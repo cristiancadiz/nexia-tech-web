@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Nexia V8.1 | Administración</title>
+  <title>Portal Nexia V8.3 | Canales por empresa</title>
   <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones de WhatsApp e Instagram, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -463,7 +463,7 @@
     .admin-panel-head h3{margin:0 0 5px;font-size:1rem}
     .admin-panel-head p{margin:0;color:var(--muted);font-size:.82rem}
     .company-list{padding:10px;display:grid;gap:7px}
-    .company-btn{width:100%;text-align:left;border:1px solid transparent;background:#0b122b;color:var(--text);border-radius:13px;padding:12px}
+    .company-btn{width:100%;text-align:left;border:1px solid transparent;background:#0b122b;color:var(--text);border-radius:13px;padding:12px;cursor:pointer;position:relative;z-index:2}
     .company-btn.active{border-color:rgba(77,231,255,.45);background:rgba(77,231,255,.09)}
     .company-btn small{display:block;color:var(--muted);margin-top:4px}
     .admin-content{padding:18px}
@@ -493,6 +493,139 @@
     .new-company-box{padding:10px;border-top:1px solid var(--line)}
     .new-company-box input{width:100%;border:1px solid var(--line);background:#091027;color:var(--text);border-radius:11px;padding:10px;margin-bottom:8px}
     @media(max-width:980px){.admin-shell{grid-template-columns:1fr}.form-grid,.module-grid{grid-template-columns:1fr}}
+
+
+    .channel-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:16px;
+    }
+    .channel-card-v83{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#0b122b;
+      min-height:180px;
+    }
+    .channel-card-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .channel-icon{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:rgba(77,231,255,.10);
+      border:1px solid rgba(77,231,255,.18);
+      font-size:1.05rem;
+      flex:0 0 auto;
+    }
+    .channel-name{
+      font-weight:900;
+      font-size:.95rem;
+      margin-bottom:3px;
+    }
+    .channel-provider{
+      color:var(--muted);
+      font-size:.74rem;
+    }
+    .channel-status-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:.7rem;
+      font-weight:900;
+      white-space:nowrap;
+      border:1px solid var(--line);
+    }
+    .channel-status-badge.active{
+      background:rgba(71,219,151,.11);
+      border-color:rgba(71,219,151,.25);
+      color:#bdf5d8;
+    }
+    .channel-status-badge.inactive{
+      background:rgba(255,196,92,.10);
+      border-color:rgba(255,196,92,.22);
+      color:#ffe0a3;
+    }
+    .channel-status-badge.pending{
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .channel-meta{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+    .channel-meta-row{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:8px;
+      font-size:.76rem;
+      align-items:start;
+    }
+    .channel-meta-row span:first-child{
+      color:var(--muted);
+    }
+    .channel-meta-row strong{
+      overflow-wrap:anywhere;
+    }
+    .channel-empty-copy{
+      color:var(--muted);
+      font-size:.78rem;
+      line-height:1.55;
+      margin-top:10px;
+    }
+    .channel-next{
+      margin-top:14px;
+      padding-top:12px;
+      border-top:1px solid var(--line);
+      color:#c7d2f0;
+      font-size:.75rem;
+      line-height:1.5;
+    }
+    .channel-readiness{
+      margin-top:16px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#091027;
+    }
+    .channel-readiness-title{
+      font-size:.88rem;
+      font-weight:900;
+      margin-bottom:10px;
+    }
+    .readiness-row{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:8px 0;
+      font-size:.77rem;
+      border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .readiness-row:last-child{border-bottom:0}
+    .readiness-dot{
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:#6d7894;
+      flex:0 0 auto;
+    }
+    .readiness-row.ok .readiness-dot{background:#47db97}
+    .readiness-row.warn .readiness-dot{background:#ffc45c}
+    @media(max-width:900px){
+      .channel-grid{grid-template-columns:1fr}
+      .channel-meta-row{grid-template-columns:95px 1fr}
+    }
 
 </style>
 </head>
@@ -756,8 +889,26 @@
         </div>
 
         <div id="adminCanales" class="hidden">
-          <div id="adminChannelsList"></div>
-          <div class="admin-status">Los tokens y claves continúan únicamente en Render; aquí no se muestran secretos.</div>
+          <div class="admin-title-row" style="align-items:flex-start">
+            <div>
+              <h2 style="font-size:1rem;margin:0">Canales de atención</h2>
+              <div style="font-size:.78rem;color:var(--muted);margin-top:5px">
+                Cada empresa mantiene sus propios canales. Una empresa puede quedar creada y configurada aunque todavía no tenga un número conectado.
+              </div>
+            </div>
+            <div id="channelGlobalStatus" class="channel-status-badge pending">Sin canal conectado</div>
+          </div>
+
+          <div id="adminChannelsList" class="channel-grid"></div>
+
+          <div class="channel-readiness">
+            <div class="channel-readiness-title">Preparación de esta empresa</div>
+            <div id="channelReadinessList"></div>
+          </div>
+
+          <div class="admin-status">
+            🔒 Los tokens, claves y credenciales permanecen únicamente en Render. Este panel no muestra ni modifica secretos.
+          </div>
         </div>
 
         <div id="adminStatus" class="admin-status"></div>
@@ -871,6 +1022,8 @@
     saveServiceBtn: document.getElementById('saveServiceBtn'),
     deleteServiceBtn: document.getElementById('deleteServiceBtn'),
     adminChannelsList: document.getElementById('adminChannelsList'),
+    channelGlobalStatus: document.getElementById('channelGlobalStatus'),
+    channelReadinessList: document.getElementById('channelReadinessList'),
     adminStatus: document.getElementById('adminStatus')
   };
 
@@ -1215,22 +1368,44 @@
 
   function renderAdminEmpresas(){
     els.adminCompanyList.innerHTML=adminEmpresas.length?adminEmpresas.map(e=>`
-      <button class="company-btn ${adminEmpresaActual?.id===e.id?'active':''}" data-company="${escapeHtml(e.id)}">
+      <button type="button" class="company-btn ${adminEmpresaActual?.id===e.id?'active':''}" data-company="${escapeHtml(e.id)}">
         <strong>${escapeHtml(e.nombre||'Sin nombre')}</strong>
         <small>${e.activo?'● Activa':'○ Inactiva'}</small>
       </button>`).join(''):'<div class="empty">No hay empresas.</div>';
-    document.querySelectorAll('.company-btn').forEach(b=>b.addEventListener('click',()=>openAdminEmpresa(b.dataset.company)));
   }
+
+  // Delegación estable: funciona aunque la lista se vuelva a renderizar.
+  els.adminCompanyList.addEventListener('click', async (ev)=>{
+    const btn = ev.target.closest('.company-btn');
+    if(!btn || !els.adminCompanyList.contains(btn)) return;
+
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const id = btn.dataset.company;
+    if(!id) return;
+
+    document.querySelectorAll('.company-btn').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+
+    await openAdminEmpresa(id);
+  });
 
   async function openAdminEmpresa(id){
     try{
-      setAdminStatus('Cargando...');
+      setAdminStatus('Cargando empresa...');
       const data=await portalFetch(`/portal/admin/empresa/${id}`);
-      adminDetalle=data; adminEmpresaActual=data.empresa;
-      renderAdminEmpresas(); renderAdminDetalle();
-      els.adminEmpty.classList.add('hidden'); els.adminContent.classList.remove('hidden');
+      adminDetalle=data;
+      adminEmpresaActual=data.empresa;
+      renderAdminEmpresas();
+      renderAdminDetalle();
+      els.adminEmpty.classList.add('hidden');
+      els.adminContent.classList.remove('hidden');
       setAdminStatus('');
-    }catch(err){setAdminStatus(err.message,true)}
+    }catch(err){
+      console.error('ADMIN EMPRESA ERROR', id, err);
+      setAdminStatus(`No se pudo abrir la empresa: ${err.message}`, true);
+    }
   }
 
   function renderAdminDetalle(){
@@ -1271,11 +1446,107 @@
 
   function renderAdminCanales(){
     const rows=adminDetalle?.canales||[];
-    els.adminChannelsList.innerHTML=rows.length?rows.map(c=>`
-      <div class="channel-card"><strong>${escapeHtml(channelLabel(c.canal))} · ${escapeHtml(c.provider||'')}</strong>
-      <small>Identificador: ${escapeHtml(c.identificador_externo||'')}</small>
-      <small>${c.activo?'Activo':'Inactivo'}${c.es_principal?' · Principal':''}</small></div>`).join('')
-      :'<div class="empty">Sin canales configurados.</div>';
+    const cfg=adminDetalle?.configuracion||{};
+    const mods=cfg.modulos||{};
+
+    const findChannel=(name)=>rows.find(c=>(c.canal||'').toLowerCase()===name);
+
+    const whatsapp=findChannel('whatsapp');
+    const instagram=findChannel('instagram');
+
+    const channelCard=(type,row)=>{
+      const isWhatsapp=type==='whatsapp';
+      const label=isWhatsapp?'WhatsApp':'Instagram';
+      const icon=isWhatsapp?'💬':'◎';
+      const moduleEnabled=isWhatsapp ? mods.whatsapp!==false : mods.instagram!==false;
+
+      if(!row){
+        return `
+          <div class="channel-card-v83">
+            <div class="channel-card-head">
+              <div style="display:flex;gap:10px;align-items:center">
+                <div class="channel-icon">${icon}</div>
+                <div>
+                  <div class="channel-name">${label}</div>
+                  <div class="channel-provider">Canal disponible para esta empresa</div>
+                </div>
+              </div>
+              <span class="channel-status-badge pending">Sin conectar</span>
+            </div>
+
+            <div class="channel-empty-copy">
+              Esta empresa todavía no tiene ${label} asociado. Puedes configurar servicios, horarios y bot ahora, y conectar el canal más adelante sin tocar las otras empresas.
+            </div>
+
+            <div class="channel-next">
+              <strong>Estado del módulo:</strong> ${moduleEnabled?'Habilitado':'Deshabilitado'}<br>
+              <strong>Siguiente paso:</strong> conectar un ${isWhatsapp?'número/proveedor':'perfil de Instagram'} cuando esté disponible.
+            </div>
+          </div>`;
+      }
+
+      const statusClass=row.activo?'active':'inactive';
+      const statusText=row.activo?'Conectado':'Inactivo';
+      return `
+        <div class="channel-card-v83">
+          <div class="channel-card-head">
+            <div style="display:flex;gap:10px;align-items:center">
+              <div class="channel-icon">${icon}</div>
+              <div>
+                <div class="channel-name">${label}</div>
+                <div class="channel-provider">${escapeHtml(row.provider||'Proveedor no indicado')}</div>
+              </div>
+            </div>
+            <span class="channel-status-badge ${statusClass}">${statusText}</span>
+          </div>
+
+          <div class="channel-meta">
+            <div class="channel-meta-row">
+              <span>Identificador</span>
+              <strong>${escapeHtml(row.identificador_externo||'—')}</strong>
+            </div>
+            <div class="channel-meta-row">
+              <span>Sender</span>
+              <strong>${escapeHtml(row.sender||'—')}</strong>
+            </div>
+            <div class="channel-meta-row">
+              <span>Principal</span>
+              <strong>${row.es_principal?'Sí':'No'}</strong>
+            </div>
+            <div class="channel-meta-row">
+              <span>Módulo bot</span>
+              <strong>${moduleEnabled?'Habilitado':'Deshabilitado'}</strong>
+            </div>
+          </div>
+        </div>`;
+    };
+
+    els.adminChannelsList.innerHTML=
+      channelCard('whatsapp',whatsapp)+
+      channelCard('instagram',instagram);
+
+    const activos=rows.filter(c=>c.activo);
+    els.channelGlobalStatus.className='channel-status-badge '+(activos.length?'active':'pending');
+    els.channelGlobalStatus.textContent=activos.length
+      ? `${activos.length} canal${activos.length===1?'':'es'} conectado${activos.length===1?'':'s'}`
+      : 'Sin canal conectado';
+
+    const empresaOk=adminDetalle?.empresa?.activo!==false;
+    const servicios=(adminDetalle?.servicios||[]).filter(s=>s.activo!==false);
+    const configOk=Boolean(cfg && Object.keys(cfg).length);
+
+    const checks=[
+      {ok:empresaOk,text:empresaOk?'Empresa activa':'Empresa inactiva'},
+      {ok:configOk,text:configOk?'Configuración del bot creada':'Falta configuración del bot'},
+      {ok:servicios.length>0,text:servicios.length>0?`${servicios.length} servicio${servicios.length===1?'':'s'} configurado${servicios.length===1?'':'s'}`:'Todavía no hay servicios configurados'},
+      {ok:activos.length>0,warn:activos.length===0,text:activos.length>0?'Canal real conectado':'Pendiente: conectar WhatsApp o Instagram'}
+    ];
+
+    els.channelReadinessList.innerHTML=checks.map(x=>`
+      <div class="readiness-row ${x.ok?'ok':(x.warn?'warn':'')}">
+        <span class="readiness-dot"></span>
+        <span>${escapeHtml(x.text)}</span>
+      </div>`).join('');
   }
 
   function switchAdminSubtab(tab){
