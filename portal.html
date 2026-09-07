@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Nexia | WhatsApp, Instagram, Reservas y Estadísticas</title>
+  <title>Portal Nexia | Omnicanal</title>
   <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones de WhatsApp e Instagram, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -638,9 +638,13 @@
   }
 
   function displayIdentifier(c){
-    return c.canal === 'instagram'
-      ? `ID Instagram: ${c.telefono || ''}`
-      : (c.telefono || '');
+    if(c.canal === 'instagram'){
+      if((c.nombre_contacto || '').startsWith('@')){
+        return 'Instagram';
+      }
+      return `ID Instagram: ${c.telefono || ''}`;
+    }
+    return c.telefono || '';
   }
 
   function renderChannelFilters(){
