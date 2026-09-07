@@ -300,6 +300,34 @@
   </div>
 </section>
 
+
+<section id="recoveryScreen" class="login-screen hidden">
+  <div class="login-card">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      NEXIA TECH
+    </div>
+
+    <h1>Nueva contraseña</h1>
+    <p>Ingresa y confirma tu nueva contraseña para recuperar el acceso al portal.</p>
+
+    <form id="recoveryForm">
+      <div class="field">
+        <label for="newPassword">Nueva contraseña</label>
+        <input id="newPassword" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Repetir contraseña</label>
+        <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+
+      <button class="primary-btn" type="submit">Guardar nueva contraseña</button>
+      <div id="recoveryError" class="error hidden"></div>
+    </form>
+  </div>
+</section>
+
 <section id="app" class="app hidden">
   <header class="topbar">
     <div class="top-left">
@@ -372,6 +400,11 @@
     loginError: document.getElementById('loginError'),
     email: document.getElementById('email'),
     password: document.getElementById('password'),
+    recoveryScreen: document.getElementById('recoveryScreen'),
+    recoveryForm: document.getElementById('recoveryForm'),
+    recoveryError: document.getElementById('recoveryError'),
+    newPassword: document.getElementById('newPassword'),
+    confirmPassword: document.getElementById('confirmPassword'),
     empresaNombre: document.getElementById('empresaNombre'),
     conversationList: document.getElementById('conversationList'),
     searchInput: document.getElementById('searchInput'),
@@ -563,6 +596,65 @@
       .subscribe();
   }
 
+
+  function showRecovery(){
+    els.loginScreen.classList.add('hidden');
+    els.app.classList.add('hidden');
+    els.recoveryScreen.classList.remove('hidden');
+  }
+
+  function hideRecovery(){
+    els.recoveryScreen.classList.add('hidden');
+  }
+
+  els.recoveryForm.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    els.recoveryError.classList.add('hidden');
+
+    const p1 = els.newPassword.value;
+    const p2 = els.confirmPassword.value;
+
+    if(p1.length < 8){
+      els.recoveryError.textContent = 'La contraseña debe tener al menos 8 caracteres.';
+      els.recoveryError.classList.remove('hidden');
+      return;
+    }
+
+    if(p1 !== p2){
+      els.recoveryError.textContent = 'Las contraseñas no coinciden.';
+      els.recoveryError.classList.remove('hidden');
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabaseClient.auth.updateUser({
+      password: p1
+    });
+
+    setLoading(false);
+
+    if(error){
+      console.error(error);
+      els.recoveryError.textContent = 'No se pudo actualizar la contraseña. Solicita un nuevo enlace de recuperación e inténtalo otra vez.';
+      els.recoveryError.classList.remove('hidden');
+      return;
+    }
+
+    els.newPassword.value = '';
+    els.confirmPassword.value = '';
+
+    alert('Contraseña actualizada correctamente. Ya puedes ingresar al portal.');
+
+    await supabaseClient.auth.signOut();
+    hideRecovery();
+    els.loginScreen.classList.remove('hidden');
+
+    // Limpiar tokens de recuperación de la URL.
+    history.replaceState({}, document.title, window.location.pathname);
+  });
+
   async function showPortal(){
     setLoading(true);
     try{
@@ -642,8 +734,34 @@
     els.backBtn.classList.add('hidden');
   });
 
-  // Revisar si ya existe una sesión activa.
+  // Detectar recuperación de contraseña y cambios de sesión.
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    if(event === 'PASSWORD_RECOVERY'){
+      showRecovery();
+      return;
+    }
+
+    if(event === 'SIGNED_OUT'){
+      hideRecovery();
+      els.app.classList.add('hidden');
+      els.loginScreen.classList.remove('hidden');
+    }
+  });
+
+  // Revisar la URL y la sesión existente.
   (async function init(){
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    const recoveryInUrl =
+      hash.includes('type=recovery') ||
+      search.includes('type=recovery');
+
+    if(recoveryInUrl){
+      // Supabase procesa automáticamente los tokens de la URL.
+      showRecovery();
+      return;
+    }
+
     const { data } = await supabaseClient.auth.getSession();
 
     if(data?.session){
