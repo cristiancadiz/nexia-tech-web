@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Nexia | Conversaciones</title>
-  <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones y mensajes.">
+  <title>Portal Nexia | Conversaciones, Reservas y Estadísticas</title>
+  <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -256,6 +256,50 @@
       box-shadow:var(--shadow);
     }
 
+
+    .portal-tabs{
+      display:flex; gap:10px; padding:12px 24px;
+      border-bottom:1px solid var(--line);
+      background:rgba(8,13,31,.92); overflow-x:auto;
+    }
+    .tab-btn{
+      border:1px solid var(--line); background:#0c1330; color:var(--text);
+      border-radius:12px; padding:10px 14px; font-weight:700; white-space:nowrap;
+    }
+    .tab-btn.active{
+      color:var(--cyan); border-color:rgba(77,231,255,.45);
+      background:rgba(77,231,255,.09);
+    }
+    .content-view{min-height:0}
+    .portal-page{padding:28px;max-width:1250px;width:100%;margin:0 auto}
+    .portal-page h2{margin:0 0 6px}
+    .page-sub{margin:0 0 22px;color:var(--muted)}
+    .table-wrap{
+      overflow:auto; border:1px solid var(--line); border-radius:18px;
+      background:rgba(15,22,48,.78); box-shadow:var(--shadow);
+    }
+    .reservas-table{width:100%;border-collapse:collapse;min-width:760px}
+    .reservas-table th,.reservas-table td{
+      padding:15px 16px;text-align:left;border-bottom:1px solid var(--line)
+    }
+    .reservas-table th{
+      color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.05em
+    }
+    .badge{
+      display:inline-flex;padding:6px 10px;border-radius:999px;font-size:.76rem;
+      font-weight:800;background:rgba(37,211,102,.11);color:#8cf2ae;
+      border:1px solid rgba(37,211,102,.22)
+    }
+    .badge.cancelada{background:rgba(255,107,122,.10);color:#ffabb4;border-color:rgba(255,107,122,.22)}
+    .badge.completada{background:rgba(77,231,255,.10);color:var(--cyan);border-color:rgba(77,231,255,.22)}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .stat-card{
+      padding:22px;border:1px solid var(--line);border-radius:20px;
+      background:rgba(15,22,48,.82);box-shadow:var(--shadow)
+    }
+    .stat-card span{display:block;color:var(--muted);font-size:.84rem}
+    .stat-card strong{display:block;font-size:2rem;margin-top:8px}
+
     @media(max-width:820px){
       .workspace{grid-template-columns:1fr}
       .sidebar{border-right:0}
@@ -263,6 +307,9 @@
       .app.mobile-chat .sidebar{display:none}
       .app.mobile-chat .chat{display:flex}
       .topbar{padding:0 14px}
+      .portal-tabs{padding:10px 14px}
+      .portal-page{padding:18px}
+      .stats-grid{grid-template-columns:1fr 1fr}
     }
   </style>
 </head>
@@ -345,6 +392,14 @@
     </div>
   </header>
 
+
+  <nav class="portal-tabs">
+    <button class="tab-btn active" data-tab="conversaciones" type="button">Conversaciones</button>
+    <button class="tab-btn" data-tab="reservas" type="button">Reservas</button>
+    <button class="tab-btn" data-tab="estadisticas" type="button">Estadísticas</button>
+  </nav>
+
+  <div id="viewConversaciones" class="content-view">
   <div class="workspace">
     <aside class="sidebar">
       <div class="sidebar-head">
@@ -372,6 +427,34 @@
         <div id="messages" class="messages"></div>
       </div>
     </main>
+  </div>
+  </div>
+
+  <div id="viewReservas" class="content-view hidden">
+    <div class="portal-page">
+      <h2>Reservas</h2>
+      <p class="page-sub">Citas registradas automáticamente por el asistente.</p>
+      <div class="table-wrap">
+        <table class="reservas-table">
+          <thead><tr><th>Cliente</th><th>Teléfono</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr></thead>
+          <tbody id="reservasBody"></tbody>
+        </table>
+      </div>
+      <div id="reservasEmpty" class="empty hidden">No hay reservas para mostrar.</div>
+    </div>
+  </div>
+
+  <div id="viewEstadisticas" class="content-view hidden">
+    <div class="portal-page">
+      <h2>Estadísticas</h2>
+      <p class="page-sub">Resumen de actividad de tu empresa.</p>
+      <div class="stats-grid">
+        <div class="stat-card"><span>Conversaciones</span><strong id="statConversaciones">0</strong></div>
+        <div class="stat-card"><span>Clientes</span><strong id="statClientes">0</strong></div>
+        <div class="stat-card"><span>Reservas</span><strong id="statReservas">0</strong></div>
+        <div class="stat-card"><span>Conversión a reserva</span><strong id="statConversion">0%</strong></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -415,12 +498,23 @@
     messages: document.getElementById('messages'),
     refreshBtn: document.getElementById('refreshBtn'),
     logoutBtn: document.getElementById('logoutBtn'),
-    backBtn: document.getElementById('backBtn')
+    backBtn: document.getElementById('backBtn'),
+    reservasBody: document.getElementById('reservasBody'),
+    reservasEmpty: document.getElementById('reservasEmpty'),
+    viewConversaciones: document.getElementById('viewConversaciones'),
+    viewReservas: document.getElementById('viewReservas'),
+    viewEstadisticas: document.getElementById('viewEstadisticas'),
+    statConversaciones: document.getElementById('statConversaciones'),
+    statClientes: document.getElementById('statClientes'),
+    statReservas: document.getElementById('statReservas'),
+    statConversion: document.getElementById('statConversion')
   };
 
   let conversaciones = [];
+  let reservas = [];
   let conversacionActiva = null;
   let realtimeChannel = null;
+  let perfilActual = null;
 
   function setLoading(value){
     els.loading.classList.toggle('hidden', !value);
@@ -472,6 +566,7 @@
       throw new Error('El usuario existe, pero aún no tiene un perfil asociado a una empresa.');
     }
 
+    perfilActual = perfil;
     els.empresaNombre.textContent = perfil.empresas?.nombre || 'Mi empresa';
     return perfil;
   }
@@ -570,6 +665,72 @@
     els.messages.scrollTop = els.messages.scrollHeight;
   }
 
+
+  function formatReservaFecha(value){
+    if(!value) return '';
+    const partes = value.split('-');
+    return partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : value;
+  }
+
+  function formatReservaHora(value){
+    return (value || '').slice(0,5);
+  }
+
+  async function loadReservas(){
+    const { data, error } = await supabaseClient
+      .from('reservas')
+      .select('id,telefono,nombre_cliente,servicio,fecha,hora,estado,google_event_id,created_at')
+      .order('fecha',{ascending:true})
+      .order('hora',{ascending:true});
+
+    if(error) throw error;
+    reservas = data || [];
+    renderReservas();
+    renderStats();
+  }
+
+  function renderReservas(){
+    els.reservasEmpty.classList.toggle('hidden', reservas.length > 0);
+    els.reservasBody.innerHTML = reservas.map(r => `
+      <tr>
+        <td><strong>${escapeHtml(r.nombre_cliente || 'Sin nombre')}</strong></td>
+        <td>${escapeHtml(r.telefono || '')}</td>
+        <td>${escapeHtml(r.servicio || '')}</td>
+        <td>${escapeHtml(formatReservaFecha(r.fecha))}</td>
+        <td>${escapeHtml(formatReservaHora(r.hora))}</td>
+        <td><span class="badge ${escapeHtml(r.estado || '')}">${escapeHtml(r.estado || 'confirmada')}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  function renderStats(){
+    const clientes = new Set(conversaciones.map(c => c.telefono).filter(Boolean));
+    const reservasValidas = reservas.filter(r => r.estado !== 'cancelada');
+    const clientesConReserva = new Set(reservasValidas.map(r => r.telefono).filter(Boolean));
+
+    els.statConversaciones.textContent = conversaciones.length;
+    els.statClientes.textContent = clientes.size;
+    els.statReservas.textContent = reservasValidas.length;
+    els.statConversion.textContent = clientes.size
+      ? `${Math.round((clientesConReserva.size / clientes.size) * 100)}%`
+      : '0%';
+  }
+
+  function switchTab(tab){
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    els.viewConversaciones.classList.toggle('hidden', tab !== 'conversaciones');
+    els.viewReservas.classList.toggle('hidden', tab !== 'reservas');
+    els.viewEstadisticas.classList.toggle('hidden', tab !== 'estadisticas');
+    els.app.classList.remove('mobile-chat');
+    els.backBtn.classList.add('hidden');
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
   async function startRealtime(){
     if(realtimeChannel){
       await supabaseClient.removeChannel(realtimeChannel);
@@ -588,9 +749,17 @@
         'postgres_changes',
         { event:'INSERT', schema:'public', table:'mensajes' },
         async payload => {
+          await loadConversations();
           if(conversacionActiva && payload.new?.conversacion_id === conversacionActiva.id){
             await loadMessages(conversacionActiva.id);
           }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event:'*', schema:'public', table:'reservas' },
+        async () => {
+          await loadReservas();
         }
       )
       .subscribe();
@@ -659,7 +828,8 @@
     setLoading(true);
     try{
       await loadProfile();
-      await loadConversations();
+      await Promise.all([loadConversations(), loadReservas()]);
+      renderStats();
       await startRealtime();
 
       els.loginScreen.classList.add('hidden');
@@ -718,10 +888,11 @@
   els.refreshBtn.addEventListener('click', async () => {
     setLoading(true);
     try{
-      await loadConversations();
+      await Promise.all([loadConversations(), loadReservas()]);
       if(conversacionActiva){
         await loadMessages(conversacionActiva.id);
       }
+      renderStats();
     }finally{
       setLoading(false);
     }
