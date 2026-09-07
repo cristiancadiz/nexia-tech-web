@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -209,9 +210,20 @@ h1{
   font-size:.9rem;
 }
 
-.f1{top:48px;left:28px;}
-.f2{right:24px;top:135px;}
-.f3{left:46px;bottom:48px;}
+.f1{
+  top:48px;
+  left:28px;
+}
+
+.f2{
+  right:24px;
+  top:135px;
+}
+
+.f3{
+  left:46px;
+  bottom:48px;
+}
 
 section{
   padding:88px 0;
@@ -301,200 +313,68 @@ footer{
   flex-wrap:wrap;
 }
 
-/* ==========================================
-   CHAT FLOTANTE NEXIA
-========================================== */
+/* ===============================
+   WHATSAPP FLOTANTE
+================================ */
 
-#nexia-chat-button{
+.nexia-wa-wrapper{
   position:fixed;
   right:24px;
   bottom:24px;
+  z-index:99999;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.nexia-wa-label{
+  background:#0b1024;
+  color:#fff;
+
+  border:1px solid rgba(255,255,255,.14);
+
+  padding:10px 14px;
+
+  border-radius:14px;
+
+  font-size:14px;
+  font-weight:700;
+
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+
+  transition:.2s ease;
+}
+
+.nexia-wa-button{
   width:64px;
   height:64px;
+
   border-radius:50%;
-  border:1px solid rgba(255,255,255,.18);
-  background:linear-gradient(135deg,var(--cyan),var(--violet));
-  color:white;
-  font-size:28px;
-  cursor:pointer;
-  box-shadow:0 12px 40px rgba(77,231,255,.30);
-  z-index:99999;
-  transition:.2s;
-}
-
-#nexia-chat-button:hover{
-  transform:scale(1.07);
-}
-
-#nexia-chat-box{
-  position:fixed;
-  right:24px;
-  bottom:100px;
-  width:370px;
-  max-width:calc(100vw - 30px);
-  height:520px;
-  max-height:calc(100vh - 130px);
-
-  background:#080d1f;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:22px;
-
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-
-  overflow:hidden;
-
-  display:none;
-  flex-direction:column;
-
-  z-index:99999;
-}
-
-.nexia-chat-header{
-  background:linear-gradient(135deg,#101a39,#171638);
-  color:white;
-
-  padding:17px 18px;
 
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:center;
 
-  border-bottom:1px solid rgba(255,255,255,.10);
-}
-
-.nexia-chat-header strong{
-  font-size:16px;
-}
-
-.nexia-chat-header small{
-  color:#a9b4d0;
-}
-
-.nexia-chat-header button{
-  background:transparent;
-  border:0;
-  color:white;
-  font-size:20px;
-  cursor:pointer;
-}
-
-#nexia-chat-messages{
-  flex:1;
-  padding:16px;
-  overflow-y:auto;
-
-  background:
-    radial-gradient(
-      circle at 20% 10%,
-      rgba(77,231,255,.06),
-      transparent 30%
-    ),
-    #080d1f;
-}
-
-.nexia-message{
-  width:fit-content;
-  max-width:82%;
-
-  padding:11px 14px;
-  border-radius:16px;
-
-  margin-bottom:10px;
-
-  line-height:1.4;
-  font-size:14px;
-
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-
-.nexia-message.bot{
-  background:rgba(255,255,255,.08);
-  color:#f7f9ff;
-
-  border:1px solid rgba(255,255,255,.08);
-
-  border-bottom-left-radius:5px;
-}
-
-.nexia-message.user{
-  background:linear-gradient(
-    135deg,
-    var(--cyan),
-    var(--violet)
-  );
-
-  color:#06101d;
-
-  margin-left:auto;
-
-  font-weight:600;
-
-  border-bottom-right-radius:5px;
-}
-
-.nexia-chat-input-area{
-  display:flex;
-  gap:8px;
-
-  padding:12px;
-
-  border-top:1px solid rgba(255,255,255,.10);
-
-  background:#090e20;
-}
-
-#nexia-chat-input{
-  flex:1;
-  min-width:0;
-
+  background:#25D366;
   color:white;
 
-  background:rgba(255,255,255,.06);
+  box-shadow:0 14px 35px rgba(0,0,0,.30);
 
-  border:1px solid rgba(255,255,255,.12);
-
-  border-radius:24px;
-
-  padding:12px 15px;
-
-  outline:none;
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
 }
 
-#nexia-chat-input::placeholder{
-  color:#8995b2;
+.nexia-wa-wrapper:hover .nexia-wa-button{
+  transform:scale(1.08);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.36);
 }
 
-#nexia-chat-input:focus{
-  border-color:rgba(77,231,255,.55);
-}
-
-#nexia-send-button{
-  width:44px;
-  height:44px;
-
-  flex:0 0 44px;
-
-  border-radius:50%;
-
-  border:0;
-
-  background:linear-gradient(
-    135deg,
-    var(--cyan),
-    var(--violet)
-  );
-
-  color:#06101d;
-
-  font-size:18px;
-  font-weight:900;
-
-  cursor:pointer;
-}
-
-#nexia-send-button:disabled{
-  opacity:.5;
+.nexia-wa-wrapper:hover .nexia-wa-label{
+  transform:translateX(-3px);
 }
 
 @media(max-width:850px){
@@ -525,19 +405,13 @@ footer{
 
 @media(max-width:600px){
 
-  #nexia-chat-button{
+  .nexia-wa-wrapper{
     right:16px;
     bottom:16px;
   }
 
-  #nexia-chat-box{
-    right:10px;
-    bottom:90px;
-
-    width:calc(100vw - 20px);
-
-    height:70vh;
-    max-height:70vh;
+  .nexia-wa-label{
+    display:none;
   }
 }
 
@@ -548,32 +422,51 @@ footer{
 <body>
 
 <header>
+
 <div class="wrap">
 
 <nav>
 
 <a class="brand" href="#inicio">
+
 <span class="logo"></span>
+
 NEXIA TECH
+
 </a>
 
 <div class="links">
-<a href="#servicios">Servicios</a>
-<a href="#proceso">Cómo trabajamos</a>
-<a href="#contacto">Contacto</a>
+
+<a href="#servicios">
+Servicios
+</a>
+
+<a href="#proceso">
+Cómo trabajamos
+</a>
+
+<a href="#contacto">
+Contacto
+</a>
+
 </div>
 
-<a class="btn" href="mailto:contacto@nexia-tech.com">
+<a
+class="btn"
+href="mailto:contacto@nexia-tech.com"
+>
 Hablemos
 </a>
 
 </nav>
 
 </div>
+
 </header>
 
 
 <main>
+
 
 <section class="hero" id="inicio">
 
@@ -586,29 +479,43 @@ AUTOMATIZACIÓN + INTELIGENCIA ARTIFICIAL
 </span>
 
 <h1>
+
 Tecnología que
+
 <span class="grad">
 trabaja por tu empresa.
 </span>
+
 </h1>
 
 <p>
+
 En Nexia Tech desarrollamos asistentes virtuales,
 automatizaciones e integraciones que ayudan a las empresas
 a responder clientes, gestionar reservas y optimizar procesos.
+
 </p>
 
 <div class="actions">
 
 <a
 class="btn primary"
-href="mailto:contacto@nexia-tech.com?subject=Quiero%20automatizar%20mi%20empresa"
+href="https://wa.me/56971906724?text=Hola%20Diego%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quiero%20hacer%20una%20consulta."
+target="_blank"
+rel="noopener noreferrer"
 >
+
 Quiero automatizar mi empresa
+
 </a>
 
-<a class="btn" href="#servicios">
+<a
+class="btn"
+href="#servicios"
+>
+
 Ver servicios
+
 </a>
 
 </div>
@@ -621,15 +528,21 @@ Ver servicios
 <div class="orb"></div>
 
 <div class="float f1">
+
 ● Asistente IA activo
+
 </div>
 
 <div class="float f2">
+
 ⚡ Automatización 24/7
+
 </div>
 
 <div class="float f3">
+
 ✓ Integración con tus herramientas
+
 </div>
 
 </div>
@@ -650,12 +563,16 @@ SOLUCIONES
 </span>
 
 <h2>
+
 Automatizamos tareas para que puedas enfocarte en crecer.
+
 </h2>
 
 <p>
+
 Soluciones simples para negocios y empresas que quieren
 incorporar tecnología sin complicarse.
+
 </p>
 
 </div>
@@ -663,17 +580,22 @@ incorporar tecnología sin complicarse.
 
 <div class="cards">
 
+
 <article class="card">
 
-<div class="icon">💬</div>
+<div class="icon">
+💬
+</div>
 
 <h3>
 Asistentes para WhatsApp
 </h3>
 
 <p>
+
 Automatiza respuestas, consultas, captación de clientes
 y atención con asistentes inteligentes.
+
 </p>
 
 </article>
@@ -681,15 +603,19 @@ y atención con asistentes inteligentes.
 
 <article class="card">
 
-<div class="icon">📅</div>
+<div class="icon">
+📅
+</div>
 
 <h3>
 Reservas automáticas
 </h3>
 
 <p>
+
 Conecta la atención con calendarios y disponibilidad real
 para agendar citas automáticamente.
+
 </p>
 
 </article>
@@ -697,18 +623,23 @@ para agendar citas automáticamente.
 
 <article class="card">
 
-<div class="icon">⚙️</div>
+<div class="icon">
+⚙️
+</div>
 
 <h3>
 Automatización de procesos
 </h3>
 
 <p>
+
 Integramos herramientas y reducimos tareas manuales repetitivas
 para mejorar tiempos y productividad.
+
 </p>
 
 </article>
+
 
 </div>
 
@@ -728,7 +659,9 @@ METODOLOGÍA
 </span>
 
 <h2>
+
 De una necesidad a una solución funcionando.
+
 </h2>
 
 </div>
@@ -736,19 +669,26 @@ De una necesidad a una solución funcionando.
 
 <div class="steps">
 
+
 <div class="step">
 
 <strong>
+
 01 · ANALIZAMOS
+
 </strong>
 
 <h3>
+
 Entendemos tu proceso
+
 </h3>
 
 <p>
+
 Revisamos qué necesitas automatizar y dónde podemos
 generar mayor impacto.
+
 </p>
 
 </div>
@@ -757,16 +697,22 @@ generar mayor impacto.
 <div class="step">
 
 <strong>
+
 02 · CONSTRUIMOS
+
 </strong>
 
 <h3>
+
 Desarrollamos la solución
+
 </h3>
 
 <p>
+
 Configuramos el asistente, automatización o integración
 según tu negocio.
+
 </p>
 
 </div>
@@ -775,19 +721,25 @@ según tu negocio.
 <div class="step">
 
 <strong>
+
 03 · IMPLEMENTAMOS
+
 </strong>
 
 <h3>
+
 Lo dejamos funcionando
+
 </h3>
 
 <p>
-Probamos el flujo y lo conectamos a tus canales
-y herramientas.
+
+Probamos el flujo y lo conectamos a tus canales y herramientas.
+
 </p>
 
 </div>
+
 
 </div>
 
@@ -805,32 +757,45 @@ y herramientas.
 <div>
 
 <span class="tag">
+
 CONVERSEMOS
+
 </span>
 
 <h2>
+
 ¿Tienes un proceso que quieres automatizar?
+
 </h2>
 
 <p>
+
 Cuéntanos qué necesitas y revisemos cómo Nexia Tech
 puede ayudarte.
+
 </p>
 
 </div>
 
+
 <a
 class="btn primary"
-href="mailto:contacto@nexia-tech.com?subject=Contacto%20desde%20Nexia%20Tech"
+href="https://wa.me/56971906724?text=Hola%20Diego%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quiero%20hacer%20una%20consulta."
+target="_blank"
+rel="noopener noreferrer"
 >
-contacto@nexia-tech.com
+
+Hablar por WhatsApp
+
 </a>
+
 
 </div>
 
 </div>
 
 </section>
+
 
 </main>
 
@@ -840,11 +805,15 @@ contacto@nexia-tech.com
 <div class="wrap foot">
 
 <div>
+
 © <span id="year"></span> Nexia Tech.
+
 </div>
 
 <div>
+
 Automatización · Inteligencia Artificial · Integraciones
+
 </div>
 
 </div>
@@ -852,273 +821,65 @@ Automatización · Inteligencia Artificial · Integraciones
 </footer>
 
 
-<!-- =====================================
-     CHAT FLOTANTE
-===================================== -->
-
-<button
-id="nexia-chat-button"
-type="button"
-aria-label="Abrir chat"
-onclick="toggleNexiaChat()"
->
-💬
-</button>
+<!-- BOTÓN FLOTANTE WHATSAPP -->
 
 
-<div id="nexia-chat-box">
-
-<div class="nexia-chat-header">
-
-<div>
-
-<strong>
-Asistente Nexia
-</strong>
-
-<br>
-
-<small>
-● En línea
-</small>
-
-</div>
-
-<button
-type="button"
-onclick="toggleNexiaChat()"
->
-✕
-</button>
-
-</div>
+<div class="nexia-wa-wrapper">
 
 
-<div id="nexia-chat-messages">
+<span class="nexia-wa-label">
 
-<div class="nexia-message bot">
-Hola 👋 Soy el asistente virtual de Nexia Tech.
-¿En qué puedo ayudarte?
-</div>
+Habla con Diego
 
-</div>
+</span>
 
 
-<div class="nexia-chat-input-area">
-
-<input
-id="nexia-chat-input"
-type="text"
-placeholder="Escribe tu mensaje..."
-autocomplete="off"
+<a
+href="https://wa.me/56971906724?text=Hola%20Diego%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quiero%20hacer%20una%20consulta."
+target="_blank"
+rel="noopener noreferrer"
+class="nexia-wa-button"
+aria-label="Hablar con Diego por WhatsApp"
 >
 
-<button
-id="nexia-send-button"
-type="button"
->
-➤
-</button>
 
-</div>
+<svg
+viewBox="0 0 32 32"
+width="32"
+height="32"
+aria-hidden="true"
+>
+
+
+<path
+fill="currentColor"
+d="M19.11 17.205c-.372-.186-2.201-1.085-2.542-1.209-.341-.124-.589-.186-.837.186-.248.372-.961 1.209-1.178 1.457-.217.248-.434.279-.806.093-.372-.186-1.57-.579-2.99-1.847-1.105-.986-1.851-2.201-2.068-2.573-.217-.372-.023-.573.163-.758.167-.166.372-.434.558-.651.186-.217.248-.372.372-.62.124-.248.062-.465-.031-.651-.093-.186-.837-2.015-1.147-2.759-.302-.725-.61-.627-.837-.639-.217-.011-.465-.013-.713-.013s-.651.093-.992.465c-.341.372-1.302 1.271-1.302 3.1 0 1.829 1.333 3.596 1.519 3.844.186.248 2.624 4.007 6.356 5.619.888.383 1.581.612 2.121.783.891.283 1.702.243 2.343.147.715-.107 2.201-.899 2.511-1.767.31-.868.31-1.612.217-1.767-.093-.155-.341-.248-.713-.434z"
+/>
+
+
+<path
+fill="currentColor"
+d="M16.027 3C8.842 3 3 8.842 3 16.027c0 2.296.599 4.536 1.736 6.508L3 29l6.635-1.74a12.973 12.973 0 0 0 6.392 1.635h.006C23.218 28.895 29 23.053 29 15.868 29 8.842 23.053 3 16.027 3zm0 23.706h-.005a10.78 10.78 0 0 1-5.493-1.503l-.394-.234-3.938 1.033 1.051-3.838-.257-.405a10.76 10.76 0 0 1-1.651-5.732c0-5.905 4.804-10.709 10.709-10.709 5.905 0 10.709 4.804 10.709 10.709 0 5.905-4.804 10.679-10.731 10.679z"
+/>
+
+
+</svg>
+
+
+</a>
+
 
 </div>
 
 
 <script>
 
-/* AÑO FOOTER */
-
 document.getElementById("year").textContent =
 new Date().getFullYear();
 
-
-/* ABRIR / CERRAR CHAT */
-
-function toggleNexiaChat(){
-
-  const chat =
-    document.getElementById("nexia-chat-box");
-
-  const abierto =
-    chat.style.display === "flex";
-
-  chat.style.display =
-    abierto ? "none" : "flex";
-
-  if(!abierto){
-
-    setTimeout(function(){
-
-      document
-      .getElementById("nexia-chat-input")
-      .focus();
-
-    },100);
-
-  }
-
-}
-
-
-/* AGREGAR MENSAJE */
-
-function addNexiaMessage(text,type){
-
-  const messages =
-    document.getElementById(
-      "nexia-chat-messages"
-    );
-
-  const div =
-    document.createElement("div");
-
-  div.className =
-    "nexia-message " + type;
-
-  /*
-  Usamos textContent en lugar de innerHTML
-  para evitar insertar HTML desde el usuario.
-  */
-
-  div.textContent = text;
-
-  messages.appendChild(div);
-
-  messages.scrollTop =
-    messages.scrollHeight;
-
-}
-
-
-/* ENVIAR MENSAJE */
-
-async function sendNexiaMessage(){
-
-  const input =
-    document.getElementById(
-      "nexia-chat-input"
-    );
-
-  const button =
-    document.getElementById(
-      "nexia-send-button"
-    );
-
-  const text =
-    input.value.trim();
-
-  if(!text){
-    return;
-  }
-
-  addNexiaMessage(
-    text,
-    "user"
-  );
-
-  input.value = "";
-
-  button.disabled = true;
-
-  try{
-
-    const response =
-      await fetch(
-        "https://chatbot-laortiga-hddw.onrender.com/webchat",
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-            "application/json"
-          },
-
-          body:JSON.stringify({
-            message:text
-          })
-        }
-      );
-
-
-    if(!response.ok){
-
-      throw new Error(
-        "HTTP " +
-        response.status
-      );
-
-    }
-
-
-    const data =
-      await response.json();
-
-
-    addNexiaMessage(
-      data.reply ||
-      "No recibí una respuesta válida.",
-      "bot"
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "Error Nexia WebChat:",
-      error
-    );
-
-    addNexiaMessage(
-      "El asistente todavía no está disponible. Intenta nuevamente en unos minutos.",
-      "bot"
-    );
-
-  }finally{
-
-    button.disabled = false;
-
-    input.focus();
-
-  }
-
-}
-
-
-/* BOTÓN ENVIAR */
-
-document
-.getElementById(
-  "nexia-send-button"
-)
-.addEventListener(
-  "click",
-  sendNexiaMessage
-);
-
-
-/* ENTER PARA ENVIAR */
-
-document
-.getElementById(
-  "nexia-chat-input"
-)
-.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Enter"){
-
-      event.preventDefault();
-
-      sendNexiaMessage();
-
-    }
-
-  }
-);
-
 </script>
 
+
 </body>
+
 </html>
