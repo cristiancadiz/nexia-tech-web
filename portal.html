@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Nexia | Omnicanal con atención humana</title>
+  <title>Portal Nexia V8 | Administración</title>
   <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones de WhatsApp e Instagram, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -455,7 +455,46 @@
       .portal-page{padding:18px}
       .stats-grid{grid-template-columns:1fr 1fr}
     }
-  </style>
+  
+    .admin-view{min-height:0;overflow:auto;padding:22px}
+    .admin-shell{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px}
+    .admin-panel{border:1px solid var(--line);background:rgba(15,22,48,.86);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+    .admin-panel-head{padding:18px;border-bottom:1px solid var(--line)}
+    .admin-panel-head h3{margin:0 0 5px;font-size:1rem}
+    .admin-panel-head p{margin:0;color:var(--muted);font-size:.82rem}
+    .company-list{padding:10px;display:grid;gap:7px}
+    .company-btn{width:100%;text-align:left;border:1px solid transparent;background:#0b122b;color:var(--text);border-radius:13px;padding:12px}
+    .company-btn.active{border-color:rgba(77,231,255,.45);background:rgba(77,231,255,.09)}
+    .company-btn small{display:block;color:var(--muted);margin-top:4px}
+    .admin-content{padding:18px}
+    .admin-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+    .admin-title-row h2{margin:0;font-size:1.3rem}
+    .admin-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+    .admin-subtab{border:1px solid var(--line);background:#0b122b;color:var(--muted);border-radius:999px;padding:8px 11px;font-weight:800;font-size:.78rem}
+    .admin-subtab.active{color:var(--text);border-color:rgba(77,231,255,.45);background:rgba(77,231,255,.10)}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .form-grid .full{grid-column:1/-1}
+    .admin-field label{display:block;color:#cfd6ea;font-size:.8rem;margin-bottom:6px}
+    .admin-field input,.admin-field textarea,.admin-field select{width:100%;border:1px solid var(--line);background:#091027;color:var(--text);border-radius:12px;padding:11px 12px;outline:none}
+    .admin-field textarea{min-height:100px;resize:vertical}
+    .save-btn,.small-btn,.danger-btn{border-radius:11px;padding:10px 13px;font-weight:800}
+    .save-btn{border:0;background:linear-gradient(135deg,var(--cyan),#80ffc1);color:#031017}
+    .small-btn{background:#18244c;color:var(--text);border:1px solid var(--line)}
+    .danger-btn{background:rgba(255,107,122,.13);color:#ffc8cf;border:1px solid rgba(255,107,122,.25)}
+    .service-table{width:100%;border-collapse:collapse;min-width:760px}
+    .service-table th,.service-table td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:.82rem}
+    .service-table th{color:var(--muted);font-size:.72rem;text-transform:uppercase}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+    .channel-card{border:1px solid var(--line);background:#0b122b;border-radius:14px;padding:14px;margin-bottom:10px}
+    .channel-card small{color:var(--muted);display:block;margin-top:5px}
+    .module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .module-item{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:#0b122b;border-radius:12px;padding:11px}
+    .admin-status{margin-top:12px;color:var(--muted);font-size:.82rem}
+    .new-company-box{padding:10px;border-top:1px solid var(--line)}
+    .new-company-box input{width:100%;border:1px solid var(--line);background:#091027;color:var(--text);border-radius:11px;padding:10px;margin-bottom:8px}
+    @media(max-width:980px){.admin-shell{grid-template-columns:1fr}.form-grid,.module-grid{grid-template-columns:1fr}}
+
+</style>
 </head>
 
 <body>
@@ -541,6 +580,7 @@
     <button class="tab-btn active" data-tab="conversaciones" type="button">Conversaciones</button>
     <button class="tab-btn" data-tab="reservas" type="button">Reservas</button>
     <button class="tab-btn" data-tab="estadisticas" type="button">Estadísticas</button>
+    <button id="adminTabBtn" class="tab-btn hidden" data-tab="administracion" type="button">Administración</button>
   </nav>
 
   <div id="viewConversaciones" class="content-view">
@@ -615,6 +655,119 @@
   </div>
 </section>
 
+
+<section id="viewAdministracion" class="admin-view hidden">
+  <div class="admin-shell">
+    <aside class="admin-panel">
+      <div class="admin-panel-head">
+        <h3>Empresas Nexia</h3>
+        <p>Selecciona un cliente para administrarlo.</p>
+      </div>
+      <div id="adminCompanyList" class="company-list"><div class="empty">Cargando...</div></div>
+      <div class="new-company-box">
+        <input id="newCompanyName" placeholder="Nombre nueva empresa">
+        <button id="createCompanyBtn" class="save-btn" style="width:100%" type="button">+ Crear empresa</button>
+      </div>
+    </aside>
+
+    <main class="admin-panel">
+      <div id="adminEmpty" class="empty" style="padding:40px">Selecciona una empresa.</div>
+      <div id="adminContent" class="admin-content hidden">
+        <div class="admin-title-row">
+          <div>
+            <h2 id="adminEmpresaTitle">Empresa</h2>
+            <div id="adminEmpresaId" style="color:var(--muted);font-size:.75rem;margin-top:4px"></div>
+          </div>
+          <button id="saveCompanyBtn" class="save-btn" type="button">Guardar empresa</button>
+        </div>
+
+        <div class="admin-tabs">
+          <button class="admin-subtab active" data-admin-tab="general" type="button">General</button>
+          <button class="admin-subtab" data-admin-tab="servicios" type="button">Servicios</button>
+          <button class="admin-subtab" data-admin-tab="bot" type="button">Bot y módulos</button>
+          <button class="admin-subtab" data-admin-tab="canales" type="button">Canales</button>
+        </div>
+
+        <div id="adminGeneral">
+          <div class="form-grid">
+            <div class="admin-field"><label>Nombre empresa</label><input id="cfgEmpresaNombre"></div>
+            <div class="admin-field"><label>Tipo de negocio</label><input id="cfgTipoNegocio"></div>
+            <div class="admin-field full"><label>Dirección</label><input id="cfgDireccion"></div>
+            <div class="admin-field"><label>Teléfono ejecutivo</label><input id="cfgTelefonoEjecutivo"></div>
+            <div class="admin-field"><label>Nombre asistente</label><input id="cfgAsistenteNombre"></div>
+            <div class="admin-field"><label>Hora apertura</label><input id="cfgHoraApertura" type="number"></div>
+            <div class="admin-field"><label>Hora cierre</label><input id="cfgHoraCierre" type="number"></div>
+            <div class="admin-field"><label>Duración reserva (min)</label><input id="cfgDuracion" type="number"></div>
+            <div class="admin-field"><label>Calendar ID</label><input id="cfgCalendarId"></div>
+            <div class="admin-field"><label>Zona horaria</label><input id="cfgTimezone"></div>
+            <div class="admin-field"><label>Estado empresa</label><select id="cfgEmpresaActiva"><option value="true">Activa</option><option value="false">Inactiva</option></select></div>
+          </div>
+          <div style="margin-top:16px"><button id="saveConfigBtn" class="save-btn" type="button">Guardar configuración</button></div>
+        </div>
+
+        <div id="adminServicios" class="hidden">
+          <div class="admin-title-row">
+            <h2 style="font-size:1rem">Servicios</h2>
+            <button id="newServiceBtn" class="save-btn" type="button">+ Nuevo servicio</button>
+          </div>
+          <div class="table-wrap">
+            <table class="service-table">
+              <thead><tr><th>#</th><th>Servicio</th><th>Categoría</th><th>Precio</th><th>Duración</th><th>Estado</th><th></th></tr></thead>
+              <tbody id="adminServicesBody"></tbody>
+            </table>
+          </div>
+
+          <div id="serviceEditor" class="hidden" style="margin-top:18px;border:1px solid var(--line);border-radius:14px;padding:16px">
+            <div class="admin-title-row">
+              <h2 id="serviceEditorTitle" style="font-size:1rem">Nuevo servicio</h2>
+              <button id="closeServiceEditor" class="small-btn" type="button">Cerrar</button>
+            </div>
+            <div class="form-grid">
+              <div class="admin-field"><label>Código</label><input id="svcCodigo"></div>
+              <div class="admin-field"><label>Número menú</label><input id="svcNumero" type="number"></div>
+              <div class="admin-field full"><label>Nombre</label><input id="svcNombre"></div>
+              <div class="admin-field"><label>Categoría</label><input id="svcCategoria"></div>
+              <div class="admin-field"><label>Precio numérico</label><input id="svcPrecio" type="number"></div>
+              <div class="admin-field"><label>Precio mostrado</label><input id="svcPrecioTexto"></div>
+              <div class="admin-field"><label>Duración minutos</label><input id="svcDuracion" type="number"></div>
+              <div class="admin-field"><label>Orden</label><input id="svcOrden" type="number"></div>
+              <div class="admin-field full"><label>Aliases separados por coma</label><input id="svcAliases"></div>
+              <div class="admin-field full"><label>Detalle</label><textarea id="svcDetalle"></textarea></div>
+            </div>
+            <div style="display:flex;gap:9px;margin-top:14px">
+              <button id="saveServiceBtn" class="save-btn" type="button">Guardar servicio</button>
+              <button id="deleteServiceBtn" class="danger-btn hidden" type="button">Eliminar</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="adminBot" class="hidden">
+          <div class="admin-field full">
+            <label>Instrucciones adicionales para la IA</label>
+            <textarea id="cfgPromptExtra"></textarea>
+          </div>
+          <h3 style="font-size:.92rem;margin:18px 0 10px">Módulos activos</h3>
+          <div class="module-grid">
+            <label class="module-item">IA <input id="modIa" type="checkbox"></label>
+            <label class="module-item">Reservas <input id="modReservas" type="checkbox"></label>
+            <label class="module-item">Atención humana <input id="modHandoff" type="checkbox"></label>
+            <label class="module-item">WhatsApp <input id="modWhatsapp" type="checkbox"></label>
+            <label class="module-item">Instagram <input id="modInstagram" type="checkbox"></label>
+          </div>
+          <div style="margin-top:16px"><button id="saveBotBtn" class="save-btn" type="button">Guardar bot</button></div>
+        </div>
+
+        <div id="adminCanales" class="hidden">
+          <div id="adminChannelsList"></div>
+          <div class="admin-status">Los tokens y claves continúan únicamente en Render; aquí no se muestran secretos.</div>
+        </div>
+
+        <div id="adminStatus" class="admin-status"></div>
+      </div>
+    </main>
+  </div>
+</section>
+
 <script>
   // ============================================================
   // CONFIGURACIÓN SUPABASE
@@ -671,7 +824,55 @@
     statConversaciones: document.getElementById('statConversaciones'),
     statClientes: document.getElementById('statClientes'),
     statReservas: document.getElementById('statReservas'),
-    statConversion: document.getElementById('statConversion')
+    statConversion: document.getElementById('statConversion'),
+    adminTabBtn: document.getElementById('adminTabBtn'),
+    viewAdministracion: document.getElementById('viewAdministracion'),
+    adminCompanyList: document.getElementById('adminCompanyList'),
+    newCompanyName: document.getElementById('newCompanyName'),
+    createCompanyBtn: document.getElementById('createCompanyBtn'),
+    adminEmpty: document.getElementById('adminEmpty'),
+    adminContent: document.getElementById('adminContent'),
+    adminEmpresaTitle: document.getElementById('adminEmpresaTitle'),
+    adminEmpresaId: document.getElementById('adminEmpresaId'),
+    cfgEmpresaNombre: document.getElementById('cfgEmpresaNombre'),
+    cfgTipoNegocio: document.getElementById('cfgTipoNegocio'),
+    cfgDireccion: document.getElementById('cfgDireccion'),
+    cfgTelefonoEjecutivo: document.getElementById('cfgTelefonoEjecutivo'),
+    cfgAsistenteNombre: document.getElementById('cfgAsistenteNombre'),
+    cfgHoraApertura: document.getElementById('cfgHoraApertura'),
+    cfgHoraCierre: document.getElementById('cfgHoraCierre'),
+    cfgDuracion: document.getElementById('cfgDuracion'),
+    cfgCalendarId: document.getElementById('cfgCalendarId'),
+    cfgTimezone: document.getElementById('cfgTimezone'),
+    cfgEmpresaActiva: document.getElementById('cfgEmpresaActiva'),
+    cfgPromptExtra: document.getElementById('cfgPromptExtra'),
+    modIa: document.getElementById('modIa'),
+    modReservas: document.getElementById('modReservas'),
+    modHandoff: document.getElementById('modHandoff'),
+    modWhatsapp: document.getElementById('modWhatsapp'),
+    modInstagram: document.getElementById('modInstagram'),
+    saveCompanyBtn: document.getElementById('saveCompanyBtn'),
+    saveConfigBtn: document.getElementById('saveConfigBtn'),
+    saveBotBtn: document.getElementById('saveBotBtn'),
+    adminServicesBody: document.getElementById('adminServicesBody'),
+    newServiceBtn: document.getElementById('newServiceBtn'),
+    serviceEditor: document.getElementById('serviceEditor'),
+    serviceEditorTitle: document.getElementById('serviceEditorTitle'),
+    closeServiceEditor: document.getElementById('closeServiceEditor'),
+    svcCodigo: document.getElementById('svcCodigo'),
+    svcNumero: document.getElementById('svcNumero'),
+    svcNombre: document.getElementById('svcNombre'),
+    svcCategoria: document.getElementById('svcCategoria'),
+    svcPrecio: document.getElementById('svcPrecio'),
+    svcPrecioTexto: document.getElementById('svcPrecioTexto'),
+    svcDuracion: document.getElementById('svcDuracion'),
+    svcOrden: document.getElementById('svcOrden'),
+    svcAliases: document.getElementById('svcAliases'),
+    svcDetalle: document.getElementById('svcDetalle'),
+    saveServiceBtn: document.getElementById('saveServiceBtn'),
+    deleteServiceBtn: document.getElementById('deleteServiceBtn'),
+    adminChannelsList: document.getElementById('adminChannelsList'),
+    adminStatus: document.getElementById('adminStatus')
   };
 
   let conversaciones = [];
@@ -680,6 +881,10 @@
   let realtimeChannel = null;
   let perfilActual = null;
   let canalFiltro = 'todos';
+  let adminEmpresas=[];
+  let adminEmpresaActual=null;
+  let adminDetalle=null;
+  let adminServicioEditando=null;
   const PORTAL_API_URL = 'https://chatbot-laortiga-hddw.onrender.com';
 
   function setLoading(value){
@@ -775,6 +980,11 @@
 
     perfilActual = perfil;
     els.empresaNombre.textContent = perfil.empresas?.nombre || 'Mi empresa';
+    const rol = String(perfil.rol || '').toLowerCase();
+    const esAdminNexia =
+      perfil.empresa_id === '0a9de921-9386-441c-b5aa-f432d3f44fe5' &&
+      ['admin','nexia_admin','superadmin','administrador'].includes(rol);
+    els.adminTabBtn.classList.toggle('hidden', !esAdminNexia);
     return perfil;
   }
 
@@ -963,12 +1173,211 @@
     els.viewConversaciones.classList.toggle('hidden', tab !== 'conversaciones');
     els.viewReservas.classList.toggle('hidden', tab !== 'reservas');
     els.viewEstadisticas.classList.toggle('hidden', tab !== 'estadisticas');
+    els.viewAdministracion.classList.toggle('hidden', tab !== 'administracion');
+    if(tab === 'administracion') loadAdminEmpresas();
     els.app.classList.remove('mobile-chat');
     els.backBtn.classList.add('hidden');
   }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+
+  async function portalFetch(path, options={}){
+    const {data:sessionData}=await supabaseClient.auth.getSession();
+    const token=sessionData?.session?.access_token;
+    if(!token) throw new Error('Sesión expirada.');
+    const res=await fetch(`${PORTAL_API_URL}${path}`,{
+      ...options,
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`,...(options.headers||{})}
+    });
+    let data={}; try{data=await res.json()}catch(_){}
+    if(!res.ok || data.ok===false) throw new Error(data.error||`Error ${res.status}`);
+    return data;
+  }
+
+  function setAdminStatus(msg,error=false){
+    els.adminStatus.textContent=msg||'';
+    els.adminStatus.style.color=error?'#ffc8cf':'var(--muted)';
+  }
+
+  async function loadAdminEmpresas(){
+    if(els.adminTabBtn.classList.contains('hidden')) return;
+    try{
+      const data=await portalFetch('/portal/admin/empresas');
+      adminEmpresas=data.empresas||[];
+      renderAdminEmpresas();
+      if(!adminEmpresaActual && adminEmpresas.length) await openAdminEmpresa(adminEmpresas[0].id);
+    }catch(err){
+      els.adminCompanyList.innerHTML=`<div class="empty">${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function renderAdminEmpresas(){
+    els.adminCompanyList.innerHTML=adminEmpresas.length?adminEmpresas.map(e=>`
+      <button class="company-btn ${adminEmpresaActual?.id===e.id?'active':''}" data-company="${escapeHtml(e.id)}">
+        <strong>${escapeHtml(e.nombre||'Sin nombre')}</strong>
+        <small>${e.activo?'● Activa':'○ Inactiva'}</small>
+      </button>`).join(''):'<div class="empty">No hay empresas.</div>';
+    document.querySelectorAll('.company-btn').forEach(b=>b.addEventListener('click',()=>openAdminEmpresa(b.dataset.company)));
+  }
+
+  async function openAdminEmpresa(id){
+    try{
+      setAdminStatus('Cargando...');
+      const data=await portalFetch(`/portal/admin/empresa/${id}`);
+      adminDetalle=data; adminEmpresaActual=data.empresa;
+      renderAdminEmpresas(); renderAdminDetalle();
+      els.adminEmpty.classList.add('hidden'); els.adminContent.classList.remove('hidden');
+      setAdminStatus('');
+    }catch(err){setAdminStatus(err.message,true)}
+  }
+
+  function renderAdminDetalle(){
+    const e=adminDetalle.empresa||{}, c=adminDetalle.configuracion||{}, m=c.modulos||{};
+    els.adminEmpresaTitle.textContent=e.nombre||'Empresa';
+    els.adminEmpresaId.textContent=e.id||'';
+    els.cfgEmpresaNombre.value=e.nombre||'';
+    els.cfgEmpresaActiva.value=String(e.activo!==false);
+    els.cfgTipoNegocio.value=c.tipo_negocio||'reservas';
+    els.cfgDireccion.value=c.direccion||'';
+    els.cfgTelefonoEjecutivo.value=c.telefono_ejecutivo||'';
+    els.cfgAsistenteNombre.value=c.asistente_nombre||'';
+    els.cfgHoraApertura.value=c.hora_apertura??9;
+    els.cfgHoraCierre.value=c.hora_cierre??18;
+    els.cfgDuracion.value=c.duracion_reserva??60;
+    els.cfgCalendarId.value=c.calendar_id||'primary';
+    els.cfgTimezone.value=c.timezone||'America/Santiago';
+    els.cfgPromptExtra.value=c.prompt_extra||'';
+    els.modIa.checked=m.ia!==false;
+    els.modReservas.checked=m.reservas!==false;
+    els.modHandoff.checked=m.handoff_humano!==false;
+    els.modWhatsapp.checked=m.whatsapp!==false;
+    els.modInstagram.checked=m.instagram!==false;
+    renderAdminServicios(); renderAdminCanales();
+  }
+
+  function renderAdminServicios(){
+    const rows=adminDetalle?.servicios||[];
+    els.adminServicesBody.innerHTML=rows.length?rows.map(s=>`
+      <tr><td>${escapeHtml(s.numero??'')}</td>
+      <td><strong>${escapeHtml(s.nombre||'')}</strong><br><small style="color:var(--muted)">${escapeHtml(s.codigo||'')}</small></td>
+      <td>${escapeHtml(s.categoria||'')}</td><td>${escapeHtml(s.precio_texto||'')}</td>
+      <td>${escapeHtml(s.duracion_minutos||'')} min</td><td>${s.activo?'Activo':'Inactivo'}</td>
+      <td><button class="small-btn edit-service" data-service="${escapeHtml(s.id)}">Editar</button></td></tr>`).join('')
+      :'<tr><td colspan="7">Sin servicios.</td></tr>';
+    document.querySelectorAll('.edit-service').forEach(b=>b.addEventListener('click',()=>editService(b.dataset.service)));
+  }
+
+  function renderAdminCanales(){
+    const rows=adminDetalle?.canales||[];
+    els.adminChannelsList.innerHTML=rows.length?rows.map(c=>`
+      <div class="channel-card"><strong>${escapeHtml(channelLabel(c.canal))} · ${escapeHtml(c.provider||'')}</strong>
+      <small>Identificador: ${escapeHtml(c.identificador_externo||'')}</small>
+      <small>${c.activo?'Activo':'Inactivo'}${c.es_principal?' · Principal':''}</small></div>`).join('')
+      :'<div class="empty">Sin canales configurados.</div>';
+  }
+
+  function switchAdminSubtab(tab){
+    document.querySelectorAll('.admin-subtab').forEach(b=>b.classList.toggle('active',b.dataset.adminTab===tab));
+    document.getElementById('adminGeneral').classList.toggle('hidden',tab!=='general');
+    document.getElementById('adminServicios').classList.toggle('hidden',tab!=='servicios');
+    document.getElementById('adminBot').classList.toggle('hidden',tab!=='bot');
+    document.getElementById('adminCanales').classList.toggle('hidden',tab!=='canales');
+  }
+  document.querySelectorAll('.admin-subtab').forEach(b=>b.addEventListener('click',()=>switchAdminSubtab(b.dataset.adminTab)));
+
+  els.createCompanyBtn.addEventListener('click',async()=>{
+    const nombre=els.newCompanyName.value.trim(); if(!nombre)return;
+    try{
+      const d=await portalFetch('/portal/admin/empresas',{method:'POST',body:JSON.stringify({nombre,activo:true})});
+      els.newCompanyName.value=''; await loadAdminEmpresas(); if(d.empresa?.id) await openAdminEmpresa(d.empresa.id);
+    }catch(err){setAdminStatus(err.message,true)}
+  });
+
+  els.saveCompanyBtn.addEventListener('click',async()=>{
+    if(!adminEmpresaActual)return;
+    try{
+      await portalFetch(`/portal/admin/empresa/${adminEmpresaActual.id}`,{method:'PATCH',body:JSON.stringify({
+        nombre:els.cfgEmpresaNombre.value.trim(),activo:els.cfgEmpresaActiva.value==='true'
+      })});
+      await loadAdminEmpresas(); await openAdminEmpresa(adminEmpresaActual.id); setAdminStatus('Empresa guardada.');
+    }catch(err){setAdminStatus(err.message,true)}
+  });
+
+  function configPayload(){
+    return {
+      tipo_negocio:els.cfgTipoNegocio.value.trim()||'reservas',
+      asistente_nombre:els.cfgAsistenteNombre.value.trim(),
+      direccion:els.cfgDireccion.value.trim(),
+      telefono_ejecutivo:els.cfgTelefonoEjecutivo.value.trim(),
+      timezone:els.cfgTimezone.value.trim()||'America/Santiago',
+      calendar_id:els.cfgCalendarId.value.trim()||'primary',
+      hora_apertura:Number(els.cfgHoraApertura.value||9),
+      hora_cierre:Number(els.cfgHoraCierre.value||18),
+      duracion_reserva:Number(els.cfgDuracion.value||60),
+      dias_atencion:[0,1,2,3,4,5],
+      prompt_extra:els.cfgPromptExtra.value.trim(),
+      modulos:{ia:els.modIa.checked,reservas:els.modReservas.checked,handoff_humano:els.modHandoff.checked,whatsapp:els.modWhatsapp.checked,instagram:els.modInstagram.checked}
+    };
+  }
+
+  async function saveConfig(){
+    if(!adminEmpresaActual)return;
+    try{
+      await portalFetch(`/portal/admin/configuracion/${adminEmpresaActual.id}`,{method:'PATCH',body:JSON.stringify(configPayload())});
+      await openAdminEmpresa(adminEmpresaActual.id); setAdminStatus('Configuración guardada.');
+    }catch(err){setAdminStatus(err.message,true)}
+  }
+  els.saveConfigBtn.addEventListener('click',saveConfig);
+  els.saveBotBtn.addEventListener('click',saveConfig);
+
+  function clearServiceEditor(){
+    adminServicioEditando=null; els.serviceEditorTitle.textContent='Nuevo servicio';
+    ['svcCodigo','svcNumero','svcNombre','svcCategoria','svcPrecio','svcPrecioTexto','svcDuracion','svcOrden','svcAliases','svcDetalle'].forEach(id=>els[id].value='');
+    els.deleteServiceBtn.classList.add('hidden');
+  }
+  els.newServiceBtn.addEventListener('click',()=>{clearServiceEditor();els.serviceEditor.classList.remove('hidden')});
+  els.closeServiceEditor.addEventListener('click',()=>els.serviceEditor.classList.add('hidden'));
+
+  function editService(id){
+    const s=(adminDetalle?.servicios||[]).find(x=>x.id===id); if(!s)return;
+    adminServicioEditando=s; els.serviceEditorTitle.textContent=`Editar: ${s.nombre}`;
+    els.svcCodigo.value=s.codigo||''; els.svcNumero.value=s.numero??''; els.svcNombre.value=s.nombre||'';
+    els.svcCategoria.value=s.categoria||''; els.svcPrecio.value=s.precio??0; els.svcPrecioTexto.value=s.precio_texto||'';
+    els.svcDuracion.value=s.duracion_minutos??60; els.svcOrden.value=s.orden??100;
+    els.svcAliases.value=Array.isArray(s.aliases)?s.aliases.join(', '):''; els.svcDetalle.value=s.detalle||'';
+    els.deleteServiceBtn.classList.remove('hidden'); els.serviceEditor.classList.remove('hidden');
+  }
+
+  function servicePayload(){
+    return {
+      codigo:els.svcCodigo.value.trim(), numero:els.svcNumero.value?Number(els.svcNumero.value):null,
+      nombre:els.svcNombre.value.trim(), categoria:els.svcCategoria.value.trim()||'Servicios',
+      precio:Number(els.svcPrecio.value||0), precio_texto:els.svcPrecioTexto.value.trim(),
+      duracion_minutos:Number(els.svcDuracion.value||60), orden:Number(els.svcOrden.value||100),
+      aliases:els.svcAliases.value.split(',').map(x=>x.trim()).filter(Boolean),
+      detalle:els.svcDetalle.value.trim(), activo:true
+    };
+  }
+
+  els.saveServiceBtn.addEventListener('click',async()=>{
+    if(!adminEmpresaActual)return;
+    const p=servicePayload(); if(!p.codigo||!p.nombre){setAdminStatus('Código y nombre son obligatorios.',true);return}
+    try{
+      if(adminServicioEditando) await portalFetch(`/portal/admin/servicio/${adminServicioEditando.id}`,{method:'PATCH',body:JSON.stringify(p)});
+      else await portalFetch(`/portal/admin/servicios/${adminEmpresaActual.id}`,{method:'POST',body:JSON.stringify(p)});
+      els.serviceEditor.classList.add('hidden'); await openAdminEmpresa(adminEmpresaActual.id); setAdminStatus('Servicio guardado.');
+    }catch(err){setAdminStatus(err.message,true)}
+  });
+
+  els.deleteServiceBtn.addEventListener('click',async()=>{
+    if(!adminServicioEditando||!confirm(`¿Eliminar ${adminServicioEditando.nombre}?`))return;
+    try{
+      await portalFetch(`/portal/admin/servicio/${adminServicioEditando.id}`,{method:'DELETE'});
+      els.serviceEditor.classList.add('hidden'); await openAdminEmpresa(adminEmpresaActual.id); setAdminStatus('Servicio eliminado.');
+    }catch(err){setAdminStatus(err.message,true)}
   });
 
   async function sendPortalMessage(){
