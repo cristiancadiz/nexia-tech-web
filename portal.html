@@ -265,6 +265,44 @@
       flex-direction:column;
       gap:10px;
     }
+    .composer{
+      border-top:1px solid var(--line);
+      padding:12px 14px;
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      background:rgba(6,11,28,.96);
+    }
+    .composer textarea{
+      flex:1;
+      min-height:44px;
+      max-height:130px;
+      resize:vertical;
+      border:1px solid var(--line);
+      background:#0b122b;
+      color:var(--text);
+      border-radius:13px;
+      padding:11px 12px;
+      outline:none;
+      font:inherit;
+    }
+    .send-btn{
+      border:1px solid rgba(77,231,255,.35);
+      background:linear-gradient(135deg,rgba(77,231,255,.18),rgba(123,108,255,.20));
+      color:var(--text);
+      border-radius:12px;
+      padding:11px 17px;
+      min-height:44px;
+      font-weight:900;
+    }
+    .send-btn:disabled{opacity:.45;cursor:not-allowed}
+    .send-status{
+      padding:0 16px 10px;
+      min-height:18px;
+      color:var(--muted);
+      font-size:.76rem;
+      background:rgba(6,11,28,.96);
+    }
     .msg{
       max-width:min(680px,78%);
       padding:12px 14px 9px;
@@ -498,6 +536,11 @@
           </div>
         </div>
         <div id="messages" class="messages"></div>
+        <div id="composer" class="composer" style="display:none">
+          <textarea id="messageInput" maxlength="4000" placeholder="Escribe una respuesta..."></textarea>
+          <button id="sendMessageBtn" class="send-btn" type="button">Enviar</button>
+        </div>
+        <div id="sendStatus" class="send-status"></div>
       </div>
     </main>
   </div>
@@ -570,6 +613,10 @@
     chatPhone: document.getElementById('chatPhone'),
     chatChannel: document.getElementById('chatChannel'),
     messages: document.getElementById('messages'),
+    composer: document.getElementById('composer'),
+    messageInput: document.getElementById('messageInput'),
+    sendMessageBtn: document.getElementById('sendMessageBtn'),
+    sendStatus: document.getElementById('sendStatus'),
     refreshBtn: document.getElementById('refreshBtn'),
     logoutBtn: document.getElementById('logoutBtn'),
     backBtn: document.getElementById('backBtn'),
@@ -590,6 +637,7 @@
   let realtimeChannel = null;
   let perfilActual = null;
   let canalFiltro = 'todos';
+  const PORTAL_API_URL = 'https://chatbot-laortiga-hddw.onrender.com';
 
   function setLoading(value){
     els.loading.classList.toggle('hidden', !value);
@@ -753,6 +801,11 @@
     els.chatPhone.textContent = displayIdentifier(c);
     els.chatChannel.textContent =
       `${channelIcon(c.canal || 'whatsapp')} ${channelLabel(c.canal || 'whatsapp')}`;
+    els.composer.style.display = 'flex';
+    els.messageInput.placeholder = c.canal === 'instagram'
+      ? 'Responder por Instagram...'
+      : 'Responder por WhatsApp...';
+    els.sendStatus.textContent = '';
 
     if(window.innerWidth <= 820){
       els.app.classList.add('mobile-chat');
@@ -856,6 +909,57 @@
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
+
+  async function sendPortalMessage(){
+    if(!conversacionActiva) return;
+    const mensaje = els.messageInput.value.trim();
+    if(!mensaje) return;
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const accessToken = sessionData?.session?.access_token;
+
+    if(!accessToken){
+      els.sendStatus.textContent = 'Tu sesión expiró. Vuelve a iniciar sesión.';
+      return;
+    }
+
+    els.sendMessageBtn.disabled = true;
+    els.messageInput.disabled = true;
+    els.sendStatus.textContent = 'Enviando...';
+
+    try{
+      const response = await fetch(`${PORTAL_API_URL}/portal/enviar-mensaje`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          conversacion_id: conversacionActiva.id,
+          mensaje
+        })
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if(!response.ok || !result.ok){
+        throw new Error(result.error || `Error ${response.status}`);
+      }
+
+      els.messageInput.value = '';
+      els.sendStatus.textContent =
+        `Enviado por ${channelLabel(result.canal || conversacionActiva.canal || 'whatsapp')}`;
+
+      await loadMessages(conversacionActiva.id);
+      await loadConversations();
+    }catch(error){
+      console.error(error);
+      els.sendStatus.textContent = `No se pudo enviar: ${error.message}`;
+    }finally{
+      els.sendMessageBtn.disabled = false;
+      els.messageInput.disabled = false;
+      els.messageInput.focus();
+    }
+  }
 
   async function startRealtime(){
     if(realtimeChannel){
@@ -1023,6 +1127,14 @@
       renderStats();
     }finally{
       setLoading(false);
+    }
+  });
+
+  els.sendMessageBtn.addEventListener('click', sendPortalMessage);
+  els.messageInput.addEventListener('keydown', event => {
+    if(event.key === 'Enter' && !event.shiftKey){
+      event.preventDefault();
+      sendPortalMessage();
     }
   });
 
