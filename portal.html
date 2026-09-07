@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Nexia | Omnicanal</title>
+  <title>Portal Nexia | Omnicanal con atención humana</title>
   <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones de WhatsApp e Instagram, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -95,9 +95,11 @@
     }
 
     .app{
-      min-height:100vh;
+      height:100vh;
+      min-height:0;
+      overflow:hidden;
       display:grid;
-      grid-template-rows:72px auto 1fr;
+      grid-template-rows:72px auto minmax(0,1fr);
     }
 
     .topbar{
@@ -126,7 +128,9 @@
     }
 
     .workspace{
+      height:100%;
       min-height:0;
+      overflow:hidden;
       display:grid;
       grid-template-columns:360px 1fr;
     }
@@ -205,6 +209,34 @@
       font-size:.76rem;
       font-weight:800;
     }
+    .attention-mode{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      margin-top:6px;
+      padding:5px 9px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-size:.72rem;
+      font-weight:900;
+      color:var(--muted);
+      background:rgba(255,255,255,.035);
+    }
+    .attention-mode.human{
+      color:#fde68a;
+      border-color:rgba(251,191,36,.30);
+      background:rgba(251,191,36,.08);
+    }
+    .mode-btn{
+      border:1px solid var(--line);
+      background:#0c1330;
+      color:var(--text);
+      border-radius:10px;
+      padding:7px 10px;
+      font-size:.72rem;
+      font-weight:800;
+      cursor:pointer;
+    }
     .conversation-list{
       overflow:auto;
       flex:1;
@@ -231,6 +263,8 @@
     .chat{
       min-width:0;
       min-height:0;
+      height:100%;
+      overflow:hidden;
       display:flex;
       flex-direction:column;
       background:
@@ -258,14 +292,19 @@
     .chat-head h3{margin:0;font-size:1rem}
     .chat-head p{margin:2px 0 0;color:var(--muted);font-size:.82rem}
     .messages{
-      flex:1;
-      overflow:auto;
+      flex:1 1 auto;
+      min-height:0;
+      overflow-y:auto;
       padding:26px;
       display:flex;
       flex-direction:column;
       gap:10px;
     }
     .composer{
+      flex:0 0 auto;
+      position:sticky;
+      bottom:0;
+      z-index:8;
       border-top:1px solid var(--line);
       padding:12px 14px;
       display:flex;
@@ -533,7 +572,9 @@
             <h3 id="chatName"></h3>
             <p id="chatPhone"></p>
             <div id="chatChannel" class="chat-channel"></div>
+            <div id="attentionMode" class="attention-mode">🤖 Bot automático</div>
           </div>
+          <button id="returnBotBtn" class="mode-btn hidden" type="button">Devolver al bot</button>
         </div>
         <div id="messages" class="messages"></div>
         <div id="composer" class="composer" style="display:none">
@@ -612,6 +653,8 @@
     chatName: document.getElementById('chatName'),
     chatPhone: document.getElementById('chatPhone'),
     chatChannel: document.getElementById('chatChannel'),
+    attentionMode: document.getElementById('attentionMode'),
+    returnBotBtn: document.getElementById('returnBotBtn'),
     messages: document.getElementById('messages'),
     composer: document.getElementById('composer'),
     messageInput: document.getElementById('messageInput'),
@@ -695,6 +738,18 @@
     return c.telefono || '';
   }
 
+  function renderAttentionMode(c){
+    const modo = c?.modo_atencion || 'bot';
+    const human = modo === 'ejecutivo';
+
+    els.attentionMode.textContent = human
+      ? '👤 Atención humana'
+      : '🤖 Bot automático';
+
+    els.attentionMode.classList.toggle('human', human);
+    els.returnBotBtn.classList.toggle('hidden', !human);
+  }
+
   function renderChannelFilters(){
     document.querySelectorAll('.channel-filter').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.channel === canalFiltro);
@@ -726,7 +781,7 @@
   async function loadConversations(){
     const { data, error } = await supabaseClient
       .from('conversaciones')
-      .select('id,telefono,nombre_contacto,ultimo_mensaje,ultima_fecha,created_at,canal')
+      .select('id,telefono,nombre_contacto,ultimo_mensaje,ultima_fecha,created_at,canal,modo_atencion')
       .order('ultima_fecha',{ascending:false});
 
     if(error) throw error;
@@ -775,6 +830,9 @@
               <span class="channel-badge ${escapeHtml(canal)}">
                 ${channelIcon(canal)} ${escapeHtml(channelLabel(canal))}
               </span>
+              ${c.modo_atencion === 'ejecutivo'
+                ? '<span class="channel-badge">👤 Humano</span>'
+                : ''}
             </div>
             <div class="conv-time">${escapeHtml(formatDate(c.ultima_fecha))}</div>
           </div>
@@ -806,6 +864,7 @@
       ? 'Responder por Instagram...'
       : 'Responder por WhatsApp...';
     els.sendStatus.textContent = '';
+    renderAttentionMode(c);
 
     if(window.innerWidth <= 820){
       els.app.classList.add('mobile-chat');
@@ -841,7 +900,9 @@
       </div>
     `).join('');
 
-    els.messages.scrollTop = els.messages.scrollHeight;
+    requestAnimationFrame(() => {
+      els.messages.scrollTop = els.messages.scrollHeight;
+    });
   }
 
 
@@ -949,6 +1010,12 @@
       els.sendStatus.textContent =
         `Enviado por ${channelLabel(result.canal || conversacionActiva.canal || 'whatsapp')}`;
 
+      conversacionActiva.modo_atencion = 'ejecutivo';
+      const idx = conversaciones.findIndex(c => c.id === conversacionActiva.id);
+      if(idx >= 0) conversaciones[idx].modo_atencion = 'ejecutivo';
+      renderAttentionMode(conversacionActiva);
+      renderConversations();
+
       await loadMessages(conversacionActiva.id);
       await loadConversations();
     }catch(error){
@@ -958,6 +1025,48 @@
       els.sendMessageBtn.disabled = false;
       els.messageInput.disabled = false;
       els.messageInput.focus();
+    }
+  }
+
+  async function returnConversationToBot(){
+    if(!conversacionActiva) return;
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const accessToken = sessionData?.session?.access_token;
+    if(!accessToken) return;
+
+    els.returnBotBtn.disabled = true;
+    els.sendStatus.textContent = 'Devolviendo conversación al bot...';
+
+    try{
+      const response = await fetch(`${PORTAL_API_URL}/portal/modo-atencion`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          conversacion_id: conversacionActiva.id,
+          modo: 'bot'
+        })
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if(!response.ok || !result.ok){
+        throw new Error(result.error || `Error ${response.status}`);
+      }
+
+      conversacionActiva.modo_atencion = 'bot';
+      const idx = conversaciones.findIndex(c => c.id === conversacionActiva.id);
+      if(idx >= 0) conversaciones[idx].modo_atencion = 'bot';
+
+      renderAttentionMode(conversacionActiva);
+      renderConversations();
+      els.sendStatus.textContent = 'Bot automático reactivado.';
+    }catch(error){
+      els.sendStatus.textContent = `No se pudo cambiar el modo: ${error.message}`;
+    }finally{
+      els.returnBotBtn.disabled = false;
     }
   }
 
@@ -1131,6 +1240,7 @@
   });
 
   els.sendMessageBtn.addEventListener('click', sendPortalMessage);
+  els.returnBotBtn.addEventListener('click', returnConversationToBot);
   els.messageInput.addEventListener('keydown', event => {
     if(event.key === 'Enter' && !event.shiftKey){
       event.preventDefault();
