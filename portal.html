@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Nexia V8.3 | Canales por empresa</title>
+  <title>Portal Nexia V8.4 | Descripción por empresa</title>
   <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones de WhatsApp e Instagram, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -823,6 +823,13 @@
           <div class="form-grid">
             <div class="admin-field"><label>Nombre empresa</label><input id="cfgEmpresaNombre"></div>
             <div class="admin-field"><label>Tipo de negocio</label><input id="cfgTipoNegocio"></div>
+            <div class="admin-field full">
+              <label>Descripción de la empresa</label>
+              <textarea id="cfgDescripcionEmpresa" rows="4" placeholder="Ej: Salón especializado en cortes, coloración, tratamientos capilares y servicios de barbería, con atención previa reserva."></textarea>
+              <small style="display:block;color:var(--muted);margin-top:6px;line-height:1.45">
+                Esta información la utilizará el asistente para entender qué hace la empresa y responder de forma más específica.
+              </small>
+            </div>
             <div class="admin-field full"><label>Dirección</label><input id="cfgDireccion"></div>
             <div class="admin-field"><label>Teléfono ejecutivo</label><input id="cfgTelefonoEjecutivo"></div>
             <div class="admin-field"><label>Nombre asistente</label><input id="cfgAsistenteNombre"></div>
@@ -986,6 +993,7 @@
     adminEmpresaId: document.getElementById('adminEmpresaId'),
     cfgEmpresaNombre: document.getElementById('cfgEmpresaNombre'),
     cfgTipoNegocio: document.getElementById('cfgTipoNegocio'),
+    cfgDescripcionEmpresa: document.getElementById('cfgDescripcionEmpresa'),
     cfgDireccion: document.getElementById('cfgDireccion'),
     cfgTelefonoEjecutivo: document.getElementById('cfgTelefonoEjecutivo'),
     cfgAsistenteNombre: document.getElementById('cfgAsistenteNombre'),
@@ -1415,6 +1423,7 @@
     els.cfgEmpresaNombre.value=e.nombre||'';
     els.cfgEmpresaActiva.value=String(e.activo!==false);
     els.cfgTipoNegocio.value=c.tipo_negocio||'reservas';
+    els.cfgDescripcionEmpresa.value=c.descripcion_empresa||'';
     els.cfgDireccion.value=c.direccion||'';
     els.cfgTelefonoEjecutivo.value=c.telefono_ejecutivo||'';
     els.cfgAsistenteNombre.value=c.asistente_nombre||'';
@@ -1579,6 +1588,7 @@
   function configPayload(){
     return {
       tipo_negocio:els.cfgTipoNegocio.value.trim()||'reservas',
+      descripcion_empresa:els.cfgDescripcionEmpresa.value.trim(),
       asistente_nombre:els.cfgAsistenteNombre.value.trim(),
       direccion:els.cfgDireccion.value.trim(),
       telefono_ejecutivo:els.cfgTelefonoEjecutivo.value.trim(),
