@@ -1,162 +1,785 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title>Nexia Tech</title>
+<title>Nexia Tech | Automatización e Inteligencia Artificial</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta name="description" content="Nexia Tech crea asistentes virtuales, automatizaciones e integraciones con inteligencia artificial para empresas.">
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #ffffff;
-      color: #1f1f1f;
-    }
+<style>
 
-    /* =========================
-       BOTÓN FLOTANTE WHATSAPP
-    ========================== */
+:root{
+  --bg:#050816;
+  --bg2:#0a1230;
+  --txt:#f7f9ff;
+  --muted:#a9b4d0;
+  --cyan:#4de7ff;
+  --violet:#8c6cff;
+  --green:#6dffb2;
+  --line:rgba(255,255,255,.12);
+}
 
-    .nexia-whatsapp-float {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      z-index: 99999;
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 10px;
+html{
+  scroll-behavior:smooth;
+}
 
-      width: 64px;
-      height: 64px;
+body{
+  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+  color:var(--txt);
+  background:
+    radial-gradient(circle at 15% 10%,rgba(77,231,255,.12),transparent 30%),
+    radial-gradient(circle at 85% 20%,rgba(140,108,255,.14),transparent 30%),
+    linear-gradient(180deg,var(--bg),#070c1e 45%,var(--bg));
+  line-height:1.6;
+}
 
-      padding: 0 15px;
+a{
+  text-decoration:none;
+  color:inherit;
+}
 
-      background: #25D366;
-      color: #ffffff;
+.wrap{
+  width:min(1120px,92%);
+  margin:auto;
+}
 
-      border-radius: 999px;
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(5,8,22,.75);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
 
-      text-decoration: none;
+nav{
+  min-height:74px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:22px;
+}
 
-      overflow: hidden;
+.brand{
+  font-weight:900;
+  letter-spacing:.08em;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+.logo{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  box-shadow:0 0 28px rgba(77,231,255,.35);
+}
 
-      transition:
-        width 0.3s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-    }
+.links{
+  display:flex;
+  gap:24px;
+  color:var(--muted);
+  font-size:.95rem;
+}
 
-    .nexia-whatsapp-float svg {
-      width: 34px;
-      height: 34px;
-      flex-shrink: 0;
-    }
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  padding:0 20px;
+  border-radius:14px;
+  font-weight:800;
+  border:1px solid var(--line);
+}
 
-    .nexia-whatsapp-text {
-      white-space: nowrap;
+.primary{
+  border:0;
+  color:#041018;
+  background:linear-gradient(135deg,var(--cyan),var(--green));
+  box-shadow:0 12px 40px rgba(77,231,255,.18);
+}
 
-      font-size: 15px;
-      font-weight: 700;
+.hero{
+  min-height:78vh;
+  display:grid;
+  align-items:center;
+  padding:90px 0 70px;
+}
 
-      opacity: 0;
-      transform: translateX(8px);
+.grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:56px;
+  align-items:center;
+}
 
-      transition:
-        opacity 0.25s ease,
-        transform 0.3s ease;
-    }
+.tag{
+  display:inline-block;
+  padding:8px 12px;
+  border:1px solid rgba(77,231,255,.25);
+  background:rgba(77,231,255,.07);
+  border-radius:999px;
+  color:var(--cyan);
+  font-size:.84rem;
+  font-weight:800;
+  margin-bottom:18px;
+}
 
-    .nexia-whatsapp-float:hover {
-      width: 230px;
-      transform: scale(1.06);
+h1{
+  font-size:clamp(2.8rem,7vw,5.6rem);
+  line-height:.98;
+  letter-spacing:-.055em;
+}
 
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.30);
-    }
+.grad{
+  background:linear-gradient(90deg,var(--cyan),#bffaff,var(--violet));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
 
-    .nexia-whatsapp-float:hover .nexia-whatsapp-text {
-      opacity: 1;
-      transform: translateX(0);
-    }
+.hero p{
+  color:var(--muted);
+  font-size:1.1rem;
+  max-width:660px;
+  margin:24px 0 30px;
+}
 
-    /* =========================
-       VERSIÓN MÓVIL
-    ========================== */
+.actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
 
-    @media (max-width: 600px) {
+.visual{
+  min-height:440px;
+  border:1px solid var(--line);
+  border-radius:30px;
+  position:relative;
+  overflow:hidden;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 39px,
+      rgba(255,255,255,.035) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 39px,
+      rgba(255,255,255,.035) 40px
+    );
+}
 
-      .nexia-whatsapp-float {
-        right: 16px;
-        bottom: 16px;
+.orb{
+  width:210px;
+  height:210px;
+  border-radius:50%;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #d5fbff,
+      var(--cyan) 22%,
+      var(--violet) 58%,
+      transparent 72%
+    );
+  box-shadow:0 0 90px rgba(77,231,255,.25);
+}
 
-        width: 58px;
-        height: 58px;
+.float{
+  position:absolute;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  background:rgba(8,14,35,.82);
+  backdrop-filter:blur(12px);
+  border-radius:14px;
+  font-size:.9rem;
+}
 
-        padding: 0 12px;
-      }
+.f1{
+  top:48px;
+  left:28px;
+}
 
-      .nexia-whatsapp-float svg {
-        width: 32px;
-        height: 32px;
-      }
+.f2{
+  right:24px;
+  top:135px;
+}
 
-      .nexia-whatsapp-float:hover {
-        width: 215px;
-      }
-    }
-  </style>
+.f3{
+  left:46px;
+  bottom:48px;
+}
+
+section{
+  padding:88px 0;
+}
+
+.head{
+  max-width:760px;
+  margin-bottom:36px;
+}
+
+.head h2{
+  font-size:clamp(2rem,4.5vw,3.4rem);
+  line-height:1.05;
+  letter-spacing:-.035em;
+}
+
+.head p,
+.card p,
+.step p,
+.cta p{
+  color:var(--muted);
+}
+
+.cards,
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.card{
+  padding:28px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  border-radius:22px;
+}
+
+.icon{
+  font-size:1.5rem;
+  margin-bottom:18px;
+}
+
+.card h3,
+.step h3{
+  margin-bottom:9px;
+}
+
+.step{
+  padding:28px;
+  border-top:1px solid var(--line);
+}
+
+.step strong{
+  color:var(--cyan);
+  font-size:.84rem;
+  letter-spacing:.1em;
+}
+
+.cta{
+  padding:48px;
+  border:1px solid rgba(77,231,255,.25);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 15% 0%,rgba(77,231,255,.12),transparent 35%),
+    rgba(255,255,255,.04);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:28px;
+  align-items:center;
+}
+
+.cta h2{
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.08;
+}
+
+footer{
+  border-top:1px solid var(--line);
+  padding:32px 0;
+  color:var(--muted);
+}
+
+.foot{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+/* WHATSAPP FLOTANTE */
+
+.nexia-wa-wrapper{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.nexia-wa-label{
+  background:#0b1024;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.14);
+  padding:10px 14px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:700;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  transition:.2s ease;
+}
+
+.nexia-wa-button{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#25D366;
+  color:white;
+  box-shadow:0 14px 35px rgba(0,0,0,.30);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.nexia-wa-button svg{
+  width:36px;
+  height:36px;
+  display:block;
+}
+
+.nexia-wa-wrapper:hover .nexia-wa-button{
+  transform:scale(1.08);
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.36),
+    0 0 24px rgba(37,211,102,.25);
+}
+
+.nexia-wa-wrapper:hover .nexia-wa-label{
+  transform:translateX(-3px);
+}
+
+@media(max-width:850px){
+
+  .links{
+    display:none;
+  }
+
+  .grid,
+  .cards,
+  .steps,
+  .cta{
+    grid-template-columns:1fr;
+  }
+
+  .visual{
+    min-height:340px;
+  }
+
+  .hero{
+    padding-top:64px;
+  }
+
+  .cta{
+    padding:34px 24px;
+  }
+}
+
+@media(max-width:600px){
+
+  .nexia-wa-wrapper{
+    right:16px;
+    bottom:16px;
+  }
+
+  .nexia-wa-label{
+    display:none;
+  }
+}
+
+</style>
+
 </head>
 
 <body>
 
-  <!-- CONTENIDO DE TU PÁGINA -->
-  <main>
-    <!-- Aquí puede estar todo el contenido actual de tu web -->
-  </main>
+<header>
 
+<div class="wrap">
 
-  <!-- =========================
-       BOTÓN WHATSAPP NEXIA
-  ========================== -->
+<nav>
 
-  <a
-    href="https://wa.me/56950064242?text=Hola%2C%20quiero%20hablar%20con%20un%20ejecutivo%20de%20Nexia"
-    class="nexia-whatsapp-float"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Hablar con ejecutivo de Nexia por WhatsApp"
-  >
+<a class="brand" href="#inicio">
 
-    <!-- LOGO WHATSAPP -->
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
-      aria-hidden="true"
-    >
-      <path
-        fill="currentColor"
-        d="M19.11 17.21c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.15-.42-2.19-1.35-.81-.72-1.36-1.61-1.52-1.88-.16-.27-.02-.42.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27s.98 2.63 1.11 2.81c.14.18 1.92 2.93 4.65 4.11.65.28 1.16.45 1.56.58.65.21 1.24.18 1.71.11.52-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"
-      />
+<span class="logo"></span>
 
-      <path
-        fill="currentColor"
-        d="M16.03 3C8.84 3 3 8.72 3 15.78c0 2.25.6 4.44 1.73 6.36L3 29l7.05-1.82a13.17 13.17 0 0 0 5.98 1.45h.01C23.23 28.63 29 22.91 29 15.85 29 8.79 23.22 3 16.03 3zm0 23.47h-.01c-1.9 0-3.76-.5-5.38-1.46l-.39-.23-4.18 1.08 1.12-4.01-.25-.41a10.42 10.42 0 0 1-1.63-5.66c0-5.79 4.8-10.51 10.71-10.51 5.9 0 10.7 4.72 10.7 10.52 0 5.79-4.8 10.5-10.69 10.5z"
-      />
-    </svg>
+NEXIA TECH
 
-    <span class="nexia-whatsapp-text">
-      Hablar con ejecutivo
-    </span>
+</a>
 
-  </a>
+<div class="links">
+
+<a href="#servicios">
+Servicios
+</a>
+
+<a href="#proceso">
+Cómo trabajamos
+</a>
+
+<a href="#contacto">
+Contacto
+</a>
+
+</div>
+
+<a
+class="btn"
+href="mailto:contacto@nexia-tech.com"
+>
+Hablemos
+</a>
+
+</nav>
+
+</div>
+
+</header>
+
+<main>
+
+<section class="hero" id="inicio">
+
+<div class="wrap grid">
+
+<div>
+
+<span class="tag">
+AUTOMATIZACIÓN + INTELIGENCIA ARTIFICIAL
+</span>
+
+<h1>
+
+Tecnología que
+
+<span class="grad">
+trabaja por tu empresa.
+</span>
+
+</h1>
+
+<p>
+
+En Nexia Tech desarrollamos asistentes virtuales,
+automatizaciones e integraciones que ayudan a las empresas
+a responder clientes, gestionar reservas y optimizar procesos.
+
+</p>
+
+<div class="actions">
+
+<a
+class="btn primary"
+href="https://wa.me/56971906724?text=Hola%20Diego%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quiero%20hacer%20una%20consulta."
+target="_blank"
+rel="noopener noreferrer"
+>
+Quiero automatizar mi empresa
+</a>
+
+<a
+class="btn"
+href="#servicios"
+>
+Ver servicios
+</a>
+
+</div>
+
+</div>
+
+<div class="visual">
+
+<div class="orb"></div>
+
+<div class="float f1">
+● Asistente IA activo
+</div>
+
+<div class="float f2">
+⚡ Automatización 24/7
+</div>
+
+<div class="float f3">
+✓ Integración con tus herramientas
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="servicios">
+
+<div class="wrap">
+
+<div class="head">
+
+<span class="tag">
+SOLUCIONES
+</span>
+
+<h2>
+Automatizamos tareas para que puedas enfocarte en crecer.
+</h2>
+
+<p>
+Soluciones simples para negocios y empresas que quieren
+incorporar tecnología sin complicarse.
+</p>
+
+</div>
+
+<div class="cards">
+
+<article class="card">
+
+<div class="icon">
+💬
+</div>
+
+<h3>
+Asistentes para WhatsApp
+</h3>
+
+<p>
+Automatiza respuestas, consultas, captación de clientes
+y atención con asistentes inteligentes.
+</p>
+
+</article>
+
+<article class="card">
+
+<div class="icon">
+📅
+</div>
+
+<h3>
+Reservas automáticas
+</h3>
+
+<p>
+Conecta la atención con calendarios y disponibilidad real
+para agendar citas automáticamente.
+</p>
+
+</article>
+
+<article class="card">
+
+<div class="icon">
+⚙️
+</div>
+
+<h3>
+Automatización de procesos
+</h3>
+
+<p>
+Integramos herramientas y reducimos tareas manuales repetitivas
+para mejorar tiempos y productividad.
+</p>
+
+</article>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="proceso">
+
+<div class="wrap">
+
+<div class="head">
+
+<span class="tag">
+METODOLOGÍA
+</span>
+
+<h2>
+De una necesidad a una solución funcionando.
+</h2>
+
+</div>
+
+<div class="steps">
+
+<div class="step">
+
+<strong>
+01 · ANALIZAMOS
+</strong>
+
+<h3>
+Entendemos tu proceso
+</h3>
+
+<p>
+Revisamos qué necesitas automatizar y dónde podemos
+generar mayor impacto.
+</p>
+
+</div>
+
+<div class="step">
+
+<strong>
+02 · CONSTRUIMOS
+</strong>
+
+<h3>
+Desarrollamos la solución
+</h3>
+
+<p>
+Configuramos el asistente, automatización o integración
+según tu negocio.
+</p>
+
+</div>
+
+<div class="step">
+
+<strong>
+03 · IMPLEMENTAMOS
+</strong>
+
+<h3>
+Lo dejamos funcionando
+</h3>
+
+<p>
+Probamos el flujo y lo conectamos a tus canales y herramientas.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="contacto">
+
+<div class="wrap">
+
+<div class="cta">
+
+<div>
+
+<span class="tag">
+CONVERSEMOS
+</span>
+
+<h2>
+¿Tienes un proceso que quieres automatizar?
+</h2>
+
+<p>
+Cuéntanos qué necesitas y revisemos cómo Nexia Tech
+puede ayudarte.
+</p>
+
+</div>
+
+<a
+class="btn primary"
+href="https://wa.me/56971906724?text=Hola%20Diego%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quiero%20hacer%20una%20consulta."
+target="_blank"
+rel="noopener noreferrer"
+>
+Hablar por WhatsApp
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<div class="wrap foot">
+
+<div>
+© <span id="year"></span> Nexia Tech.
+</div>
+
+<div>
+Automatización · Inteligencia Artificial · Integraciones
+</div>
+
+</div>
+
+</footer>
+
+<!-- BOTÓN FLOTANTE WHATSAPP -->
+
+<div class="nexia-wa-wrapper">
+
+<span class="nexia-wa-label">
+Habla con Diego
+</span>
+
+<a
+href="https://wa.me/56971906724?text=Hola%20Diego%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quiero%20hacer%20una%20consulta."
+target="_blank"
+rel="noopener noreferrer"
+class="nexia-wa-button"
+aria-label="Hablar con Diego por WhatsApp"
+>
+
+<svg
+viewBox="0 0 24 24"
+width="36"
+height="36"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+aria-hidden="true"
+>
+<path
+fill="#ffffff"
+d="M12 2C6.486 2 2 6.486 2 12c0 1.756.458 3.47 1.326 4.983L2 22l5.14-1.35A9.935 9.935 0 0 0 12 22c5.514 0 10-4.486 10-10S17.514 2 12 2Zm0 18.182c-1.48 0-2.93-.4-4.193-1.157l-.3-.178-3.05.8.813-2.97-.196-.306A8.14 8.14 0 0 1 3.818 12c0-4.513 3.67-8.182 8.182-8.182 4.513 0 8.182 3.669 8.182 8.182S16.513 20.182 12 20.182Zm4.49-6.15c-.245-.123-1.45-.715-1.674-.797-.225-.082-.388-.123-.552.123-.163.245-.633.797-.776.96-.143.164-.286.184-.531.062-.245-.123-1.035-.381-1.97-1.216-.728-.648-1.219-1.45-1.362-1.695-.143-.245-.015-.378.108-.5.11-.11.245-.286.368-.43.122-.143.163-.245.245-.408.082-.164.041-.307-.02-.43-.061-.122-.552-1.328-.756-1.818-.198-.477-.4-.412-.552-.42l-.47-.008c-.163 0-.429.061-.654.306-.224.245-.857.838-.857 2.043 0 1.205.878 2.37 1 2.534.123.163 1.728 2.636 4.186 3.697.584.252 1.04.403 1.395.516.586.186 1.12.16 1.542.097.47-.07 1.45-.592 1.654-1.164.204-.572.204-1.062.143-1.164-.061-.102-.225-.163-.47-.286Z"
+/>
+</svg>
+
+</a>
+
+</div>
+
+<script>
+
+document.getElementById("year").textContent =
+new Date().getFullYear();
+
+</script>
 
 </body>
 </html>
