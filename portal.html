@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Nexia | Conversaciones, Reservas y Estadísticas</title>
-  <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones, reservas y estadísticas.">
+  <title>Portal Nexia | WhatsApp, Instagram, Reservas y Estadísticas</title>
+  <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones de WhatsApp e Instagram, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -151,6 +151,59 @@
       border-radius:12px;
       padding:11px 12px;
       outline:none;
+    }
+    .channel-filters{
+      display:flex;
+      gap:7px;
+      margin-top:10px;
+      overflow-x:auto;
+      padding-bottom:2px;
+    }
+    .channel-filter{
+      flex:0 0 auto;
+      border:1px solid var(--line);
+      background:#0b122b;
+      color:var(--muted);
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:.76rem;
+      font-weight:800;
+    }
+    .channel-filter.active{
+      color:var(--text);
+      border-color:rgba(77,231,255,.45);
+      background:rgba(77,231,255,.10);
+    }
+    .channel-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      margin-top:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:.68rem;
+      line-height:1;
+      font-weight:900;
+      border:1px solid var(--line);
+    }
+    .channel-badge.whatsapp{
+      color:#86efac;
+      background:rgba(37,211,102,.10);
+      border-color:rgba(37,211,102,.25);
+    }
+    .channel-badge.instagram{
+      color:#e7c5ff;
+      background:linear-gradient(135deg,rgba(255,92,146,.12),rgba(140,108,255,.14));
+      border-color:rgba(190,120,255,.30);
+    }
+    .chat-channel{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      margin-top:5px;
+      color:var(--muted);
+      font-size:.76rem;
+      font-weight:800;
     }
     .conversation-list{
       overflow:auto;
@@ -418,7 +471,12 @@
     <aside class="sidebar">
       <div class="sidebar-head">
         <h2>Conversaciones</h2>
-        <input id="searchInput" class="search" placeholder="Buscar por nombre o teléfono">
+        <input id="searchInput" class="search" placeholder="Buscar por nombre, teléfono o ID">
+        <div class="channel-filters" aria-label="Filtrar conversaciones por canal">
+          <button class="channel-filter active" type="button" data-channel="todos">Todos</button>
+          <button class="channel-filter" type="button" data-channel="whatsapp">WhatsApp</button>
+          <button class="channel-filter" type="button" data-channel="instagram">Instagram</button>
+        </div>
       </div>
       <div id="conversationList" class="conversation-list"></div>
     </aside>
@@ -436,6 +494,7 @@
           <div>
             <h3 id="chatName"></h3>
             <p id="chatPhone"></p>
+            <div id="chatChannel" class="chat-channel"></div>
           </div>
         </div>
         <div id="messages" class="messages"></div>
@@ -509,6 +568,7 @@
     chatContent: document.getElementById('chatContent'),
     chatName: document.getElementById('chatName'),
     chatPhone: document.getElementById('chatPhone'),
+    chatChannel: document.getElementById('chatChannel'),
     messages: document.getElementById('messages'),
     refreshBtn: document.getElementById('refreshBtn'),
     logoutBtn: document.getElementById('logoutBtn'),
@@ -529,6 +589,7 @@
   let conversacionActiva = null;
   let realtimeChannel = null;
   let perfilActual = null;
+  let canalFiltro = 'todos';
 
   function setLoading(value){
     els.loading.classList.toggle('hidden', !value);
@@ -563,6 +624,31 @@
     });
   }
 
+  function channelLabel(canal){
+    return canal === 'instagram' ? 'Instagram' : 'WhatsApp';
+  }
+
+  function channelIcon(canal){
+    return canal === 'instagram' ? '◎' : '◉';
+  }
+
+  function displayContact(c){
+    if(c.nombre_contacto) return c.nombre_contacto;
+    return c.canal === 'instagram' ? 'Usuario de Instagram' : 'Sin nombre';
+  }
+
+  function displayIdentifier(c){
+    return c.canal === 'instagram'
+      ? `ID Instagram: ${c.telefono || ''}`
+      : (c.telefono || '');
+  }
+
+  function renderChannelFilters(){
+    document.querySelectorAll('.channel-filter').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.channel === canalFiltro);
+    });
+  }
+
   async function loadProfile(){
     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
@@ -588,7 +674,7 @@
   async function loadConversations(){
     const { data, error } = await supabaseClient
       .from('conversaciones')
-      .select('id,telefono,nombre_contacto,ultimo_mensaje,ultima_fecha,created_at')
+      .select('id,telefono,nombre_contacto,ultimo_mensaje,ultima_fecha,created_at,canal')
       .order('ultima_fecha',{ascending:false});
 
     if(error) throw error;
@@ -603,27 +689,47 @@
     const filtradas = conversaciones.filter(c => {
       const name = (c.nombre_contacto || '').toLowerCase();
       const phone = (c.telefono || '').toLowerCase();
-      return !q || name.includes(q) || phone.includes(q);
+      const canal = (c.canal || 'whatsapp').toLowerCase();
+
+      const coincideBusqueda =
+        !q ||
+        name.includes(q) ||
+        phone.includes(q) ||
+        canal.includes(q);
+
+      const coincideCanal =
+        canalFiltro === 'todos' ||
+        canal === canalFiltro;
+
+      return coincideBusqueda && coincideCanal;
     });
 
     if(!filtradas.length){
-      els.conversationList.innerHTML = '<div class="empty">No hay conversaciones para mostrar.</div>';
+      els.conversationList.innerHTML =
+        '<div class="empty">No hay conversaciones para este filtro.</div>';
       return;
     }
 
-    els.conversationList.innerHTML = filtradas.map(c => `
-      <button class="conversation-item ${conversacionActiva?.id === c.id ? 'active' : ''}"
-              data-id="${escapeHtml(c.id)}">
-        <div class="conv-row">
-          <div>
-            <div class="conv-name">${escapeHtml(c.nombre_contacto || 'Sin nombre')}</div>
-            <div class="conv-phone">${escapeHtml(c.telefono || '')}</div>
+    els.conversationList.innerHTML = filtradas.map(c => {
+      const canal = c.canal || 'whatsapp';
+
+      return `
+        <button class="conversation-item ${conversacionActiva?.id === c.id ? 'active' : ''}"
+                data-id="${escapeHtml(c.id)}">
+          <div class="conv-row">
+            <div>
+              <div class="conv-name">${escapeHtml(displayContact(c))}</div>
+              <div class="conv-phone">${escapeHtml(displayIdentifier(c))}</div>
+              <span class="channel-badge ${escapeHtml(canal)}">
+                ${channelIcon(canal)} ${escapeHtml(channelLabel(canal))}
+              </span>
+            </div>
+            <div class="conv-time">${escapeHtml(formatDate(c.ultima_fecha))}</div>
           </div>
-          <div class="conv-time">${escapeHtml(formatDate(c.ultima_fecha))}</div>
-        </div>
-        <div class="conv-last">${escapeHtml(c.ultimo_mensaje || 'Sin mensajes')}</div>
-      </button>
-    `).join('');
+          <div class="conv-last">${escapeHtml(c.ultimo_mensaje || 'Sin mensajes')}</div>
+        </button>
+      `;
+    }).join('');
 
     document.querySelectorAll('.conversation-item').forEach(btn => {
       btn.addEventListener('click', () => openConversation(btn.dataset.id));
@@ -639,8 +745,10 @@
 
     els.chatEmpty.classList.add('hidden');
     els.chatContent.classList.remove('hidden');
-    els.chatName.textContent = c.nombre_contacto || 'Sin nombre';
-    els.chatPhone.textContent = c.telefono || '';
+    els.chatName.textContent = displayContact(c);
+    els.chatPhone.textContent = displayIdentifier(c);
+    els.chatChannel.textContent =
+      `${channelIcon(c.canal || 'whatsapp')} ${channelLabel(c.canal || 'whatsapp')}`;
 
     if(window.innerWidth <= 820){
       els.app.classList.add('mobile-chat');
@@ -655,7 +763,7 @@
 
     const { data, error } = await supabaseClient
       .from('mensajes')
-      .select('id,direccion,mensaje,fecha')
+      .select('id,direccion,mensaje,fecha,canal')
       .eq('conversacion_id',conversationId)
       .order('fecha',{ascending:true});
 
@@ -718,7 +826,7 @@
   }
 
   function renderStats(){
-    const clientes = new Set(conversaciones.map(c => c.telefono).filter(Boolean));
+    const clientes = new Set(conversaciones.map(c => `${c.canal || 'whatsapp'}:${c.telefono || ''}`).filter(x => !x.endsWith(':')));
     const reservasValidas = reservas.filter(r => r.estado !== 'cancelada');
     const clientesConReserva = new Set(reservasValidas.map(r => r.telefono).filter(Boolean));
 
@@ -893,6 +1001,8 @@
 
     conversaciones = [];
     conversacionActiva = null;
+    canalFiltro = 'todos';
+    renderChannelFilters();
     els.password.value = '';
     els.app.classList.add('hidden');
     els.loginScreen.classList.remove('hidden');
@@ -913,6 +1023,14 @@
   });
 
   els.searchInput.addEventListener('input', renderConversations);
+
+  document.querySelectorAll('.channel-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      canalFiltro = btn.dataset.channel || 'todos';
+      renderChannelFilters();
+      renderConversations();
+    });
+  });
 
   els.backBtn.addEventListener('click', () => {
     els.app.classList.remove('mobile-chat');
