@@ -436,6 +436,33 @@
     }
     .badge.cancelada{background:rgba(255,107,122,.10);color:#ffabb4;border-color:rgba(255,107,122,.22)}
     .badge.completada{background:rgba(77,231,255,.10);color:var(--cyan);border-color:rgba(77,231,255,.22)}
+    .stats-section-title{
+      margin:26px 0 12px;
+      font-size:1rem;
+      font-weight:800;
+      color:var(--text);
+    }
+    .stats-note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:.86rem;
+      line-height:1.45;
+    }
+    .stats-breakdown{margin-top:24px}
+    .stats-breakdown table{width:100%;border-collapse:collapse;min-width:650px}
+    .stats-breakdown th,.stats-breakdown td{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+    }
+    .stats-breakdown th{
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:var(--muted);
+    }
+    .stats-breakdown td:not(:first-child),
+    .stats-breakdown th:not(:first-child){text-align:right}
     .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
     .stat-card{
       padding:22px;border:1px solid var(--line);border-radius:20px;
@@ -777,12 +804,40 @@
   <div id="viewEstadisticas" class="content-view hidden">
     <div class="portal-page">
       <h2>Estadísticas</h2>
-      <p class="page-sub">Resumen de actividad de tu empresa.</p>
+      <p id="statsSubtitle" class="page-sub">Resumen de actividad de tu empresa.</p>
+
+      <div class="stats-section-title">Mensajería</div>
       <div class="stats-grid">
+        <div class="stat-card"><span>Mensajes recibidos</span><strong id="statMensajesRecibidos">0</strong></div>
+        <div class="stat-card"><span>Mensajes enviados</span><strong id="statMensajesEnviados">0</strong></div>
+        <div class="stat-card"><span>Total mensajes</span><strong id="statMensajesTotales">0</strong></div>
         <div class="stat-card"><span>Conversaciones</span><strong id="statConversaciones">0</strong></div>
+      </div>
+
+      <div class="stats-section-title">Reservas y clientes</div>
+      <div class="stats-grid">
         <div class="stat-card"><span>Clientes</span><strong id="statClientes">0</strong></div>
         <div class="stat-card"><span>Reservas</span><strong id="statReservas">0</strong></div>
         <div class="stat-card"><span>Conversión a reserva</span><strong id="statConversion">0%</strong></div>
+      </div>
+
+      <div id="statsBreakdown" class="stats-breakdown hidden">
+        <div class="stats-section-title">Desglose por empresa</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Empresa</th>
+                <th>Recibidos</th>
+                <th>Enviados</th>
+                <th>Total</th>
+                <th>Conversaciones</th>
+              </tr>
+            </thead>
+            <tbody id="statsBreakdownBody"></tbody>
+          </table>
+        </div>
+        <p class="stats-note">Administración General suma los mensajes y conversaciones de todas las empresas.</p>
       </div>
     </div>
   </div>
@@ -978,10 +1033,16 @@
     viewConversaciones: document.getElementById('viewConversaciones'),
     viewReservas: document.getElementById('viewReservas'),
     viewEstadisticas: document.getElementById('viewEstadisticas'),
+    statsSubtitle: document.getElementById('statsSubtitle'),
+    statMensajesRecibidos: document.getElementById('statMensajesRecibidos'),
+    statMensajesEnviados: document.getElementById('statMensajesEnviados'),
+    statMensajesTotales: document.getElementById('statMensajesTotales'),
     statConversaciones: document.getElementById('statConversaciones'),
     statClientes: document.getElementById('statClientes'),
     statReservas: document.getElementById('statReservas'),
     statConversion: document.getElementById('statConversion'),
+    statsBreakdown: document.getElementById('statsBreakdown'),
+    statsBreakdownBody: document.getElementById('statsBreakdownBody'),
     adminTabBtn: document.getElementById('adminTabBtn'),
     viewAdministracion: document.getElementById('viewAdministracion'),
     adminCompanyList: document.getElementById('adminCompanyList'),
@@ -1037,6 +1098,7 @@
 
   let conversaciones = [];
   let reservas = [];
+  let estadisticasMensajes = null;
   let conversacionActiva = null;
   let realtimeChannel = null;
   let perfilActual = null;
@@ -1341,17 +1403,74 @@
     `).join('');
   }
 
-  function renderStats(){
-    const clientes = new Set(conversaciones.map(c => `${c.canal || 'whatsapp'}:${c.telefono || ''}`).filter(x => !x.endsWith(':')));
-    const reservasValidas = reservas.filter(r => r.estado !== 'cancelada');
-    const clientesConReserva = new Set(reservasValidas.map(r => r.telefono).filter(Boolean));
+  async function loadEstadisticasMensajes(){
+    try{
+      estadisticasMensajes = await portalFetch('/portal/estadisticas');
+    }catch(error){
+      console.error('No se pudieron cargar estadísticas de mensajería:', error);
+      estadisticasMensajes = null;
+    }
+  }
 
-    els.statConversaciones.textContent = conversaciones.length;
-    els.statClientes.textContent = clientes.size;
-    els.statReservas.textContent = reservasValidas.length;
+  function renderStats(){
+    const clientes = new Set(
+      conversaciones
+        .map(c => `${c.canal || 'whatsapp'}:${c.telefono || ''}`)
+        .filter(x => !x.endsWith(':'))
+    );
+
+    const reservasValidas = reservas.filter(r => r.estado !== 'cancelada');
+    const clientesConReserva = new Set(
+      reservasValidas.map(r => r.telefono).filter(Boolean)
+    );
+
+    const totales = estadisticasMensajes?.totales || {};
+
+    els.statMensajesRecibidos.textContent =
+      Number(totales.mensajes_recibidos || 0).toLocaleString('es-CL');
+    els.statMensajesEnviados.textContent =
+      Number(totales.mensajes_enviados || 0).toLocaleString('es-CL');
+    els.statMensajesTotales.textContent =
+      Number(totales.mensajes_totales || 0).toLocaleString('es-CL');
+
+    els.statConversaciones.textContent =
+      Number(
+        totales.conversaciones !== undefined
+          ? totales.conversaciones
+          : conversaciones.length
+      ).toLocaleString('es-CL');
+
+    // Conserva las estadísticas anteriores de reservas.
+    els.statClientes.textContent = clientes.size.toLocaleString('es-CL');
+    els.statReservas.textContent = reservasValidas.length.toLocaleString('es-CL');
     els.statConversion.textContent = clientes.size
       ? `${Math.round((clientesConReserva.size / clientes.size) * 100)}%`
       : '0%';
+
+    const esGlobal = estadisticasMensajes?.alcance === 'global';
+    els.statsSubtitle.textContent = esGlobal
+      ? 'Resumen global de todas las empresas administradas.'
+      : 'Resumen de actividad de tu empresa.';
+
+    const detalle = Array.isArray(estadisticasMensajes?.empresas)
+      ? estadisticasMensajes.empresas
+      : [];
+
+    els.statsBreakdown.classList.toggle('hidden', !esGlobal);
+
+    if(esGlobal){
+      els.statsBreakdownBody.innerHTML = detalle.map(item => `
+        <tr>
+          <td><strong>${escapeHtml(item.empresa_nombre || 'Sin nombre')}</strong></td>
+          <td>${Number(item.mensajes_recibidos || 0).toLocaleString('es-CL')}</td>
+          <td>${Number(item.mensajes_enviados || 0).toLocaleString('es-CL')}</td>
+          <td>${Number(item.mensajes_totales || 0).toLocaleString('es-CL')}</td>
+          <td>${Number(item.conversaciones || 0).toLocaleString('es-CL')}</td>
+        </tr>
+      `).join('');
+    }else{
+      els.statsBreakdownBody.innerHTML = '';
+    }
   }
 
   function switchTab(tab){
@@ -1805,7 +1924,11 @@
         'postgres_changes',
         { event:'INSERT', schema:'public', table:'mensajes' },
         async payload => {
-          await loadConversations();
+          await Promise.all([
+            loadConversations(),
+            loadEstadisticasMensajes()
+          ]);
+          renderStats();
           if(conversacionActiva && payload.new?.conversacion_id === conversacionActiva.id){
             await loadMessages(conversacionActiva.id);
           }
@@ -1816,6 +1939,7 @@
         { event:'*', schema:'public', table:'reservas' },
         async () => {
           await loadReservas();
+          renderStats();
         }
       )
       .subscribe();
@@ -1884,7 +2008,11 @@
     setLoading(true);
     try{
       await loadProfile();
-      await Promise.all([loadConversations(), loadReservas()]);
+      await Promise.all([
+        loadConversations(),
+        loadReservas(),
+        loadEstadisticasMensajes()
+      ]);
       renderStats();
       await startRealtime();
 
@@ -1946,7 +2074,11 @@
   els.refreshBtn.addEventListener('click', async () => {
     setLoading(true);
     try{
-      await Promise.all([loadConversations(), loadReservas()]);
+      await Promise.all([
+        loadConversations(),
+        loadReservas(),
+        loadEstadisticasMensajes()
+      ]);
       if(conversacionActiva){
         await loadMessages(conversacionActiva.id);
       }
