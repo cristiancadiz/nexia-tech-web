@@ -1142,21 +1142,31 @@
     els.empresaNombre.textContent = perfil.empresas?.nombre || 'Mi empresa';
     const rol = String(perfil.rol || '').toLowerCase();
     const esAdminNexia =
-      perfil.empresa_id === '0a9de921-9386-441c-b5aa-f432d3f44fe5' &&
-      ['admin','nexia_admin','superadmin','administrador'].includes(rol);
+      rol === 'superadmin' ||
+      (
+        perfil.empresa_id === '0a9de921-9386-441c-b5aa-f432d3f44fe5' &&
+        ['admin','nexia_admin','administrador'].includes(rol)
+      );
     els.adminTabBtn.classList.toggle('hidden', !esAdminNexia);
     return perfil;
   }
 
   async function loadConversations(){
-    const { data, error } = await supabaseClient
-      .from('conversaciones')
-      .select('id,telefono,nombre_contacto,ultimo_mensaje,ultima_fecha,created_at,canal,modo_atencion')
-      .order('ultima_fecha',{ascending:false});
+    const rol = String(perfilActual?.rol || '').toLowerCase();
 
-    if(error) throw error;
+    if(rol === 'superadmin'){
+      const respuesta = await portalFetch('/portal/conversaciones');
+      conversaciones = respuesta.conversaciones || [];
+    }else{
+      const { data, error } = await supabaseClient
+        .from('conversaciones')
+        .select('id,empresa_id,telefono,nombre_contacto,ultimo_mensaje,ultima_fecha,created_at,canal,modo_atencion')
+        .order('ultima_fecha',{ascending:false});
 
-    conversaciones = data || [];
+      if(error) throw error;
+      conversaciones = data || [];
+    }
+
     renderConversations();
   }
 
@@ -1200,6 +1210,9 @@
               <span class="channel-badge ${escapeHtml(canal)}">
                 ${channelIcon(canal)} ${escapeHtml(channelLabel(canal))}
               </span>
+              ${String(perfilActual?.rol || '').toLowerCase() === 'superadmin' && c.empresas?.nombre
+                ? `<span class="channel-badge">🏢 ${escapeHtml(c.empresas.nombre)}</span>`
+                : ''}
               ${c.modo_atencion === 'ejecutivo'
                 ? '<span class="channel-badge">👤 Humano</span>'
                 : ''}
@@ -1247,15 +1260,30 @@
   async function loadMessages(conversationId){
     els.messages.innerHTML = '<div class="empty">Cargando mensajes...</div>';
 
-    const { data, error } = await supabaseClient
-      .from('mensajes')
-      .select('id,direccion,mensaje,fecha,canal')
-      .eq('conversacion_id',conversationId)
-      .order('fecha',{ascending:true});
+    let data = [];
+    const rol = String(perfilActual?.rol || '').toLowerCase();
 
-    if(error){
-      els.messages.innerHTML = '<div class="empty">No se pudieron cargar los mensajes.</div>';
-      return;
+    if(rol === 'superadmin'){
+      try{
+        const respuesta = await portalFetch(`/portal/conversacion/${encodeURIComponent(conversationId)}/mensajes`);
+        data = respuesta.mensajes || [];
+      }catch(error){
+        els.messages.innerHTML = '<div class="empty">No se pudieron cargar los mensajes.</div>';
+        return;
+      }
+    }else{
+      const resultado = await supabaseClient
+        .from('mensajes')
+        .select('id,direccion,mensaje,fecha,canal')
+        .eq('conversacion_id',conversationId)
+        .order('fecha',{ascending:true});
+
+      if(resultado.error){
+        els.messages.innerHTML = '<div class="empty">No se pudieron cargar los mensajes.</div>';
+        return;
+      }
+
+      data = resultado.data || [];
     }
 
     if(!data?.length){
