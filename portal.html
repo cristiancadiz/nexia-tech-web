@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Portal Nexia V8.5 | Saludo multicliente</title>
-  <meta name="description" content="Portal de clientes Nexia Tech para visualizar conversaciones de WhatsApp e Instagram, reservas y estadísticas.">
+  <meta name="description" content="Portal Nexia Tech para conversaciones omnicanal, estado en línea, tiempos de actividad, reservas y estadísticas.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -256,7 +256,15 @@
     .conv-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
     .conv-name{font-weight:800}
     .conv-phone{font-size:.78rem;color:var(--muted);margin-top:2px}
-    .conv-time{font-size:.72rem;color:var(--muted);white-space:nowrap}
+    .conv-time{font-size:.72rem;color:var(--muted);white-space:nowrap;text-align:right}
+    .conv-relative{font-size:.72rem;color:var(--cyan);font-weight:800;margin-top:4px;white-space:nowrap}
+    .system-status{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;font-size:.76rem;font-weight:900;color:var(--muted);background:rgba(255,255,255,.035)}
+    .system-status::before{content:'';width:8px;height:8px;border-radius:50%;background:#fbbf24;box-shadow:0 0 0 3px rgba(251,191,36,.10)}
+    .system-status.online{color:#bbf7d0;border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.07)}
+    .system-status.online::before{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.12)}
+    .system-status.offline{color:#fecaca;border-color:rgba(248,113,113,.25);background:rgba(248,113,113,.07)}
+    .system-status.offline::before{background:#f87171;box-shadow:0 0 0 3px rgba(248,113,113,.12)}
+    .chat-relative{display:inline-block;margin-top:5px;font-size:.76rem;color:var(--cyan);font-weight:800}
     .conv-last{font-size:.87rem;color:#bbc5dc;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .empty{padding:24px;color:var(--muted);text-align:center}
 
@@ -729,6 +737,7 @@
     </div>
 
     <div class="top-actions">
+      <span id="systemStatus" class="system-status">Comprobando...</span>
       <button id="backBtn" class="ghost-btn hidden" type="button">← Conversaciones</button>
       <button id="refreshBtn" class="ghost-btn" type="button">Actualizar</button>
       <button id="logoutBtn" class="ghost-btn" type="button">Salir</button>
@@ -772,6 +781,7 @@
             <h3 id="chatName"></h3>
             <p id="chatPhone"></p>
             <div id="chatChannel" class="chat-channel"></div>
+            <div id="chatRelativeTime" class="chat-relative"></div>
             <div id="attentionMode" class="attention-mode">🤖 Bot automático</div>
           </div>
           <button id="returnBotBtn" class="mode-btn hidden" type="button">Devolver al bot</button>
@@ -1011,6 +1021,7 @@
     newPassword: document.getElementById('newPassword'),
     confirmPassword: document.getElementById('confirmPassword'),
     empresaNombre: document.getElementById('empresaNombre'),
+    systemStatus: document.getElementById('systemStatus'),
     conversationList: document.getElementById('conversationList'),
     searchInput: document.getElementById('searchInput'),
     chatEmpty: document.getElementById('chatEmpty'),
@@ -1018,6 +1029,7 @@
     chatName: document.getElementById('chatName'),
     chatPhone: document.getElementById('chatPhone'),
     chatChannel: document.getElementById('chatChannel'),
+    chatRelativeTime: document.getElementById('chatRelativeTime'),
     attentionMode: document.getElementById('attentionMode'),
     returnBotBtn: document.getElementById('returnBotBtn'),
     messages: document.getElementById('messages'),
@@ -1107,6 +1119,8 @@
   let adminEmpresaActual=null;
   let adminDetalle=null;
   let adminServicioEditando=null;
+  let backendOnline = null;
+  let relativeTimer = null;
   const PORTAL_API_URL = 'https://chatbot-laortiga-hddw.onrender.com';
 
   function setLoading(value){
@@ -1131,6 +1145,51 @@
       hour:'2-digit',
       minute:'2-digit'
     });
+  }
+
+
+  function relativeTime(value){
+    if(!value) return 'Sin actividad';
+    const d = new Date(value);
+    const ms = Date.now() - d.getTime();
+    if(Number.isNaN(ms)) return '';
+    if(ms < 0) return 'Ahora';
+    const sec = Math.floor(ms / 1000);
+    if(sec < 30) return 'Ahora';
+    if(sec < 60) return `Hace ${sec} s`;
+    const min = Math.floor(sec / 60);
+    if(min < 60) return `Hace ${min} min`;
+    const h = Math.floor(min / 60);
+    if(h < 24) return `Hace ${h} h${h === 1 ? '' : ''}`;
+    const dias = Math.floor(h / 24);
+    if(dias < 7) return `Hace ${dias} día${dias === 1 ? '' : 's'}`;
+    const semanas = Math.floor(dias / 7);
+    if(semanas < 5) return `Hace ${semanas} sem`;
+    const meses = Math.floor(dias / 30);
+    return `Hace ${Math.max(1, meses)} mes${meses === 1 ? '' : 'es'}`;
+  }
+
+  function setSystemStatus(online){
+    backendOnline = online;
+    if(!els.systemStatus) return;
+    els.systemStatus.classList.remove('online','offline');
+    if(online === true){
+      els.systemStatus.classList.add('online');
+      els.systemStatus.textContent = 'En línea';
+    }else if(online === false){
+      els.systemStatus.classList.add('offline');
+      els.systemStatus.textContent = 'Fuera de línea';
+    }else{
+      els.systemStatus.textContent = 'Comprobando...';
+    }
+  }
+
+  function refreshRelativeTimes(){
+    renderConversations();
+    if(conversacionActiva && els.chatRelativeTime){
+      els.chatRelativeTime.textContent = `Última actividad: ${relativeTime(conversacionActiva.ultima_fecha)}`;
+      els.chatRelativeTime.title = formatDate(conversacionActiva.ultima_fecha);
+    }
   }
 
   function formatTime(value){
@@ -1279,7 +1338,10 @@
                 ? '<span class="channel-badge">👤 Humano</span>'
                 : ''}
             </div>
-            <div class="conv-time">${escapeHtml(formatDate(c.ultima_fecha))}</div>
+            <div class="conv-time">
+              <div>${escapeHtml(formatDate(c.ultima_fecha))}</div>
+              <div class="conv-relative">${escapeHtml(relativeTime(c.ultima_fecha))}</div>
+            </div>
           </div>
           <div class="conv-last">${escapeHtml(c.ultimo_mensaje || 'Sin mensajes')}</div>
         </button>
@@ -1304,6 +1366,8 @@
     els.chatPhone.textContent = displayIdentifier(c);
     els.chatChannel.textContent =
       `${channelIcon(c.canal || 'whatsapp')} ${channelLabel(c.canal || 'whatsapp')}`;
+    els.chatRelativeTime.textContent = `Última actividad: ${relativeTime(c.ultima_fecha)}`;
+    els.chatRelativeTime.title = formatDate(c.ultima_fecha);
     els.composer.style.display = 'flex';
     els.messageInput.placeholder = c.canal === 'instagram'
       ? 'Responder por Instagram...'
@@ -1495,13 +1559,19 @@
     const {data:sessionData}=await supabaseClient.auth.getSession();
     const token=sessionData?.session?.access_token;
     if(!token) throw new Error('Sesión expirada.');
-    const res=await fetch(`${PORTAL_API_URL}${path}`,{
-      ...options,
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`,...(options.headers||{})}
-    });
-    let data={}; try{data=await res.json()}catch(_){}
-    if(!res.ok || data.ok===false) throw new Error(data.error||`Error ${res.status}`);
-    return data;
+    try{
+      const res=await fetch(`${PORTAL_API_URL}${path}`,{
+        ...options,
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`,...(options.headers||{})}
+      });
+      let data={}; try{data=await res.json()}catch(_){}
+      if(!res.ok || data.ok===false) throw new Error(data.error||`Error ${res.status}`);
+      setSystemStatus(true);
+      return data;
+    }catch(err){
+      setSystemStatus(false);
+      throw err;
+    }
   }
 
   function setAdminStatus(msg,error=false){
@@ -2015,6 +2085,8 @@
       ]);
       renderStats();
       await startRealtime();
+      if(relativeTimer) clearInterval(relativeTimer);
+      relativeTimer = setInterval(refreshRelativeTimes, 30000);
 
       els.loginScreen.classList.add('hidden');
       els.app.classList.remove('hidden');
@@ -2060,6 +2132,8 @@
       await supabaseClient.removeChannel(realtimeChannel);
       realtimeChannel = null;
     }
+    if(relativeTimer){ clearInterval(relativeTimer); relativeTimer = null; }
+    setSystemStatus(null);
 
     conversaciones = [];
     conversacionActiva = null;
