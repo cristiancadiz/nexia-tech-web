@@ -90,7 +90,11 @@
 <script>
 const PARAMS=new URLSearchParams(location.search);
 const API=(PARAMS.get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');
-const DEMO_TOKEN=(PARAMS.get('demo_token')||'').trim();
+// V2.5: la prueba conserva su token durante OAuth/recargas.
+// La URL tiene prioridad; sessionStorage es respaldo para volver desde proveedores externos.
+const URL_DEMO_TOKEN=(PARAMS.get('demo_token')||'').trim();
+if(URL_DEMO_TOKEN)sessionStorage.setItem('nexia_demo_token',URL_DEMO_TOKEN);
+const DEMO_TOKEN=URL_DEMO_TOKEN||(sessionStorage.getItem('nexia_demo_token')||'').trim();
 const state={authToken:sessionStorage.getItem('nexia_portal_token')||'',demoToken:DEMO_TOKEN,session:null,me:null,conversations:[],selected:null,messages:[],handoffs:[],stats:null,demos:[]};
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=d=>{if(!d)return '—';try{return new Date(d).toLocaleString('es-CL',{dateStyle:'short',timeStyle:'short'})}catch{return d}};
@@ -102,6 +106,10 @@ function buildNav(){const html=navItems.map(([id,ic,n])=>`<button data-page="${i
 function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='conversations')loadConversations();if(id==='agenda')loadAgenda();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies();if(id==='integrations')loadIntegrations()}
 async function init(){
   buildNav();
+  if(PARAMS.get('cuenta')==='creada'){
+    $('loginError').style.color='#137333';
+    $('loginError').textContent='Tu acceso permanente quedó creado. Ingresa con tu correo y la contraseña que elegiste.';
+  }
   try{
     const cfg=await publicFetch('/portal/config-public');
     $('versionText').textContent=cfg.app_version||'';
@@ -118,6 +126,8 @@ async function init(){
 async function login(){
   try{
     $('loginBtn').disabled=true;$('loginError').textContent='';
+    sessionStorage.removeItem('nexia_demo_token');
+    state.demoToken='';
     const email=$('email').value.trim(), password=$('password').value;
     if(!email||!password)throw new Error('Ingresa correo y contraseña');
     const d=await publicFetch('/portal/login',{method:'POST',body:JSON.stringify({email,password})});
@@ -129,7 +139,13 @@ async function login(){
   finally{$('loginBtn').disabled=false}
 }
 async function enterApp(){const d=await api('/portal/me');state.me=d;$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');const p=d.perfil||{};if(p.demo){document.querySelectorAll('[data-page="demos"],[data-page="companies"]').forEach(x=>x.classList.add('hidden'));}$('userName').textContent=p.nombre||p.email||'Usuario';$('userRole').textContent=d.superadmin?'Superadmin global':(p.demo?'Prueba Nexia':(p.rol||'Cliente'));$('avatar').textContent=(p.nombre||p.email||'N').slice(0,1).toUpperCase();$('scopeText').textContent=d.superadmin?'Acceso: todas las empresas':(p.demo?'Prueba activa · acceso temporal':'Acceso: solo tu empresa');$('settingsScope').innerHTML=d.superadmin?'<strong>Superadmin global:</strong> puedes administrar y visualizar todas las empresas.':(p.demo?'<strong>Acceso temporal:</strong> puedes probar el Portal completo con los datos de tu prueba durante su vigencia.':'<strong>Usuario empresa:</strong> tu acceso está aislado por empresa.');await Promise.allSettled([loadStats(),loadHandoffs(),loadConversations()]);const q=new URLSearchParams(location.search);const seccion=q.get('seccion');if(seccion&&navItems.some(x=>x[0]===seccion)){go(seccion)}handleDeepLink();checkPaymentReturn();checkCalendarReturn()}
-async function logout(){sessionStorage.removeItem('nexia_portal_token');state.authToken='';if(state.demoToken){location.href=location.pathname}else location.reload()}
+async function logout(){
+  sessionStorage.removeItem('nexia_portal_token');
+  sessionStorage.removeItem('nexia_demo_token');
+  state.authToken='';
+  state.demoToken='';
+  location.href=location.pathname;
+}
 async function loadStats(){try{const d=await api('/portal/estadisticas');state.stats=d;const t=d.totales||{};$('mConv').textContent=t.conversaciones||0;$('mMsg').textContent=t.mensajes_totales||0;$('mEmp').textContent=t.empresas||1;$('mEmpSub').textContent=d.alcance==='global'?'Empresas registradas':'Tu espacio de trabajo';$('sIn').textContent=t.mensajes_recibidos||0;$('sOut').textContent=t.mensajes_enviados||0;$('sTotal').textContent=t.mensajes_totales||0;$('sConv').textContent=t.conversaciones||0;renderStats(d.empresas||[])}catch(e){console.error(e)}}
 function renderStats(rows){const max=Math.max(1,...rows.map(x=>x.mensajes_totales||0));const html=rows.slice(0,12).map(x=>`<div class="barrow"><div class="truncate" title="${esc(x.empresa_nombre||x.empresa_id)}">${esc(x.empresa_nombre||'Empresa')}</div><div class="bar"><i style="width:${Math.round((x.mensajes_totales||0)/max*100)}%"></i></div><b>${x.mensajes_totales||0}</b></div>`).join('')||'<div class="small">Sin actividad todavía.</div>';$('statsBars').innerHTML=html;$('statsDetail').innerHTML=html}
 async function loadHandoffs(){try{const d=await api('/portal/handoffs');state.handoffs=d.handoffs||[];const pending=state.handoffs.filter(x=>['pendiente','en_atencion'].includes(String(x.estado||'').toLowerCase()));$('mHandoff').textContent=pending.filter(x=>x.estado==='pendiente').length;$('handoffMini').innerHTML=pending.slice(0,5).map(x=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div style="font-weight:800">${esc(x.nombre_contacto||'Cliente')}</div><div class="small">${esc(x.motivo||'Solicitud de atención')} · ${fmt(x.created_at)}</div></div>`).join('')||'<div class="small">No hay solicitudes pendientes.</div>'}catch(e){console.error(e)}}
@@ -170,7 +186,23 @@ async function loadConsumption(){
 }
 async function buyPlan(code,btn){try{if(btn){btn.disabled=true;btn.textContent='Abriendo Mercado Pago…'}const d=await api('/portal/mercadopago/checkout',{method:'POST',body:JSON.stringify({plan:code})});if(!d.checkout_url)throw new Error('Mercado Pago no devolvió la URL de pago');location.href=d.checkout_url}catch(e){alert(e.message);if(btn){btn.disabled=false;btn.textContent=code==='nexia_500'?'Comprar 500 mensajes':'Comprar 1.000 mensajes'}}}
 async function checkPaymentReturn(){const p=new URLSearchParams(location.search),status=p.get('pago');if(!status)return;if(status==='success'){$('paymentStatus').innerHTML='<div class="pay-status ok"><b>Pago recibido.</b> Estamos confirmando la acreditación con Mercado Pago.</div>';go('consumption');for(let i=0;i<6;i++){try{const d=await api('/portal/pago/estado');if(d.pago?.status==='approved'&&d.pago?.applied_at){$('paymentStatus').innerHTML=`<div class="pay-status ok"><b>Pago aprobado ✓</b> ${esc(d.pago.plan_nombre||'Tu plan')} ya fue acreditado.</div>`;if(state.demoToken&&!d.pago.setup_completed)$('paidSetup').classList.remove('hidden');await loadConsumption();break}}catch(e){}await new Promise(r=>setTimeout(r,1800))}}else if(status==='pending'){$('paymentStatus').innerHTML='<div class="pay-status warn">Tu pago está pendiente. Actualizaremos el plan cuando Mercado Pago lo apruebe.</div>';go('consumption')}else if(status==='failure'){$('paymentStatus').innerHTML='<div class="pay-status warn">El pago no se completó. Puedes intentarlo nuevamente.</div>';go('consumption')}}
-async function createPaidAccess(){const pw=$('newPaidPassword').value;if((pw||'').length<8){$('setupInfo').textContent='La contraseña debe tener al menos 8 caracteres.';return}try{const d=await api('/portal/crear-acceso-pagado',{method:'POST',body:JSON.stringify({password:pw})});$('setupInfo').textContent=d.mensaje||'Acceso creado.';$('paidSetup').classList.add('hidden');setTimeout(()=>{location.href=location.pathname},1800)}catch(e){$('setupInfo').textContent=e.message}}
+async function createPaidAccess(){
+ const pw=$('newPaidPassword').value;
+ if((pw||'').length<8){$('setupInfo').textContent='La contraseña debe tener al menos 8 caracteres.';return}
+ try{
+  const d=await api('/portal/crear-acceso-pagado',{method:'POST',body:JSON.stringify({password:pw})});
+  $('setupInfo').textContent=d.mensaje||'Acceso permanente creado.';
+  $('paidSetup').classList.add('hidden');
+  // Desde aquí deja de usar el token temporal. El próximo acceso será correo + contraseña.
+  sessionStorage.removeItem('nexia_demo_token');
+  state.demoToken='';
+  setTimeout(()=>{
+    const url=new URL(location.pathname,location.origin);
+    url.searchParams.set('cuenta','creada');
+    location.href=url.toString();
+  },1800);
+ }catch(e){$('setupInfo').textContent=e.message}
+}
 
 async function loadDemos(){
  try{
@@ -220,6 +252,8 @@ async function loadIntegrations(){
 }
 async function connectGoogleCalendar(){
  try{
+  // Guardar el token temporal antes de salir a Google.
+  if(state.demoToken)sessionStorage.setItem('nexia_demo_token',state.demoToken);
   sessionStorage.setItem('nexia_calendar_return','1');
   const d=await api('/portal/integraciones/google-calendar/iniciar',{method:'POST',body:'{}'});
   if(!d.url)throw new Error('No se recibió el enlace de autorización de Google');
