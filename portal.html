@@ -46,20 +46,31 @@
 
 <section id="page-consumption" class="page"><div class="sectionhead"><h2>Consumo y planes</h2><button class="btn" onclick="loadConsumption()">Actualizar</button></div><div class="tablewrap"><table class="table"><thead><tr><th>Empresa</th><th>Plan</th><th>Estado</th><th>Usados</th><th>Límite</th><th>Demo inicio</th><th>Demo fin</th></tr></thead><tbody id="consRows"></tbody></table></div></section>
 
+<section id="page-demos" class="page">
+ <div class="sectionhead"><div><h2>Demos Nexia</h2><div class="small">Supervisa pruebas, uso y acceso al asistente.</div></div><button class="btn" onclick="loadDemos()">Actualizar</button></div>
+ <div class="cards">
+  <div class="card metric"><div class="k">DEMOS ACTIVAS</div><div class="v" id="dActive">0</div><div class="s">Disponibles ahora</div></div>
+  <div class="card metric"><div class="k">CREADAS</div><div class="v" id="dTotal">0</div><div class="s">Demos registradas</div></div>
+  <div class="card metric"><div class="k">AGOTADAS / VENCIDAS</div><div class="v" id="dEnded">0</div><div class="s">Requieren reactivación o plan</div></div>
+  <div class="card metric"><div class="k">MENSAJES USADOS</div><div class="v" id="dMessages">0</div><div class="s">Consumo total de demos</div></div>
+ </div>
+ <div class="section tablewrap"><table class="table"><thead><tr><th>Empresa</th><th>Contacto</th><th>Canal / usuario</th><th>Estado</th><th>Uso</th><th>Vence</th><th>Acciones</th></tr></thead><tbody id="demoRows"></tbody></table></div>
+</section>
+
 <section id="page-companies" class="page"><div class="sectionhead"><h2>Empresas</h2><button class="btn" onclick="loadCompanies()">Actualizar</button></div><div id="companyAdminNote" class="panelnote hidden">Esta sección solo está disponible para el superadmin.</div><div class="tablewrap" id="companyTable"><table class="table"><thead><tr><th>Empresa</th><th>Estado</th><th>Creada</th><th>ID</th></tr></thead><tbody id="companyRows"></tbody></table></div></section>
 
 <section id="page-settings" class="page"><div class="sectionhead"><h2>Configuración</h2></div><div class="card"><h3 style="margin-top:0">Seguridad y alcance</h3><p id="settingsScope"></p><p class="small">El superusuario maestro se valida en backend. Los clientes normales solo reciben información correspondiente a su empresa_id.</p></div></section>
 </main></div></div>
 <script>
 const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');
-const state={supabase:null,session:null,me:null,conversations:[],selected:null,messages:[],handoffs:[],stats:null};
+const state={supabase:null,session:null,me:null,conversations:[],selected:null,messages:[],handoffs:[],stats:null,demos:[]};
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=d=>{if(!d)return '—';try{return new Date(d).toLocaleString('es-CL',{dateStyle:'short',timeStyle:'short'})}catch{return d}};
 async function publicFetch(path,opt={}){const r=await fetch(API+path,{headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
 async function api(path,opt={}){const sess=(await state.supabase.auth.getSession()).data.session;if(!sess)throw new Error('Sesión expirada');return publicFetch(path,{...opt,headers:{Authorization:`Bearer ${sess.access_token}`,...(opt.headers||{})}})}
-const navItems=[['dashboard','▣','Inicio','Resumen de la operación'],['conversations','💬','Conversaciones','Bandeja de atención humana'],['agenda','📅','Agenda','Reservas y solicitudes'],['interested','👥','Personas interesadas','Contactos captados'],['statistics','📊','Estadísticas','Actividad y rendimiento'],['consumption','⚡','Consumo','Planes y mensajes'],['companies','🏢','Empresas','Administración de clientes'],['settings','⚙','Configuración','Seguridad y alcance']];
+const navItems=[['dashboard','▣','Inicio','Resumen de la operación'],['conversations','💬','Conversaciones','Bandeja de atención humana'],['agenda','📅','Agenda','Reservas y solicitudes'],['interested','👥','Personas interesadas','Contactos captados'],['statistics','📊','Estadísticas','Actividad y rendimiento'],['consumption','⚡','Consumo','Planes y mensajes'],['demos','🧪','Demos','Pruebas, uso y activación'],['companies','🏢','Empresas','Administración de clientes'],['settings','⚙','Configuración','Seguridad y alcance']];
 function buildNav(){const html=navItems.map(([id,ic,n])=>`<button data-page="${id}" class="${id==='dashboard'?'active':''}">${ic} &nbsp;${n}</button>`).join('');$('nav').innerHTML=html;$('mobileNav').innerHTML=html;document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page))}
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='conversations')loadConversations();if(id==='agenda')loadAgenda();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='companies')loadCompanies()}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='conversations')loadConversations();if(id==='agenda')loadAgenda();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies()}
 async function init(){buildNav();try{const cfg=await publicFetch('/portal/config-public');$('versionText').textContent=cfg.app_version||'';if(!cfg.supabase_url||!cfg.supabase_anon_key)throw new Error('Falta SUPABASE_ANON_KEY en Render');state.supabase=window.supabase.createClient(cfg.supabase_url,cfg.supabase_anon_key);const {data}=await state.supabase.auth.getSession();if(data.session){state.session=data.session;await enterApp()}}catch(e){$('loginError').textContent=e.message}}
 async function login(){try{$('loginBtn').disabled=true;$('loginError').textContent='';const {data,error}=await state.supabase.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;state.session=data.session;await enterApp()}catch(e){$('loginError').textContent=e.message}finally{$('loginBtn').disabled=false}}
 async function enterApp(){const d=await api('/portal/me');state.me=d;$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');const p=d.perfil||{};$('userName').textContent=p.nombre||p.email||'Usuario';$('userRole').textContent=d.superadmin?'Superadmin global':(p.rol||'Cliente');$('avatar').textContent=(p.nombre||p.email||'N').slice(0,1).toUpperCase();$('scopeText').textContent=d.superadmin?'Acceso: todas las empresas':'Acceso: solo tu empresa';$('settingsScope').innerHTML=d.superadmin?'<strong>Superadmin global:</strong> puedes administrar y visualizar todas las empresas.':'<strong>Usuario empresa:</strong> tu acceso está aislado por empresa.';await Promise.allSettled([loadStats(),loadHandoffs(),loadConversations()]);handleDeepLink()}
@@ -77,6 +88,36 @@ async function closeConversation(){if(!state.selected)return;if(!confirm('¿Devo
 async function sendMessage(){const msg=$('messageInput').value.trim();if(!msg||!state.selected)return;try{$('sendBtn').disabled=true;if(state.selected.modo_atencion!=='ejecutivo')await takeConversation();await api('/portal/enviar-mensaje',{method:'POST',body:JSON.stringify({conversacion_id:state.selected.id,mensaje:msg})});$('messageInput').value='';await selectConversation(state.selected.id)}catch(e){alert(e.message)}finally{$('sendBtn').disabled=false}}
 async function loadAgenda(){try{const d=await api('/portal/agenda');const res=d.reservas||[],sol=d.solicitudes||[];$('aRes').textContent=res.length;$('aSol').textContent=sol.length;const rows=[...res.map(x=>({tipo:'Reserva',cliente:x.nombre_cliente||x.telefono,servicio:x.servicio,fecha:x.fecha,hora:x.hora,estado:x.estado,empresa:x.empresa_id})),...sol.map(x=>({tipo:'Solicitud',cliente:x.nombre||x.nombre_cliente||x.identificador,servicio:x.servicio||x.servicio_nombre,fecha:x.fecha,hora:x.hora,estado:x.estado,empresa:x.empresa_id}))];$('agendaRows').innerHTML=rows.map(x=>`<tr><td>${esc(x.tipo)}</td><td>${esc(x.cliente||'—')}</td><td>${esc(x.servicio||'—')}</td><td>${esc(x.fecha||'—')}</td><td>${esc(x.hora||'—')}</td><td>${esc(x.estado||'—')}</td><td class="small">${esc(x.empresa||'—')}</td></tr>`).join('')||'<tr><td colspan="7">Sin registros.</td></tr>'}catch(e){$('agendaRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}}
 async function loadConsumption(){try{const d=await api('/portal/consumo');$('consRows').innerHTML=(d.planes||[]).map(x=>`<tr><td class="small">${esc(x.empresa_id)}</td><td>${esc(x.tipo_plan||'legacy')}</td><td>${esc(x.estado||'activo')}</td><td>${x.mensajes_usados??x.respuestas_usadas??'—'}</td><td>${x.limite_mensajes??x.limite_respuestas??'—'}</td><td>${fmt(x.demo_inicio)}</td><td>${fmt(x.demo_fin)}</td></tr>`).join('')||'<tr><td colspan="7">Sin planes registrados.</td></tr>'}catch(e){$('consRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}}
+
+async function loadDemos(){
+ try{
+  const d=await api('/portal/demos'); state.demos=d.demos||[];
+  const rows=state.demos;
+  const active=rows.filter(x=>String(x.estado||'').toLowerCase()==='activo');
+  const ended=rows.filter(x=>['vencida','agotada','finalizado','inactivo'].includes(String(x.estado||'').toLowerCase()));
+  $('dActive').textContent=active.length;$('dTotal').textContent=rows.length;$('dEnded').textContent=ended.length;$('dMessages').textContent=rows.reduce((a,x)=>a+(Number(x.mensajes_usados)||0),0);
+  $('demoRows').innerHTML=rows.map(x=>{
+   const st=String(x.estado||'').toLowerCase(); const cls=st==='activo'?'exec':(['vencida','agotada','finalizado'].includes(st)?'end':'wait');
+   const uso=`${x.mensajes_usados||0}/${x.limite_mensajes||50}`;
+   const channel=[x.canal,x.identificador_cliente].filter(Boolean).join(' · ')||'—';
+   const actions=state.me?.superadmin?`<div class="toolbar"><button class="btn" onclick="openDemoConversation('${x.empresa_id}')">Conversación</button><button class="btn" onclick="reactivateDemo('${x.empresa_id}')">Reactivar</button><button class="btn danger" onclick="deactivateDemo('${x.empresa_id}')">Desactivar</button></div>`:'<span class="small">Solo lectura</span>';
+   return `<tr><td><b>${esc(x.empresa_nombre||'Empresa demo')}</b><div class="small">${esc(x.rubro||x.asistente||'')}</div></td><td>${esc(x.contacto||'—')}<div class="small">${esc(x.email||'')}</div></td><td>${esc(channel)}</td><td><span class="badge ${cls}"><i class="dot"></i>${esc(st||'—')}</span></td><td><b>${uso}</b><div class="small">${x.mensajes_restantes??'—'} restantes</div></td><td>${fmt(x.demo_fin)}</td><td>${actions}</td></tr>`
+  }).join('')||'<tr><td colspan="7">No hay demos registradas.</td></tr>';
+ }catch(e){$('demoRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}
+}
+function openDemoConversation(empresaId){
+ const c=state.conversations.find(x=>String(x.empresa_id)===String(empresaId));
+ if(!c){alert('Esta demo todavía no tiene una conversación operativa registrada.');return}
+ go('conversations');selectConversation(c.id);
+}
+async function reactivateDemo(empresaId){
+ if(!confirm('¿Reactivar esta demo por 24 horas y reiniciar su cupo a 50 mensajes?'))return;
+ try{await api(`/portal/admin/demo/${empresaId}/reactivar`,{method:'POST',body:'{}'});await Promise.allSettled([loadDemos(),loadConsumption()])}catch(e){alert(e.message)}
+}
+async function deactivateDemo(empresaId){
+ if(!confirm('¿Desactivar esta demo? El acceso quedará cerrado.'))return;
+ try{await api(`/portal/admin/demo/${empresaId}/desactivar`,{method:'POST',body:'{}'});await Promise.allSettled([loadDemos(),loadConsumption()])}catch(e){alert(e.message)}
+}
 async function loadCompanies(){if(!state.me?.superadmin){$('companyAdminNote').classList.remove('hidden');$('companyTable').classList.add('hidden');return}try{const d=await api('/portal/admin/empresas');$('companyRows').innerHTML=(d.empresas||[]).map(x=>`<tr><td><b>${esc(x.nombre)}</b></td><td>${x.activo?'Activa':'Inactiva'}</td><td>${fmt(x.created_at)}</td><td class="small">${esc(x.id)}</td></tr>`).join('')}catch(e){$('companyRows').innerHTML=`<tr><td colspan="4" class="error">${esc(e.message)}</td></tr>`}}
 function handleDeepLink(){const p=new URLSearchParams(location.search),id=p.get('conversacion');if(id){go('conversations');setTimeout(async()=>{await loadConversations();const found=state.conversations.find(x=>x.id===id);if(found)selectConversation(id)},250)}}
 $('loginBtn').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('logoutBtn').onclick=logout;$('convSearch').addEventListener('input',renderConversations);$('takeBtn').onclick=takeConversation;$('closeBtn').onclick=closeConversation;$('sendBtn').onclick=sendMessage;$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});init();
