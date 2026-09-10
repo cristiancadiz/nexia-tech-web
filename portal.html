@@ -32,10 +32,24 @@
 <p id="status" class="muted"></p>
 </section>
 <section id="ready" class="card hidden"><div class="pill">Demo activa</div><h2>Tu asistente está listo 🚀</h2><p class="muted">Puedes probarlo en el simulador web y, si registraste WhatsApp durante la configuración, también desde tu propio teléfono escribiendo al número demo de Nexia.</p><div id="demoStats" class="stats"></div><div id="whatsappReady" class="card hidden" style="margin-top:12px;background:#0e162d"><strong>WhatsApp conectado a tu demo</strong><p id="whatsappText" class="muted" style="margin-bottom:10px"></p><div class="actions"><button id="openWhatsapp">Probar por WhatsApp</button></div></div><details><summary>Ver configuración entendida</summary><pre id="summary" class="summary"></pre></details><div class="actions"><button id="openChat">Probar en simulador web</button></div></section>
-<section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 style="margin-bottom:4px">Habla con tu Nexi</h2></div><div id="remaining" class="stat">50 respuestas</div></div><div id="chat" class="chat"><div class="msg bot">¡Hola! 👋 Soy tu Nexi de demostración. Pregúntame algo relacionado con la información que acabas de configurar.</div></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
+<section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 id="chatTitle" style="margin-bottom:4px">Habla con tu asistente</h2></div><div id="remaining" class="stat">50 respuestas</div></div><div id="chat" class="chat"></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
 </div>
 <script>
 const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');let token=null,summary={};
+function refreshAssistantIdentity(){
+ const nombre=(summary.nombre_asistente||'tu asistente').trim();
+ const negocio=(summary.nombre_negocio||'tu negocio').trim();
+ if($('chatTitle')) $('chatTitle').textContent='Habla con '+nombre;
+ const chat=$('chat');
+ if(chat && !chat.dataset.welcome){
+   const div=document.createElement('div');
+   div.className='msg bot';
+   div.textContent='¡Hola! 👋 Soy '+nombre+', el asistente virtual de '+negocio+'. ¿En qué te puedo ayudar?';
+   chat.appendChild(div);
+   chat.dataset.welcome='1';
+ }
+}
+
 const $=id=>document.getElementById(id); const esc=s=>String(s??'');
 async function api(path,opt={}){const r=await fetch(API+path,{headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
 let currentQuestion=null,selectedMulti=new Set();
@@ -89,7 +103,7 @@ async function submitAnswer(){
   summary=d.summary||summary;
   if(d.complete){
    $('onboarding').classList.add('hidden');$('ready').classList.remove('hidden');
-   $('summary').textContent=JSON.stringify(summary,null,2);
+   $('summary').textContent=JSON.stringify(summary,null,2); refreshAssistantIdentity();
    $('demoStats').innerHTML='<div class="stat">50 respuestas gratis</div><div class="stat">24 horas</div><div class="stat">Avisos por correo activos</div>';
    if(d.whatsapp?.enabled&&summary.whatsapp_demo){
     $('whatsappReady').classList.remove('hidden');
