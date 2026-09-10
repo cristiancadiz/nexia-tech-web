@@ -2,15 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nexi Core V1 · Demo</title>
+<title> · Demo</title>
 <style>
 :root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#0b1020;color:#edf2ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0,#18244b 0,transparent 40%),#0b1020}.wrap{max-width:860px;margin:auto;padding:28px 18px 70px}.brand{font-weight:800;letter-spacing:.06em}.muted{color:#9caaca}.card{background:rgba(18,26,50,.92);border:1px solid #2b3a67;border-radius:22px;padding:22px;box-shadow:0 20px 70px rgba(0,0,0,.25);margin-top:18px}.hero h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.02;margin:10px 0}.hero p{font-size:1.05rem;line-height:1.6;max-width:650px}.pill{display:inline-block;padding:7px 11px;border:1px solid #3c4d80;border-radius:999px;color:#c9d4f5;font-size:.86rem}.progress{height:8px;background:#243052;border-radius:999px;overflow:hidden;margin:14px 0}.progress>div{height:100%;background:linear-gradient(90deg,#7c9cff,#8a7cff);width:0;transition:.3s}.question{font-size:1.25rem;font-weight:750;line-height:1.4;margin:10px 0 16px}textarea,input{width:100%;border-radius:14px;border:1px solid #35456f;background:#0e162d;color:white;padding:14px;font:inherit;outline:none}textarea{min-height:100px;resize:vertical}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:13px;padding:12px 17px;font:inherit;font-weight:700;cursor:pointer;background:#7895ff;color:#081020}button.secondary{background:#1f2a4d;color:#e8edff;border:1px solid #394974}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.chip{background:#17213e;color:#e5eaff;border:1px solid #3d4e7c}.chat{height:380px;overflow:auto;background:#0d1429;border:1px solid #29375e;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}.msg{max-width:82%;padding:11px 13px;border-radius:15px;line-height:1.45;white-space:pre-wrap}.me{align-self:flex-end;background:#6f89ec;color:#071022}.bot{align-self:flex-start;background:#1d2949}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.stat{padding:10px 12px;border-radius:12px;background:#111b35;border:1px solid #2f3e69}.hidden{display:none}.summary{font-size:.9rem;line-height:1.55;max-height:260px;overflow:auto}.ok{color:#9be6b4}.error{color:#ff9fa9}@media(max-width:600px){.wrap{padding:18px 12px}.card{padding:16px}.msg{max-width:92%}}
 </style>
 </head>
 <body><div class="wrap">
-<div class="brand">NEXIA TECH · NEXI CORE V1</div>
-<section class="hero"><span class="pill">Rama experimental aislada</span><h1>Crea tu asistente y pruébalo.</h1><p class="muted">Nexi Core adapta las preguntas según seas persona, profesional o empresa; configura web y redes sociales en campos separados, conecta avisos por correo y crea una demo de 100 respuestas durante 24 horas.</p></section>
-<section id="startCard" class="card"><h2>Comenzar demo</h2><p class="muted">No necesitas conectar WhatsApp, Instagram ni Google Calendar para probar el núcleo. Primero configuramos tu asistente y luego lo pruebas en el simulador.</p><button id="startBtn">Crear mi asistente</button><div id="startError" class="error"></div></section>
+<div class="brand">NEXIA TECH</div>
+<section class="hero"><span class="pill">Configura tu asistente en 3 minutos</span><h1>Crea tu asistente y pruébalo.</h1><p class="muted">Configura Nexi para tu negocio, conecta tus canales públicos y pruébalo gratis con 50 respuestas durante 24 horas.</p></section>
+<section id="startCard" class="card"><h2>Comenzar demo</h2><p class="muted">No necesitas conectar WhatsApp, Instagram ni Google Calendar para probar el núcleo. Primero entendemos tu negocio, tus canales y tu web. Luego puedes probar tu asistente en el simulador o por WhatsApp.</p><button id="startBtn">Crear mi asistente</button><div id="startError" class="error"></div></section>
 <section id="onboarding" class="card hidden">
 <div class="pill">Configuración guiada</div>
 <div class="progress"><div id="bar"></div></div><div id="pct" class="muted">0%</div>
@@ -18,21 +18,21 @@
 <p id="help" class="muted"></p>
 <div id="chips" class="chips"></div>
 <div id="digitalBox" class="hidden">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <input id="webUrl" placeholder="🌐 Sitio web: https://...">
-    <input id="instagramUrl" placeholder="📸 Instagram: @usuario o enlace">
-    <input id="facebookUrl" placeholder="🔵 Facebook / Messenger">
-    <input id="tiktokUrl" placeholder="🎵 TikTok">
-    <input id="linkedinUrl" placeholder="💼 LinkedIn">
-    <input id="otherSocial" placeholder="🔗 Otra red o perfil">
-  </div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+  <input id="webUrl" placeholder="🌐 Sitio web: https://...">
+  <input id="instagramUrl" placeholder="📸 Instagram: @usuario o enlace">
+  <input id="facebookUrl" placeholder="🔵 Facebook / Messenger">
+  <input id="tiktokUrl" placeholder="🎵 TikTok">
+  <input id="linkedinUrl" placeholder="💼 LinkedIn">
+  <input id="otherSocial" placeholder="🔗 Otra red o perfil">
+ </div>
 </div>
 <textarea id="answer" placeholder="Escribe tu respuesta..."></textarea>
 <div class="actions"><button id="sendAnswer">Continuar</button></div>
 <p id="status" class="muted"></p>
 </section>
 <section id="ready" class="card hidden"><div class="pill">Demo activa</div><h2>Tu asistente está listo 🚀</h2><p class="muted">Puedes probarlo en el simulador web y, si registraste WhatsApp durante la configuración, también desde tu propio teléfono escribiendo al número demo de Nexia.</p><div id="demoStats" class="stats"></div><div id="whatsappReady" class="card hidden" style="margin-top:12px;background:#0e162d"><strong>WhatsApp conectado a tu demo</strong><p id="whatsappText" class="muted" style="margin-bottom:10px"></p><div class="actions"><button id="openWhatsapp">Probar por WhatsApp</button></div></div><details><summary>Ver configuración entendida</summary><pre id="summary" class="summary"></pre></details><div class="actions"><button id="openChat">Probar en simulador web</button></div></section>
-<section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 style="margin-bottom:4px">Habla con tu Nexia</h2></div><div id="remaining" class="stat">100 respuestas</div></div><div id="chat" class="chat"><div class="msg bot">¡Hola! 👋 Soy tu asistente de demostración. Pregúntame algo relacionado con la información que acabas de configurar.</div></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
+<section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 style="margin-bottom:4px">Habla con tu Nexi</h2></div><div id="remaining" class="stat">50 respuestas</div></div><div id="chat" class="chat"><div class="msg bot">¡Hola! 👋 Soy tu Nexi de demostración. Pregúntame algo relacionado con la información que acabas de configurar.</div></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
 </div>
 <script>
 const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');let token=null,summary={};
@@ -41,65 +41,65 @@ async function api(path,opt={}){const r=await fetch(API+path,{headers:{'Content-
 let currentQuestion=null,selectedMulti=new Set();
 function optionsFor(q){return q?.options||[]}
 function showQuestion(d){
-  summary=d.summary||summary; currentQuestion=d.question; selectedMulti=new Set();
-  const q=currentQuestion;
-  $('bar').style.width=(d.progress||0)+'%'; $('pct').textContent=(d.progress||0)+'%';
-  $('question').textContent=q?.text||''; $('help').textContent=q?.help||'';
-  $('answer').value=''; $('chips').innerHTML='';
-  $('digitalBox').classList.toggle('hidden',q?.kind!=='digital_presence');
-  $('answer').classList.toggle('hidden',q?.kind==='digital_presence');
-  if(q?.placeholder)$('answer').placeholder=q.placeholder;
-  else $('answer').placeholder=q?.kind==='long_text'?'Puedes escribir varios detalles aquí...':'Escribe tu respuesta...';
+ summary=d.summary||summary; currentQuestion=d.question; selectedMulti=new Set();
+ const q=currentQuestion;
+ $('bar').style.width=(d.progress||0)+'%'; $('pct').textContent=(d.progress||0)+'%';
+ $('question').textContent=q?.text||''; $('help').textContent=q?.help||'';
+ $('answer').value=''; $('chips').innerHTML='';
+ $('digitalBox').classList.toggle('hidden',q?.kind!=='digital_presence');
+ $('answer').classList.toggle('hidden',q?.kind==='digital_presence');
+ if(q?.placeholder)$('answer').placeholder=q.placeholder;
+ else $('answer').placeholder=q?.kind==='long_text'?'Puedes escribir varios detalles aquí...':'Escribe tu respuesta...';
 
-  const opts=optionsFor(q);
-  opts.forEach(v=>{
-    const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=v;
-    b.onclick=()=>{
-      if(q?.kind==='multi_choice'){
-        if(selectedMulti.has(v)){selectedMulti.delete(v);b.style.outline=''}
-        else{selectedMulti.add(v);b.style.outline='2px solid #a9b8ff'}
-        $('answer').value=[...selectedMulti].join(', ');
-      }else{
-        $('answer').value=v; submitAnswer();
-      }
-    };
-    $('chips').appendChild(b)
-  });
-  if(q?.kind!=='digital_presence')$('answer').focus();
+ const opts=optionsFor(q);
+ opts.forEach(v=>{
+  const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=v;
+  b.onclick=()=>{
+   if(q?.kind==='multi_choice'){
+    if(selectedMulti.has(v)){selectedMulti.delete(v);b.style.outline=''}
+    else{selectedMulti.add(v);b.style.outline='2px solid #a9b8ff'}
+    $('answer').value=[...selectedMulti].join(', ');
+   }else{
+    $('answer').value=v; submitAnswer();
+   }
+  };
+  $('chips').appendChild(b)
+ });
+ if(q?.kind!=='digital_presence')$('answer').focus();
 }
 async function start(){try{$('startBtn').disabled=true;const d=await api('/core/onboarding/start',{method:'POST',body:'{}'});token=d.token;$('startCard').classList.add('hidden');$('onboarding').classList.remove('hidden');showQuestion(d)}catch(e){$('startError').textContent=e.message;$('startBtn').disabled=false}}
 async function submitAnswer(){
-  let a;
-  if(currentQuestion?.kind==='digital_presence'){
-    a={
-      web:$('webUrl').value.trim(),
-      instagram:$('instagramUrl').value.trim(),
-      facebook:$('facebookUrl').value.trim(),
-      tiktok:$('tiktokUrl').value.trim(),
-      linkedin:$('linkedinUrl').value.trim(),
-      other:$('otherSocial').value.trim()
-    };
-  }else{
-    a=$('answer').value.trim();
-    if(!a)return;
-  }
-  try{
-    $('sendAnswer').disabled=true;$('status').textContent='Guardando...';$('status').className='muted';
-    const d=await api(`/core/onboarding/${token}/answer`,{method:'POST',body:JSON.stringify({answer:a})});
-    summary=d.summary||summary;
-    if(d.complete){
-      $('onboarding').classList.add('hidden');$('ready').classList.remove('hidden');
-      $('summary').textContent=JSON.stringify(summary,null,2);
-      $('demoStats').innerHTML='<div class="stat">100 respuestas gratis</div><div class="stat">24 horas</div><div class="stat">Avisos por correo activos</div>';
-      if(d.whatsapp?.enabled&&summary.whatsapp_demo){
-        $('whatsappReady').classList.remove('hidden');
-        $('whatsappText').textContent='Desde '+summary.whatsapp_demo+' escribe al número demo de Nexia '+(d.whatsapp.destination||'')+'. Nexi Core reconocerá tu teléfono y cargará este asistente.';
-        $('openWhatsapp').onclick=()=>window.open(d.whatsapp.wa_url,'_blank')
-      }
-    }else showQuestion(d);
-    $('status').textContent=''
-  }catch(e){$('status').textContent=e.message;$('status').className='error'}
-  finally{$('sendAnswer').disabled=false}
+ let a;
+ if(currentQuestion?.kind==='digital_presence'){
+  a={
+   web:$('webUrl').value.trim(),
+   instagram:$('instagramUrl').value.trim(),
+   facebook:$('facebookUrl').value.trim(),
+   tiktok:$('tiktokUrl').value.trim(),
+   linkedin:$('linkedinUrl').value.trim(),
+   other:$('otherSocial').value.trim()
+  };
+ }else{
+  a=$('answer').value.trim();
+  if(!a)return;
+ }
+ try{
+  $('sendAnswer').disabled=true;$('status').textContent='Guardando...';$('status').className='muted';
+  const d=await api(`/core/onboarding/${token}/answer`,{method:'POST',body:JSON.stringify({answer:a})});
+  summary=d.summary||summary;
+  if(d.complete){
+   $('onboarding').classList.add('hidden');$('ready').classList.remove('hidden');
+   $('summary').textContent=JSON.stringify(summary,null,2);
+   $('demoStats').innerHTML='<div class="stat">50 respuestas gratis</div><div class="stat">24 horas</div><div class="stat">Avisos por correo activos</div>';
+   if(d.whatsapp?.enabled&&summary.whatsapp_demo){
+    $('whatsappReady').classList.remove('hidden');
+    $('whatsappText').textContent='Desde '+summary.whatsapp_demo+' escribe al número demo de Nexia '+(d.whatsapp.destination||'')+'. Nexi Core reconocerá tu teléfono y cargará este asistente.';
+    $('openWhatsapp').onclick=()=>window.open(d.whatsapp.wa_url,'_blank')
+   }
+  }else showQuestion(d);
+  $('status').textContent=''
+ }catch(e){$('status').textContent=e.message;$('status').className='error'}
+ finally{$('sendAnswer').disabled=false}
 }
 function addMsg(text,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}
 async function sendChat(){const text=$('chatInput').value.trim();if(!text)return;addMsg(text,'me');$('chatInput').value='';try{$('chatSend').disabled=true;$('chatStatus').textContent='Nexia está respondiendo...';const d=await api(`/core/demo/${token}/message`,{method:'POST',body:JSON.stringify({message:text})});addMsg(d.reply,'bot');const rest=d.plan?.respuestas_restantes;if(rest!==undefined&&rest!==null)$('remaining').textContent=rest+' respuestas restantes';$('chatStatus').textContent=''}catch(e){$('chatStatus').textContent=e.message;$('chatStatus').className='error'}finally{$('chatSend').disabled=false;$('chatInput').focus()}}
