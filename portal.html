@@ -16,7 +16,7 @@
 <section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 style="margin-bottom:4px">Habla con tu Nexia</h2></div><div id="remaining" class="stat">100 respuestas</div></div><div id="chat" class="chat"><div class="msg bot">¡Hola! 👋 Soy tu asistente de demostración. Pregúntame algo relacionado con la información que acabas de configurar.</div></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
 </div>
 <script>
-const API=(new URLSearchParams(location.search).get('api')||location.origin).replace(/\/$/,'');let token=null,summary={};
+const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');let token=null,summary={};
 const $=id=>document.getElementById(id); const esc=s=>String(s??'');
 async function api(path,opt={}){const r=await fetch(API+path,{headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
 function optionsFor(q){const m={tipo_cliente:['Personal','Profesional independiente','Empresa/emprendimiento'],handoff:['Sí','No'],desconocido:['Decir que no sabe','Pedir más detalles','Derivar a una persona']};return q?.options||m[q?.key]||[]}
