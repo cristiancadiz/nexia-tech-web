@@ -112,7 +112,22 @@ function renderChatHeader(){const x=state.selected||{};$('chatName').textContent
 function renderMessages(){$('chatBody').innerHTML=state.messages.map(m=>`<div class="msg ${m.direccion==='entrante'?'in':'out'}"><div>${esc(m.mensaje)}</div><div style="font-size:10px;opacity:.65;margin-top:5px">${fmt(m.fecha)}</div></div>`).join('');$('chatBody').scrollTop=$('chatBody').scrollHeight}
 async function takeConversation(){if(!state.selected)return;try{await api(`/portal/conversacion/${state.selected.id}/tomar`,{method:'POST',body:'{}'});state.selected.modo_atencion='ejecutivo';renderChatHeader();await Promise.allSettled([loadConversations(),loadHandoffs()])}catch(e){alert(e.message)}}
 async function closeConversation(){if(!state.selected)return;if(!confirm('¿Devolver esta conversación al asistente?'))return;try{await api(`/portal/conversacion/${state.selected.id}/cerrar`,{method:'POST',body:'{}'});state.selected.modo_atencion='bot';renderChatHeader();await Promise.allSettled([loadConversations(),loadHandoffs()])}catch(e){alert(e.message)}}
-async function sendMessage(){const msg=$('messageInput').value.trim();if(!msg||!state.selected)return;try{$('sendBtn').disabled=true;if(state.selected.modo_atencion!=='ejecutivo')await takeConversation();await api('/portal/enviar-mensaje',{method:'POST',body:JSON.stringify({conversacion_id:state.selected.id,mensaje:msg})});$('messageInput').value='';await selectConversation(state.selected.id)}catch(e){alert(e.message)}finally{$('sendBtn').disabled=false}}
+async function sendMessage(){
+ const msg=$('messageInput').value.trim();
+ const conversationId=String(state.selected?.id||'').trim();
+ if(!msg){return}
+ if(!conversationId){alert('Selecciona una conversación antes de enviar.');return}
+ try{
+   $('sendBtn').disabled=true;
+   // Guardamos el ID antes de tomar/recargar la conversación para que nunca se
+   // pierda durante las actualizaciones de la bandeja.
+   if(state.selected?.modo_atencion!=='ejecutivo')await takeConversation();
+   await api('/portal/enviar-mensaje',{method:'POST',body:JSON.stringify({conversacion_id:conversationId,mensaje:msg})});
+   $('messageInput').value='';
+   await loadConversations();
+   await selectConversation(conversationId);
+ }catch(e){alert(e.message)}finally{$('sendBtn').disabled=false}
+}
 async function loadAgenda(){try{const d=await api('/portal/agenda');const res=d.reservas||[],sol=d.solicitudes||[];$('aRes').textContent=res.length;$('aSol').textContent=sol.length;const rows=[...res.map(x=>({tipo:'Reserva',cliente:x.nombre_cliente||x.telefono,servicio:x.servicio,fecha:x.fecha,hora:x.hora,estado:x.estado,empresa:x.empresa_id})),...sol.map(x=>({tipo:'Solicitud',cliente:x.nombre||x.nombre_cliente||x.identificador,servicio:x.servicio||x.servicio_nombre,fecha:x.fecha,hora:x.hora,estado:x.estado,empresa:x.empresa_id}))];$('agendaRows').innerHTML=rows.map(x=>`<tr><td>${esc(x.tipo)}</td><td>${esc(x.cliente||'—')}</td><td>${esc(x.servicio||'—')}</td><td>${esc(x.fecha||'—')}</td><td>${esc(x.hora||'—')}</td><td>${esc(x.estado||'—')}</td><td class="small">${esc(x.empresa||'—')}</td></tr>`).join('')||'<tr><td colspan="7">Sin registros.</td></tr>'}catch(e){$('agendaRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}}
 async function loadConsumption(){try{const d=await api('/portal/consumo');$('consRows').innerHTML=(d.planes||[]).map(x=>`<tr><td class="small">${esc(x.empresa_id)}</td><td>${esc(x.tipo_plan||'legacy')}</td><td>${esc(x.estado||'activo')}</td><td>${x.mensajes_usados??x.respuestas_usadas??'—'}</td><td>${x.limite_mensajes??x.limite_respuestas??'—'}</td><td>${fmt(x.demo_inicio)}</td><td>${fmt(x.demo_fin)}</td></tr>`).join('')||'<tr><td colspan="7">Sin planes registrados.</td></tr>'}catch(e){$('consRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}}
 
