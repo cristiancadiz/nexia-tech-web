@@ -10,7 +10,7 @@
 <body><div class="wrap">
 <div class="brand">NEXIA TECH</div>
 <section class="hero"><span class="pill">Configura tu asistente en 3 minutos</span><h1>Tu negocio. Tu asistente. Listo para conversar.</h1><p class="muted">Configura tu asistente para tu negocio en pocos minutos y pruébalo gratis con 50 mensajes totales durante 24 horas. Luego puedes llevar la experiencia a WhatsApp.</p></section>
-<section id="startCard" class="card"><h2>Comenzar demo</h2><p class="muted">No necesitas configurar integraciones técnicas para comenzar. Nexia entiende tu negocio, tus servicios y tu presencia digital; después puedes probar el asistente en el simulador o por WhatsApp.</p><button id="startBtn">Crear mi asistente</button><div id="startError" class="error"></div></section>
+<section id="startCard" class="card"><h2>Comenzar prueba</h2><p class="muted">No necesitas configurar integraciones técnicas para comenzar. Nexia entiende tu negocio, tus servicios y tu presencia digital; después puedes probar el asistente en el simulador o por WhatsApp.</p><button id="startBtn">Crear mi asistente</button><div id="startError" class="error"></div></section>
 <section id="onboarding" class="card hidden">
 <div class="pill">Configuración guiada</div>
 <div class="progress"><div id="bar"></div></div><div id="pct" class="muted">0%</div>
@@ -27,7 +27,7 @@
 <div class="actions"><button id="sendAnswer">Continuar</button></div>
 <p id="status" class="muted"></p>
 </section>
-<section id="ready" class="card hidden"><div class="pill">Demo activa</div><h2>Tu asistente está listo 🚀</h2><p class="muted">Puedes probarlo por WhatsApp, en el simulador web y también vivir la experiencia completa del Portal Nexia.</p><div id="portalAccessNote" class="card" style="margin:14px 0;background:#eef2ff;color:#172554"><strong>Acceso al Portal sin contraseña</strong><p id="portalEmailText" style="margin:7px 0 0">Usaremos el correo ingresado durante la configuración para asociar tu acceso y enviarte avisos relacionados con la demo.</p></div><div id="demoStats" class="stats"></div><div id="whatsappReady" class="card hidden" style="margin-top:12px;background:#0e162d"><strong>WhatsApp conectado a tu demo</strong><p id="whatsappText" class="muted" style="margin-bottom:10px"></p><div class="actions"><button id="openWhatsapp">Probar por WhatsApp</button></div></div><details><summary>Ver configuración entendida</summary><pre id="summary" class="summary"></pre></details><div class="actions"><button id="openChat">Probar en simulador web</button><button id="openPortal">Ver mi Portal</button></div></section>
+<section id="ready" class="card hidden"><div class="pill">Prueba activa</div><h2>Tu asistente está listo 🚀</h2><p class="muted">Puedes probarlo por WhatsApp, en el simulador web y también vivir la experiencia completa del Portal Nexia.</p><div id="portalAccessNote" class="card" style="margin:14px 0;background:#eef2ff;color:#172554"><strong>Acceso al Portal sin contraseña</strong><p id="portalEmailText" style="margin:7px 0 0">Usaremos el correo ingresado durante la configuración para asociar tu acceso y enviarte avisos relacionados con la prueba.</p></div><div id="demoStats" class="stats"></div><div id="whatsappReady" class="card hidden" style="margin-top:12px;background:#0e162d"><strong>WhatsApp conectado a tu prueba</strong><p id="whatsappText" class="muted" style="margin-bottom:10px"></p><div class="actions"><button id="openWhatsapp">Probar por WhatsApp</button></div></div><details><summary>Ver configuración entendida</summary><pre id="summary" class="summary"></pre></details><div class="actions"><button id="openChat">Probar en simulador web</button><button id="openPortal">Ver mi Portal</button></div></section>
 <section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 id="chatTitle" style="margin-bottom:4px">Habla con tu asistente</h2></div><div id="remaining" class="stat">50 mensajes</div></div><div id="chat" class="chat"></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
 </div>
 <script>
@@ -97,12 +97,12 @@ async function submitAnswer(){
    $('onboarding').classList.add('hidden');$('ready').classList.remove('hidden');
    $('summary').textContent=JSON.stringify(summary,null,2); refreshAssistantIdentity();
    const correoPortal=summary.email_contacto||'';
-   $('portalEmailText').textContent=correoPortal?`Usaremos ${correoPortal} para asociar tu acceso al Portal Nexia y enviarte avisos de la demo. No necesitas contraseña durante esta prueba.`:'Tu demo incluye acceso temporal al Portal Nexia sin contraseña.';
+   $('portalEmailText').textContent=correoPortal?`Usaremos ${correoPortal} para asociar tu acceso al Portal Nexia y enviarte avisos de la prueba. No necesitas contraseña durante esta prueba.`:'Tu prueba incluye acceso temporal al Portal Nexia sin contraseña.';
    $('openPortal').onclick=()=>window.open(`https://nexia-tech.com/portal.html?demo_token=${encodeURIComponent(token)}`,'_blank');
    $('demoStats').innerHTML='<div class="stat">50 mensajes gratis</div><div class="stat">24 horas</div><div class="stat">Portal incluido</div>';
    if(d.whatsapp?.enabled&&summary.whatsapp_demo){
     $('whatsappReady').classList.remove('hidden');
-    $('whatsappText').textContent='Desde '+summary.whatsapp_demo+' abre el WhatsApp compartido de Nexia '+(d.whatsapp.destination||'')+'. El Router cargará automáticamente el contexto de esta demo.';
+    $('whatsappText').textContent='Desde '+summary.whatsapp_demo+' abre el WhatsApp compartido de Nexia '+(d.whatsapp.destination||'')+'. El Router cargará automáticamente el contexto de esta prueba.';
     $('openWhatsapp').onclick=()=>window.open(d.whatsapp.wa_url,'_blank')
    }
   }else showQuestion(d);
