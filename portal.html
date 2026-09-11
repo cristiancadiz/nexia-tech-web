@@ -316,6 +316,8 @@
   }
 }
 
+
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.formgrid label{display:grid;gap:7px;font-size:13px;font-weight:700}.formgrid .wide{grid-column:1/-1}.formgrid input,.formgrid textarea,.cfg-service input{width:100%;box-sizing:border-box}.formgrid textarea{min-height:90px;resize:vertical}.cfg-service{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,.7fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}.cfg-service:last-child{border-bottom:0}.cfg-service .svc-actions{display:flex;gap:6px}@media(max-width:760px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.cfg-service{grid-template-columns:1fr}.cfg-service .svc-actions{justify-content:flex-end}}
 </style>
 </head>
 <body>
@@ -414,7 +416,54 @@
  </div>
 </section>
 
-<section id="page-settings" class="page"><div class="sectionhead"><h2>Configuración</h2></div><div class="card"><h3 style="margin-top:0">Seguridad y alcance</h3><p id="settingsScope"></p><p class="small">El superusuario maestro se valida en backend. Los clientes normales solo reciben información correspondiente a su empresa_id.</p></div></section>
+<section id="page-settings" class="page">
+<div class="sectionhead"><div><h2>Configuración de tu asistente</h2><div class="small">Puedes modificar los datos que utiliza tu asistente sin repetir el onboarding.</div></div><button class="btn" onclick="loadBusinessSettings()">↻ Actualizar</button></div>
+
+<div id="settingsNotice"></div>
+
+<div class="card">
+<h3 style="margin-top:0">Información del negocio</h3>
+<div class="formgrid">
+<label>Nombre del negocio<input id="cfgBusinessName" placeholder="Nombre de tu negocio"></label>
+<label>Nombre del asistente<input id="cfgAssistantName" placeholder="Ej: Luna, Sofía, Max"></label>
+<label class="wide">¿A qué se dedica?<textarea id="cfgRubro" placeholder="Describe brevemente tu actividad"></textarea></label>
+<label class="wide">Descripción adicional<textarea id="cfgDescription" placeholder="Información útil para responder consultas"></textarea></label>
+<label class="wide">Objetivo del asistente<textarea id="cfgObjective" placeholder="Ej: responder consultas, captar interesados y agendar"></textarea></label>
+<label>Tono del asistente<input id="cfgTone" placeholder="Ej: cercano, profesional y breve"></label>
+<label>Correo de contacto<input id="cfgEmail" type="email" placeholder="contacto@empresa.cl"></label>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Atención presencial</h3>
+<label style="display:flex;align-items:center;gap:10px"><input id="cfgHasAddress" type="checkbox" style="width:auto"> Atiendo clientes en una dirección física</label>
+<div id="cfgAddressFields" class="formgrid" style="margin-top:14px">
+<label>Dirección<input id="cfgAddress" placeholder="Av. Libertad 1234"></label>
+<label>Comuna<input id="cfgComuna" placeholder="Viña del Mar"></label>
+<label class="wide">Referencia opcional<input id="cfgAddressRef" placeholder="Local 4, segundo piso"></label>
+<label class="wide">Google Maps<input id="cfgMaps" placeholder="Puedes pegar el enlace o dejarlo vacío para generarlo"></label>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Horario y agenda</h3>
+<div class="formgrid">
+<label>Hora de apertura<input id="cfgOpen" type="number" min="0" max="23" placeholder="9"></label>
+<label>Hora de cierre<input id="cfgClose" type="number" min="0" max="23" placeholder="18"></label>
+<label>Duración habitual de una reserva (min)<input id="cfgDuration" type="number" min="5" max="1440" placeholder="60"></label>
+<label class="wide">Instrucciones adicionales para el asistente<textarea id="cfgPromptExtra" placeholder="Reglas o información especial que quieras que el asistente considere"></textarea></label>
+</div>
+</div>
+
+<div class="card">
+<div class="sectionhead" style="margin-bottom:12px"><div><h3 style="margin:0">Productos y servicios</h3><div class="small">El precio es opcional. Los cambios se usan inmediatamente en respuestas y agenda.</div></div><button class="btn secondary" onclick="addPortalServiceRow()">＋ Agregar</button></div>
+<div id="cfgServices"></div>
+</div>
+
+<div class="actions" style="margin-top:18px"><button class="btn" id="saveBusinessSettings" onclick="saveBusinessSettings()">Guardar configuración</button></div>
+
+<div class="card" style="margin-top:18px"><h3 style="margin-top:0">Seguridad y alcance</h3><p id="settingsScope"></p><p class="small">Cada cliente solo puede modificar la configuración correspondiente a su propia empresa.</p></div>
+</section>
 </main></div></div>
 <script>
 const PARAMS=new URLSearchParams(location.search);
@@ -432,7 +481,7 @@ async function publicFetch(path,opt={}){try{const options={...opt,headers:{'Cont
 async function api(path,opt={}){const headers={...(opt.headers||{})};if(state.demoToken)headers['X-Demo-Token']=state.demoToken;else if(state.authToken)headers['Authorization']=`Bearer ${state.authToken}`;else throw new Error('Sesión expirada');return publicFetch(path,{...opt,headers})}
 const navItems=[['dashboard','▣','Inicio','Resumen de la operación'],['assistant','🤖','Probar mi asistente','Abre el asistente de tu empresa'],['conversations','💬','Conversaciones','Bandeja de atención humana'],['agenda','📅','Agenda','Reservas y solicitudes'],['interested','👥','Personas interesadas','Contactos captados'],['statistics','📊','Estadísticas','Actividad y rendimiento'],['consumption','⚡','Consumo','Planes y mensajes'],['demos','🧪','Pruebas','Uso, vigencia y activación'],['companies','🏢','Empresas','Administración de clientes'],['integrations','🔗','Integraciones','Conecta Google Calendar y otras herramientas'],['settings','⚙','Configuración','Seguridad y alcance']];
 function buildNav(){const html=navItems.map(([id,ic,n])=>`<button data-page="${id}" class="${id==='dashboard'?'active':''}">${ic} &nbsp;${n}</button>`).join('');$('nav').innerHTML=html;$('mobileNav').innerHTML=html;document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page))}
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='assistant')loadMyAssistant();if(id==='conversations')loadConversations();if(id==='agenda')loadAgenda();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies();if(id==='integrations')loadIntegrations()}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='assistant')loadMyAssistant();if(id==='conversations')loadConversations();if(id==='agenda')loadAgenda();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies();if(id==='integrations')loadIntegrations();if(id==='settings')loadBusinessSettings()}
 async function init(){
   buildNav();
   if(PARAMS.get('cuenta')==='creada'){
@@ -531,6 +580,129 @@ async function createPaidAccess(){
     location.href=url.toString();
   },1800);
  }catch(e){$('setupInfo').textContent=e.message}
+}
+
+
+let businessSettingsData=null;
+
+function cfgAddressToggle(){
+ const on=$('cfgHasAddress')?.checked;
+ if($('cfgAddressFields'))$('cfgAddressFields').style.opacity=on?'1':'.45';
+ ['cfgAddress','cfgComuna','cfgAddressRef','cfgMaps'].forEach(id=>{if($(id))$(id).disabled=!on});
+}
+
+function serviceRowHTML(s={}){
+ const id=s.id||'';
+ return `<div class="cfg-service" data-id="${esc(id)}">
+   <input class="svc-name" placeholder="Producto o servicio" value="${esc(s.nombre||'')}">
+   <input class="svc-price" placeholder="Precio opcional" value="${esc(s.precio_texto&&s.precio_texto!=='Valor por confirmar'?s.precio_texto:'')}">
+   <div class="svc-actions">
+     <button class="btn secondary svc-save" type="button">Guardar</button>
+     <button class="btn secondary svc-delete" type="button">Eliminar</button>
+   </div>
+ </div>`;
+}
+
+function wireServiceRows(){
+ document.querySelectorAll('#cfgServices .cfg-service').forEach(row=>{
+   row.querySelector('.svc-save').onclick=()=>savePortalServiceRow(row);
+   row.querySelector('.svc-delete').onclick=()=>deletePortalServiceRow(row);
+ });
+}
+
+function addPortalServiceRow(){
+ $('cfgServices').insertAdjacentHTML('beforeend',serviceRowHTML({}));
+ wireServiceRows();
+ const rows=$('cfgServices').querySelectorAll('.cfg-service');
+ rows[rows.length-1]?.querySelector('.svc-name')?.focus();
+}
+
+async function savePortalServiceRow(row){
+ const id=row.dataset.id||'';
+ const nombre=row.querySelector('.svc-name').value.trim();
+ const precio_texto=row.querySelector('.svc-price').value.trim();
+ if(!nombre){alert('Escribe el nombre del producto o servicio.');return}
+ const btn=row.querySelector('.svc-save');
+ try{
+   btn.disabled=true;btn.textContent='Guardando…';
+   const d=await api(id?`/portal/configuracion-negocio/servicio/${id}`:'/portal/configuracion-negocio/servicios',{
+     method:id?'PATCH':'POST',
+     body:JSON.stringify({nombre,precio_texto})
+   });
+   if(d.servicio?.id)row.dataset.id=d.servicio.id;
+   btn.textContent='Guardado ✓';
+   setTimeout(()=>btn.textContent='Guardar',1200);
+ }catch(e){alert(e.message);btn.textContent='Guardar'}finally{btn.disabled=false}
+}
+
+async function deletePortalServiceRow(row){
+ const id=row.dataset.id||'';
+ if(!id){row.remove();return}
+ if(!confirm('¿Eliminar este producto o servicio?'))return;
+ try{
+   await api(`/portal/configuracion-negocio/servicio/${id}`,{method:'DELETE'});
+   row.remove();
+ }catch(e){alert(e.message)}
+}
+
+async function loadBusinessSettings(){
+ const notice=$('settingsNotice');
+ if(!notice)return;
+ notice.innerHTML='<div class="small">Cargando configuración…</div>';
+ try{
+   const d=await api('/portal/configuracion-negocio');
+   businessSettingsData=d;
+   const datos=d.datos||{},conf=d.configuracion||{},empresa=d.empresa||{};
+   $('cfgBusinessName').value=datos.nombre_negocio||empresa.nombre||'';
+   $('cfgAssistantName').value=datos.nombre_asistente||conf.asistente_nombre||'';
+   $('cfgRubro').value=datos.rubro||conf.tipo_negocio||'';
+   $('cfgDescription').value=conf.descripcion_empresa||datos.descripcion_empresa||'';
+   $('cfgObjective').value=Array.isArray(datos.objetivo)?datos.objetivo.join(', '):(datos.objetivo||'');
+   $('cfgTone').value=datos.tono||'';
+   $('cfgEmail').value=conf.correo_ejecutivo||datos.email_contacto||'';
+   $('cfgHasAddress').checked=!!datos.atiende_direccion_fisica;
+   $('cfgAddress').value=(datos.direccion||'').replace(datos.comuna?`, ${datos.comuna}`:'','');
+   $('cfgComuna').value=datos.comuna||'';
+   $('cfgAddressRef').value=datos.referencia_direccion||'';
+   $('cfgMaps').value=datos.google_maps_url||'';
+   $('cfgOpen').value=conf.hora_apertura??'';
+   $('cfgClose').value=conf.hora_cierre??'';
+   $('cfgDuration').value=conf.duracion_reserva??'';
+   $('cfgPromptExtra').value=conf.prompt_extra||'';
+   $('cfgServices').innerHTML=(d.servicios||[]).map(serviceRowHTML).join('')||'<div class="small">Aún no tienes productos o servicios. Usa “Agregar”.</div>';
+   wireServiceRows();cfgAddressToggle();
+   notice.innerHTML='';
+ }catch(e){notice.innerHTML=`<div class="error">${esc(e.message)}</div>`}
+}
+
+async function saveBusinessSettings(){
+ const btn=$('saveBusinessSettings'),notice=$('settingsNotice');
+ const payload={
+   nombre_negocio:$('cfgBusinessName').value.trim(),
+   nombre_asistente:$('cfgAssistantName').value.trim(),
+   rubro:$('cfgRubro').value.trim(),
+   descripcion_empresa:$('cfgDescription').value.trim(),
+   objetivo:$('cfgObjective').value.trim(),
+   tono:$('cfgTone').value.trim(),
+   email_contacto:$('cfgEmail').value.trim(),
+   atiende_direccion_fisica:$('cfgHasAddress').checked,
+   direccion:$('cfgAddress').value.trim(),
+   comuna:$('cfgComuna').value.trim(),
+   referencia_direccion:$('cfgAddressRef').value.trim(),
+   google_maps_url:$('cfgMaps').value.trim(),
+   hora_apertura:$('cfgOpen').value===''?null:Number($('cfgOpen').value),
+   hora_cierre:$('cfgClose').value===''?null:Number($('cfgClose').value),
+   duracion_reserva:$('cfgDuration').value===''?null:Number($('cfgDuration').value),
+   prompt_extra:$('cfgPromptExtra').value.trim()
+ };
+ try{
+   btn.disabled=true;btn.textContent='Guardando…';
+   const d=await api('/portal/configuracion-negocio',{method:'PATCH',body:JSON.stringify(payload)});
+   notice.innerHTML=`<div class="pay-status ok"><b>Configuración guardada ✓</b> Los cambios ya están disponibles para tu asistente.</div>`;
+   businessSettingsData=d;
+   setTimeout(()=>notice.innerHTML='',3500);
+ }catch(e){notice.innerHTML=`<div class="error">${esc(e.message)}</div>`}
+ finally{btn.disabled=false;btn.textContent='Guardar configuración'}
 }
 
 let myAssistantData=null;
@@ -643,6 +815,7 @@ function checkCalendarReturn(){
 
 async function loadCompanies(){if(!state.me?.superadmin){$('companyAdminNote').classList.remove('hidden');$('companyTable').classList.add('hidden');return}try{const d=await api('/portal/admin/empresas');$('companyRows').innerHTML=(d.empresas||[]).map(x=>`<tr><td><b>${esc(x.nombre)}</b></td><td>${x.activo?'Activa':'Inactiva'}</td><td>${fmt(x.created_at)}</td><td class="small">${esc(x.id)}</td></tr>`).join('')}catch(e){$('companyRows').innerHTML=`<tr><td colspan="4" class="error">${esc(e.message)}</td></tr>`}}
 function handleDeepLink(){const p=new URLSearchParams(location.search),id=p.get('conversacion');if(id){go('conversations');setTimeout(async()=>{await loadConversations();const found=state.conversations.find(x=>x.id===id);if(found)selectConversation(id)},250)}}
-$('loginBtn').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('logoutBtn').onclick=logout;setInterval(()=>{if(!$('appView').classList.contains('hidden')){renderConversations();if(state.selected)renderChatHeader()}},30000);$('convSearch').addEventListener('input',renderConversations);$('takeBtn').onclick=takeConversation;$('closeBtn').onclick=closeConversation;$('sendBtn').onclick=sendMessage;$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});init();
+$('loginBtn').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('logoutBtn').onclick=logout;setInterval(()=>{if(!$('appView').classList.contains('hidden')){renderConversations();if(state.selected)renderChatHeader()}},30000);$('convSearch').addEventListener('input',renderConversations);$('takeBtn').onclick=takeConversation;$('closeBtn').onclick=closeConversation;$('sendBtn').onclick=sendMessage;$('cfgHasAddress')?.addEventListener('change',cfgAddressToggle);
+$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});init();
 </script>
 </body></html>
