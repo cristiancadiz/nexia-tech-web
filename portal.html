@@ -318,7 +318,44 @@
 
 
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.formgrid label{display:grid;gap:7px;font-size:13px;font-weight:700}.formgrid .wide{grid-column:1/-1}.formgrid input,.formgrid textarea,.formgrid select,.cfg-service input{width:100%;box-sizing:border-box}.formgrid select{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:11px 12px;border-radius:10px}.formgrid textarea{min-height:90px;resize:vertical}.cfg-service{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,.7fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}.cfg-service:last-child{border-bottom:0}.cfg-service .svc-actions{display:flex;gap:6px}@media(max-width:760px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.cfg-service{grid-template-columns:1fr}.cfg-service .svc-actions{justify-content:flex-end}}
+
+/* ==========================================================
+   NEXIA CALENDAR
+   ========================================================== */
+.agenda-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.agenda-tabs .btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.calendar-wrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.calendar-toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+.calendar-toolbar label{font-size:12px;color:var(--muted);font-weight:700;display:grid;gap:6px}
+.calendar-toolbar select{min-width:160px;border:1px solid var(--line);background:white;color:var(--ink);padding:9px 10px;border-radius:10px}
+#nexiaCalendar{min-height:650px}
+.fc .fc-toolbar-title{font-size:1.25rem}
+.fc .fc-button{background:#111827;border-color:#111827}
+.fc .fc-button:hover{background:#1f2937;border-color:#1f2937}
+.fc .fc-button-primary:not(:disabled).fc-button-active{background:#334155;border-color:#334155}
+.fc .fc-daygrid-event{border-radius:7px;padding:2px 5px}
+.fc .fc-timegrid-event{border-radius:8px}
+.fc-event.estado-confirmada{background:#067647!important;border-color:#067647!important}
+.fc-event.estado-cancelada{background:#98a2b3!important;border-color:#98a2b3!important;opacity:.65}
+.fc-event.estado-pendiente{background:#b54708!important;border-color:#b54708!important}
+.calendar-modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:grid;place-items:center;z-index:9999;padding:18px}
+.calendar-modal{width:min(520px,100%);background:#fff;border-radius:18px;padding:22px;box-shadow:0 30px 90px rgba(15,23,42,.28)}
+.calendar-modal h3{margin:0 0 14px}
+.calendar-detail{display:grid;grid-template-columns:130px 1fr;gap:9px 12px;font-size:14px}
+.calendar-detail b{color:var(--muted)}
+.calendar-modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px}
+@media(max-width:700px){
+ #nexiaCalendar{min-height:520px}
+ .fc .fc-toolbar{display:grid;gap:8px}
+ .fc .fc-toolbar-chunk{display:flex;justify-content:center;flex-wrap:wrap}
+ .calendar-detail{grid-template-columns:1fr}
+}
+
 </style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
 </head>
 <body>
 <div id="loginView" class="loginwrap">
@@ -372,22 +409,59 @@
 
 <section id="page-agenda" class="page">
  <div class="sectionhead">
-  <div><h2>Agenda</h2><div id="agendaSyncStatus" class="small">Google Calendar se sincroniza al actualizar.</div></div>
+  <div>
+   <h2>Agenda</h2>
+   <div id="agendaSyncStatus" class="small">Google Calendar se sincroniza con Nexia.</div>
+  </div>
   <div class="toolbar">
    <button class="btn" onclick="syncAgenda()">↻ Sincronizar Calendar</button>
-   <button class="btn" onclick="loadAgenda()">Actualizar</button>
+   <button class="btn" onclick="refreshAgendaAll()">Actualizar</button>
   </div>
  </div>
+
  <div class="cards">
   <div class="card metric"><div class="k">RESERVAS</div><div class="v" id="aRes">0</div></div>
   <div class="card metric"><div class="k">SOLICITUDES DE AGENDA</div><div class="v" id="aSol">0</div></div>
  </div>
- <div class="panelnote" style="margin-bottom:14px">Las citas creadas o modificadas en Google Calendar se reflejan aquí. Si reprogramas o cancelas desde Nexia, el cambio también se aplica en Google Calendar.</div>
- <div class="section tablewrap">
-  <table class="table">
-   <thead><tr><th>Tipo</th><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Origen</th><th>Acciones</th></tr></thead>
-   <tbody id="agendaRows"></tbody>
-  </table>
+
+ <div class="sectionhead" style="margin-top:18px">
+  <div class="agenda-tabs">
+   <button id="agendaTabCalendar" class="btn active" onclick="setAgendaView('calendar')">Calendario</button>
+   <button id="agendaTabList" class="btn" onclick="setAgendaView('list')">Lista</button>
+  </div>
+ </div>
+
+ <div id="agendaCalendarView">
+  <div class="calendar-wrap">
+   <div class="calendar-toolbar">
+    <label>Estado
+     <select id="agendaStatusFilter" onchange="reloadCalendar()">
+      <option value="">Todos</option>
+      <option value="confirmada">Confirmadas</option>
+      <option value="cancelada">Canceladas</option>
+      <option value="pendiente">Pendientes</option>
+     </select>
+    </label>
+    <label>Servicio
+     <select id="agendaServiceFilter" onchange="reloadCalendar()">
+      <option value="">Todos los servicios</option>
+     </select>
+    </label>
+   </div>
+   <div id="nexiaCalendar"></div>
+  </div>
+ </div>
+
+ <div id="agendaListView" class="hidden">
+  <div class="panelnote" style="margin-bottom:14px">
+   Las citas creadas o modificadas en Google Calendar se reflejan aquí. Reprogramar o cancelar desde Nexia también actualiza Google Calendar.
+  </div>
+  <div class="section tablewrap">
+   <table class="table">
+    <thead><tr><th>Tipo</th><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Origen</th><th>Acciones</th></tr></thead>
+    <tbody id="agendaRows"></tbody>
+   </table>
+  </div>
  </div>
 </section>
 
@@ -557,7 +631,7 @@ async function publicFetch(path,opt={}){try{const options={...opt,headers:{'Cont
 async function api(path,opt={}){const headers={...(opt.headers||{})};if(state.demoToken)headers['X-Demo-Token']=state.demoToken;else if(state.authToken)headers['Authorization']=`Bearer ${state.authToken}`;else throw new Error('Sesión expirada');return publicFetch(path,{...opt,headers})}
 const navItems=[['dashboard','▣','Inicio','Resumen de la operación'],['assistant','🤖','Probar mi asistente','Abre el asistente de tu empresa'],['conversations','💬','Conversaciones','Bandeja de atención humana'],['agenda','📅','Agenda','Reservas y solicitudes'],['interested','👥','Personas interesadas','Contactos captados'],['statistics','📊','Estadísticas','Actividad y rendimiento'],['consumption','⚡','Consumo','Planes y mensajes'],['demos','🧪','Pruebas','Uso, vigencia y activación'],['companies','🏢','Empresas','Administración de clientes'],['integrations','🔗','Integraciones','Conecta Google Calendar y otras herramientas'],['settings','⚙','Configuración','Seguridad y alcance']];
 function buildNav(){const html=navItems.map(([id,ic,n])=>`<button data-page="${id}" class="${id==='dashboard'?'active':''}">${ic} &nbsp;${n}</button>`).join('');$('nav').innerHTML=html;$('mobileNav').innerHTML=html;document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page))}
-function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='assistant')loadMyAssistant();if(id==='conversations')loadConversations();if(id==='agenda')loadAgenda();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies();if(id==='integrations')loadIntegrations();if(id==='settings')loadBusinessSettings()}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='assistant')loadMyAssistant();if(id==='conversations')loadConversations();if(id==='agenda')openAgendaPage();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies();if(id==='integrations')loadIntegrations();if(id==='settings')loadBusinessSettings()}
 async function init(){
   buildNav();
   if(PARAMS.get('cuenta')==='creada'){
@@ -627,12 +701,54 @@ async function sendMessage(){
    await selectConversation(conversationId);
  }catch(e){alert(e.message)}finally{$('sendBtn').disabled=false}
 }
+
+let nexiaCalendar=null;
+let agendaReservations=[];
+let agendaRequests=[];
+
+async function openAgendaPage(){
+ await loadAgenda();
+ setTimeout(()=>initNexiaCalendar(),0);
+}
+
+async function refreshAgendaAll(){
+ await loadAgenda();
+ if(nexiaCalendar)nexiaCalendar.refetchEvents();
+}
+
+function setAgendaView(view){
+ const isCalendar=view==='calendar';
+ $('agendaCalendarView').classList.toggle('hidden',!isCalendar);
+ $('agendaListView').classList.toggle('hidden',isCalendar);
+ $('agendaTabCalendar').classList.toggle('active',isCalendar);
+ $('agendaTabList').classList.toggle('active',!isCalendar);
+ if(isCalendar){
+  setTimeout(()=>{
+   initNexiaCalendar();
+   nexiaCalendar?.updateSize();
+  },0);
+ }
+}
+
+function updateAgendaServiceFilter(){
+ const sel=$('agendaServiceFilter');
+ if(!sel)return;
+ const current=sel.value;
+ const services=[...new Set(agendaReservations.map(x=>x.servicio).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+ sel.innerHTML='<option value="">Todos los servicios</option>'+services.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+ if(services.includes(current))sel.value=current;
+}
+
 async function loadAgenda(){
  try{
   const d=await api('/portal/agenda');
   const res=d.reservas||[],sol=d.solicitudes||[];
+  agendaReservations=res;
+  agendaRequests=sol;
+
   $('aRes').textContent=res.filter(x=>(x.estado||'').toLowerCase()!=='cancelada').length;
   $('aSol').textContent=sol.length;
+  updateAgendaServiceFilter();
 
   const rows=[
    ...res.map(x=>({
@@ -671,6 +787,146 @@ async function loadAgenda(){
  }
 }
 
+function initNexiaCalendar(){
+ if(nexiaCalendar){
+  nexiaCalendar.updateSize();
+  return;
+ }
+ if(typeof FullCalendar==='undefined'){
+  $('nexiaCalendar').innerHTML='<div class="error">No se pudo cargar el componente visual del calendario.</div>';
+  return;
+ }
+
+ nexiaCalendar=new FullCalendar.Calendar($('nexiaCalendar'),{
+  locale:'es',
+  initialView:'dayGridMonth',
+  height:'auto',
+  nowIndicator:true,
+  editable:true,
+  eventDurationEditable:false,
+  firstDay:1,
+  slotMinTime:'07:00:00',
+  slotMaxTime:'23:00:00',
+  headerToolbar:{
+   left:'prev,next today',
+   center:'title',
+   right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+  },
+  buttonText:{
+   today:'Hoy',
+   month:'Mes',
+   week:'Semana',
+   day:'Día',
+   list:'Lista'
+  },
+  events:async function(info,success,failure){
+   try{
+    const params=new URLSearchParams({
+     start:info.startStr,
+     end:info.endStr,
+    });
+    const estado=$('agendaStatusFilter')?.value||'';
+    const servicio=$('agendaServiceFilter')?.value||'';
+    if(estado)params.set('estado',estado);
+    if(servicio)params.set('servicio',servicio);
+    const d=await api('/portal/agenda/eventos?'+params.toString());
+    success(d.events||[]);
+   }catch(e){failure(e)}
+  },
+  eventClick:function(info){
+   info.jsEvent.preventDefault();
+   openCalendarModal(info.event);
+  },
+  eventDrop:async function(info){
+   const ev=info.event;
+   if(!ev.extendedProps.google_event_id){
+    info.revert();
+    alert('Esta reserva no está vinculada a Google Calendar.');
+    return;
+   }
+   const fecha=localDateYYYYMMDD(ev.start);
+   const hora=localTimeHHMM(ev.start);
+   try{
+    await api('/portal/agenda/reserva/'+encodeURIComponent(ev.id),{
+     method:'PATCH',
+     body:JSON.stringify({fecha,hora})
+    });
+    await loadAgenda();
+    ev.setExtendedProp('fecha',fecha);
+    ev.setExtendedProp('hora',hora);
+   }catch(e){
+    info.revert();
+    alert(e.message);
+   }
+  },
+  eventDidMount:function(info){
+   const p=info.event.extendedProps||{};
+   const tips=[p.cliente,p.servicio,p.estado].filter(Boolean).join(' · ');
+   info.el.title=tips;
+  }
+ });
+ nexiaCalendar.render();
+}
+
+function reloadCalendar(){
+ nexiaCalendar?.refetchEvents();
+}
+
+function localDateYYYYMMDD(date){
+ const y=date.getFullYear();
+ const m=String(date.getMonth()+1).padStart(2,'0');
+ const d=String(date.getDate()).padStart(2,'0');
+ return `${y}-${m}-${d}`;
+}
+
+function localTimeHHMM(date){
+ return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+}
+
+function openCalendarModal(event){
+ const p=event.extendedProps||{};
+ $('calendarModalTitle').textContent=p.servicio||event.title||'Reserva';
+ $('calendarModalBody').innerHTML=[
+  ['Cliente',p.cliente||'—'],
+  ['Teléfono',p.telefono||'—'],
+  ['Correo',p.correo||'—'],
+  ['Servicio',p.servicio||'—'],
+  ['Fecha',p.fecha||localDateYYYYMMDD(event.start)],
+  ['Hora',(p.hora||localTimeHHMM(event.start)).slice(0,5)],
+  ['Estado',p.estado||'—'],
+  ['Origen',p.origen||'—']
+ ].map(([k,v])=>`<b>${esc(k)}</b><span>${esc(v)}</span>`).join('');
+
+ const canEdit=!!p.google_event_id && (p.estado||'').toLowerCase()!=='cancelada';
+ $('calendarRescheduleBtn').classList.toggle('hidden',!canEdit);
+ $('calendarCancelBtn').classList.toggle('hidden',!canEdit);
+ $('calendarRescheduleBtn').onclick=async()=>{
+  closeCalendarModal();
+  await editAgendaReservation(event.id,p.fecha||localDateYYYYMMDD(event.start),(p.hora||localTimeHHMM(event.start)).slice(0,5));
+  nexiaCalendar?.refetchEvents();
+ };
+ $('calendarCancelBtn').onclick=async()=>{
+  closeCalendarModal();
+  await cancelAgendaReservation(event.id);
+  nexiaCalendar?.refetchEvents();
+ };
+
+ const link=$('calendarGoogleLink');
+ if(p.google_html_link){
+  link.href=p.google_html_link;
+  link.classList.remove('hidden');
+ }else{
+  link.classList.add('hidden');
+  link.removeAttribute('href');
+ }
+
+ $('calendarModalBackdrop').classList.remove('hidden');
+}
+
+function closeCalendarModal(){
+ $('calendarModalBackdrop').classList.add('hidden');
+}
+
 async function syncAgenda(){
  const status=$('agendaSyncStatus');
  try{
@@ -682,6 +938,7 @@ async function syncAgenda(){
    status.textContent=`Sincronización completa: ${d.actualizados||0} eventos actualizados${d.errores?` · ${d.errores} con error`:''}.`;
   }
   await loadAgenda();
+  nexiaCalendar?.refetchEvents();
  }catch(e){
   status.textContent='Error de sincronización: '+e.message;
  }
@@ -698,6 +955,7 @@ async function editAgendaReservation(id,currentDate,currentTime){
    body:JSON.stringify({fecha,hora})
   });
   await loadAgenda();
+  nexiaCalendar?.refetchEvents();
  }catch(e){alert(e.message)}
 }
 
@@ -706,6 +964,7 @@ async function cancelAgendaReservation(id){
  try{
   await api('/portal/agenda/reserva/'+encodeURIComponent(id),{method:'DELETE'});
   await loadAgenda();
+  nexiaCalendar?.refetchEvents();
  }catch(e){alert(e.message)}
 }
 
@@ -1042,4 +1301,18 @@ function handleDeepLink(){const p=new URLSearchParams(location.search),id=p.get(
 $('loginBtn').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('logoutBtn').onclick=logout;setInterval(()=>{if(!$('appView').classList.contains('hidden')){renderConversations();if(state.selected)renderChatHeader()}},30000);$('convSearch').addEventListener('input',renderConversations);$('takeBtn').onclick=takeConversation;$('closeBtn').onclick=closeConversation;$('sendBtn').onclick=sendMessage;$('cfgHasAddress')?.addEventListener('change',cfgAddressToggle);
 $('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});init();
 </script>
+
+<div id="calendarModalBackdrop" class="calendar-modal-backdrop hidden" onclick="if(event.target===this)closeCalendarModal()">
+ <div class="calendar-modal">
+  <h3 id="calendarModalTitle">Reserva</h3>
+  <div id="calendarModalBody" class="calendar-detail"></div>
+  <div class="calendar-modal-actions">
+   <a id="calendarGoogleLink" class="btn hidden" target="_blank" rel="noopener">Abrir en Google Calendar</a>
+   <button class="btn" onclick="closeCalendarModal()">Cerrar</button>
+   <button id="calendarRescheduleBtn" class="btn primary">Reprogramar</button>
+   <button id="calendarCancelBtn" class="btn danger">Cancelar</button>
+  </div>
+ </div>
+</div>
+
 </body></html>
