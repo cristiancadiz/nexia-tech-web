@@ -370,7 +370,26 @@
  <div class="inbox"><div class="convlist"><div class="search"><input id="convSearch" placeholder="Buscar cliente, empresa o mensaje"></div><div id="convList"></div></div><div class="chatpane"><div id="chatEmpty" class="empty">Selecciona una conversación para ver el historial.</div><div id="chatActive" class="chatpane hidden" style="display:contents"><div class="chathead"><div><div id="chatName" style="font-weight:850"></div><div id="chatMeta" class="small"></div><div id="chatElapsed" class="elapsed" style="margin-top:4px"></div></div><div class="toolbar"><span id="chatStatus"></span><button id="takeBtn" class="btn good">Tomar conversación</button><button id="closeBtn" class="btn danger">Devolver al bot</button></div></div><div id="chatBody" class="chatbody"></div><div class="composer"><div class="composerrow"><textarea id="messageInput" placeholder="Escribe una respuesta..."></textarea><button id="sendBtn" class="btn primary">Enviar</button></div><div id="sendInfo" class="small" style="margin-top:6px"></div></div></div></div></div>
 </section>
 
-<section id="page-agenda" class="page"><div class="sectionhead"><h2>Agenda</h2><button class="btn" onclick="loadAgenda()">Actualizar</button></div><div class="cards"><div class="card metric"><div class="k">RESERVAS CONFIRMADAS</div><div class="v" id="aRes">0</div></div><div class="card metric"><div class="k">SOLICITUDES DE AGENDA</div><div class="v" id="aSol">0</div></div></div><div class="section tablewrap"><table class="table"><thead><tr><th>Tipo</th><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Empresa</th></tr></thead><tbody id="agendaRows"></tbody></table></div></section>
+<section id="page-agenda" class="page">
+ <div class="sectionhead">
+  <div><h2>Agenda</h2><div id="agendaSyncStatus" class="small">Google Calendar se sincroniza al actualizar.</div></div>
+  <div class="toolbar">
+   <button class="btn" onclick="syncAgenda()">↻ Sincronizar Calendar</button>
+   <button class="btn" onclick="loadAgenda()">Actualizar</button>
+  </div>
+ </div>
+ <div class="cards">
+  <div class="card metric"><div class="k">RESERVAS</div><div class="v" id="aRes">0</div></div>
+  <div class="card metric"><div class="k">SOLICITUDES DE AGENDA</div><div class="v" id="aSol">0</div></div>
+ </div>
+ <div class="panelnote" style="margin-bottom:14px">Las citas creadas o modificadas en Google Calendar se reflejan aquí. Si reprogramas o cancelas desde Nexia, el cambio también se aplica en Google Calendar.</div>
+ <div class="section tablewrap">
+  <table class="table">
+   <thead><tr><th>Tipo</th><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Origen</th><th>Acciones</th></tr></thead>
+   <tbody id="agendaRows"></tbody>
+  </table>
+ </div>
+</section>
 
 <section id="page-interested" class="page"><div class="sectionhead"><h2>Personas interesadas</h2></div><div class="card"><p style="margin-top:0">Este módulo queda preparado para centralizar contactos captados por ventas, formularios y conversaciones.</p><div class="panelnote">La V1.9 crea la tabla de interesados, pero el agente de ventas todavía debe conectarse explícitamente a esa tabla para capturarlos automáticamente. No se inventan contactos.</div></div></section>
 
@@ -381,8 +400,8 @@
  <div id="paymentStatus"></div>
  <div id="currentUsage" class="usagebox">Cargando plan actual…</div>
  <div class="plan-grid" id="planGrid">
-  <div class="plan-card"><div class="plan-name">Nexia 500</div><div class="plan-msg">500 mensajes para tu asistente y atención desde el Portal.</div><div class="price-old">Antes $29.990</div><div class="price-now">$19.990 <small>CLP</small></div><button class="btn primary" style="width:100%" onclick="buyPlan('nexia_500',this)">Comprar 500 mensajes</button></div>
-  <div class="plan-card featured"><span class="plan-badge">MÁS CAPACIDAD</span><div class="plan-name">Nexia 1000</div><div class="plan-msg">1.000 mensajes para mayor volumen de atención.</div><div class="price-old">Antes $49.990</div><div class="price-now">$39.990 <small>CLP</small></div><button class="btn primary" style="width:100%" onclick="buyPlan('nexia_1000',this)">Comprar 1.000 mensajes</button></div>
+  <div class="plan-card"><div class="plan-name">Nexia 500</div><div class="plan-msg">500 mensajes para tu asistente y atención desde el Portal.</div><div class="price-old">Antes $19.990</div><div class="price-now">$15.990 <small>CLP</small></div><button class="btn primary" style="width:100%" onclick="buyPlan('nexia_500',this)">Comprar 500 mensajes</button></div>
+  <div class="plan-card featured"><span class="plan-badge">MÁS CAPACIDAD</span><div class="plan-name">Nexia 1000</div><div class="plan-msg">1.000 mensajes para mayor volumen de atención.</div><div class="price-old">Antes $39.990</div><div class="price-now">$29.990 <small>CLP</small></div><button class="btn primary" style="width:100%" onclick="buyPlan('nexia_1000',this)">Comprar 1.000 mensajes</button></div>
  </div>
  <div id="paidSetup" class="setupbox hidden"><b>Tu pago fue aprobado 🎉</b><div class="small" style="margin-top:5px">Crea una contraseña para convertir tu acceso temporal en una cuenta permanente del Portal Nexia.</div><input id="newPaidPassword" type="password" minlength="8" placeholder="Nueva contraseña (mínimo 8 caracteres)"><button class="btn good" onclick="createPaidAccess()">Crear mi acceso permanente</button><div id="setupInfo" class="small" style="margin-top:8px"></div></div>
  <div class="history"><div class="sectionhead"><h2>Historial de compras</h2></div><div class="tablewrap"><table class="table"><thead><tr><th>Fecha</th><th>Plan</th><th>Mensajes</th><th>Monto</th><th>Estado</th><th>Payment ID</th></tr></thead><tbody id="paymentRows"></tbody></table></div></div>
@@ -608,7 +627,88 @@ async function sendMessage(){
    await selectConversation(conversationId);
  }catch(e){alert(e.message)}finally{$('sendBtn').disabled=false}
 }
-async function loadAgenda(){try{const d=await api('/portal/agenda');const res=d.reservas||[],sol=d.solicitudes||[];$('aRes').textContent=res.length;$('aSol').textContent=sol.length;const rows=[...res.map(x=>({tipo:'Reserva',cliente:x.nombre_cliente||x.telefono,servicio:x.servicio,fecha:x.fecha,hora:x.hora,estado:x.estado,empresa:x.empresa_id})),...sol.map(x=>({tipo:'Solicitud',cliente:x.nombre||x.nombre_cliente||x.identificador,servicio:x.servicio||x.servicio_nombre,fecha:x.fecha,hora:x.hora,estado:x.estado,empresa:x.empresa_id}))];$('agendaRows').innerHTML=rows.map(x=>`<tr><td>${esc(x.tipo)}</td><td>${esc(x.cliente||'—')}</td><td>${esc(x.servicio||'—')}</td><td>${esc(x.fecha||'—')}</td><td>${esc(x.hora||'—')}</td><td>${esc(x.estado||'—')}</td><td class="small">${esc(x.empresa||'—')}</td></tr>`).join('')||'<tr><td colspan="7">Sin registros.</td></tr>'}catch(e){$('agendaRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}}
+async function loadAgenda(){
+ try{
+  const d=await api('/portal/agenda');
+  const res=d.reservas||[],sol=d.solicitudes||[];
+  $('aRes').textContent=res.filter(x=>(x.estado||'').toLowerCase()!=='cancelada').length;
+  $('aSol').textContent=sol.length;
+
+  const rows=[
+   ...res.map(x=>({
+    id:x.id,
+    tipo:'Reserva',
+    cliente:x.nombre_cliente||x.telefono,
+    servicio:x.servicio,
+    fecha:x.fecha,
+    hora:x.hora,
+    estado:x.estado,
+    origen:x.origen||((x.google_event_id)?'Google Calendar':'Nexia'),
+    google_event_id:x.google_event_id,
+   })),
+   ...sol.map(x=>({
+    tipo:'Solicitud',
+    cliente:x.nombre||x.nombre_cliente||x.identificador,
+    servicio:x.servicio||x.servicio_nombre,
+    fecha:x.fecha,
+    hora:x.hora,
+    estado:x.estado,
+    origen:'Solicitud',
+   }))
+  ];
+
+  $('agendaRows').innerHTML=rows.map(x=>{
+   const cancelada=(x.estado||'').toLowerCase()==='cancelada';
+   const actions=x.tipo==='Reserva'&&x.google_event_id&&!cancelada
+    ?`<div class="toolbar"><button class="btn" onclick="editAgendaReservation('${esc(x.id)}','${esc(x.fecha||'')}','${esc((x.hora||'').slice(0,5))}')">Reprogramar</button><button class="btn danger" onclick="cancelAgendaReservation('${esc(x.id)}')">Cancelar</button></div>`
+    :'—';
+   return `<tr><td>${esc(x.tipo)}</td><td>${esc(x.cliente||'—')}</td><td>${esc(x.servicio||'—')}</td><td>${esc(x.fecha||'—')}</td><td>${esc((x.hora||'—').slice(0,5))}</td><td>${esc(x.estado||'—')}</td><td class="small">${esc(x.origen||'—')}</td><td>${actions}</td></tr>`
+  }).join('')||'<tr><td colspan="8">Sin registros.</td></tr>';
+
+  if($('agendaSyncStatus'))$('agendaSyncStatus').textContent='Agenda actualizada y reconciliada con Google Calendar.';
+ }catch(e){
+  $('agendaRows').innerHTML=`<tr><td colspan="8" class="error">${esc(e.message)}</td></tr>`;
+ }
+}
+
+async function syncAgenda(){
+ const status=$('agendaSyncStatus');
+ try{
+  status.textContent='Sincronizando con Google Calendar…';
+  const d=await api('/portal/agenda/sincronizar',{method:'POST',body:'{}'});
+  if(d.conectado===false){
+   status.textContent='Google Calendar no está conectado para esta empresa.';
+  }else{
+   status.textContent=`Sincronización completa: ${d.actualizados||0} eventos actualizados${d.errores?` · ${d.errores} con error`:''}.`;
+  }
+  await loadAgenda();
+ }catch(e){
+  status.textContent='Error de sincronización: '+e.message;
+ }
+}
+
+async function editAgendaReservation(id,currentDate,currentTime){
+ const fecha=prompt('Nueva fecha (AAAA-MM-DD):',currentDate||'');
+ if(!fecha)return;
+ const hora=prompt('Nueva hora (HH:MM):',currentTime||'');
+ if(!hora)return;
+ try{
+  await api('/portal/agenda/reserva/'+encodeURIComponent(id),{
+   method:'PATCH',
+   body:JSON.stringify({fecha,hora})
+  });
+  await loadAgenda();
+ }catch(e){alert(e.message)}
+}
+
+async function cancelAgendaReservation(id){
+ if(!confirm('¿Cancelar esta cita? También se cancelará en Google Calendar.'))return;
+ try{
+  await api('/portal/agenda/reserva/'+encodeURIComponent(id),{method:'DELETE'});
+  await loadAgenda();
+ }catch(e){alert(e.message)}
+}
+
 async function loadConsumption(){
  try{
   const [d,pays]=await Promise.all([api('/portal/consumo'),api('/portal/pagos')]);
