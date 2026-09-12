@@ -4,7 +4,12 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nexia · Crea tu asistente</title>
 <style>
-:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#0b1020;color:#edf2ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0,#18244b 0,transparent 40%),#0b1020}.wrap{max-width:860px;margin:auto;padding:28px 18px 70px}.brand{font-weight:800;letter-spacing:.06em}.muted{color:#9caaca}.card{background:rgba(18,26,50,.92);border:1px solid #2b3a67;border-radius:22px;padding:22px;box-shadow:0 20px 70px rgba(0,0,0,.25);margin-top:18px}.hero h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.02;margin:10px 0}.hero p{font-size:1.05rem;line-height:1.6;max-width:650px}.pill{display:inline-block;padding:7px 11px;border:1px solid #3c4d80;border-radius:999px;color:#c9d4f5;font-size:.86rem}.progress{height:8px;background:#243052;border-radius:999px;overflow:hidden;margin:14px 0}.progress>div{height:100%;background:linear-gradient(90deg,#7c9cff,#8a7cff);width:0;transition:.3s}.question{font-size:1.25rem;font-weight:750;line-height:1.4;margin:10px 0 16px}textarea,input{width:100%;border-radius:14px;border:1px solid #35456f;background:#0e162d;color:white;padding:14px;font:inherit;outline:none}textarea{min-height:100px;resize:vertical}.servicebox{display:grid;gap:10px}.servicerow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) auto;gap:8px;align-items:center}.servicerow button{padding:10px 12px;background:#2a365c;color:#fff}.cataloghint{font-size:.86rem;color:#9caaca;margin:6px 0 2px}.addressbox{display:grid;gap:10px}.addresschoice{display:flex;gap:10px;flex-wrap:wrap}.addresschoice button.active{outline:2px solid #a9b8ff;background:#25325a}.addressfields{display:grid;grid-template-columns:1.4fr .8fr;gap:10px}.addressfields .wide{grid-column:1/-1}@media(max-width:600px){#digitalBox>div[style*="grid-template-columns"]{grid-template-columns:1fr!important}.addressfields{grid-template-columns:1fr}.servicerow{grid-template-columns:1fr 1fr}.servicerow button{grid-column:1/-1}}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:13px;padding:12px 17px;font:inherit;font-weight:700;cursor:pointer;background:#7895ff;color:#081020}button.secondary{background:#1f2a4d;color:#e8edff;border:1px solid #394974}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.chip{background:#17213e;color:#e5eaff;border:1px solid #3d4e7c}.chat{height:380px;overflow:auto;background:#0d1429;border:1px solid #29375e;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}.msg{max-width:82%;padding:11px 13px;border-radius:15px;line-height:1.45;white-space:pre-wrap}.me{align-self:flex-end;background:#6f89ec;color:#071022}.bot{align-self:flex-start;background:#1d2949}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.stat{padding:10px 12px;border-radius:12px;background:#111b35;border:1px solid #2f3e69}.hidden{display:none}.summary{font-size:.9rem;line-height:1.55;max-height:260px;overflow:auto}.ok{color:#9be6b4}.error{color:#ff9fa9}@media(max-width:600px){.wrap{padding:18px 12px}.card{padding:16px}.msg{max-width:92%}}
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#0b1020;color:#edf2ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0,#18244b 0,transparent 40%),#0b1020}.wrap{max-width:860px;margin:auto;padding:28px 18px 70px}.brand{font-weight:800;letter-spacing:.06em}.muted{color:#9caaca}.card{background:rgba(18,26,50,.92);border:1px solid #2b3a67;border-radius:22px;padding:22px;box-shadow:0 20px 70px rgba(0,0,0,.25);margin-top:18px}.hero h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.02;margin:10px 0}.hero p{font-size:1.05rem;line-height:1.6;max-width:650px}.pill{display:inline-block;padding:7px 11px;border:1px solid #3c4d80;border-radius:999px;color:#c9d4f5;font-size:.86rem}.progress{height:8px;background:#243052;border-radius:999px;overflow:hidden;margin:14px 0}.progress>div{height:100%;background:linear-gradient(90deg,#7c9cff,#8a7cff);width:0;transition:.3s}.question{font-size:1.25rem;font-weight:750;line-height:1.4;margin:10px 0 16px}textarea,input{width:100%;border-radius:14px;border:1px solid #35456f;background:#0e162d;color:white;padding:14px;font:inherit;outline:none}textarea{min-height:100px;resize:vertical}.servicebox{display:grid;gap:10px}.servicerow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) auto;gap:8px;align-items:center}.servicerow button{padding:10px 12px;background:#2a365c;color:#fff}.cataloghint{font-size:.86rem;color:#9caaca;margin:6px 0 2px}
+.ecommercechoices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ecommercechoice{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:#17213e;color:#e5eaff;border:1px solid #3d4e7c;padding:14px;border-radius:14px}
+.ecommercechoice span{font-size:.82rem;color:#9caaca;font-weight:500;line-height:1.35}
+.ecommercechoice.active{outline:2px solid #a9b8ff;background:#25325a}
+.addressbox{display:grid;gap:10px}.addresschoice{display:flex;gap:10px;flex-wrap:wrap}.addresschoice button.active{outline:2px solid #a9b8ff;background:#25325a}.addressfields{display:grid;grid-template-columns:1.4fr .8fr;gap:10px}.addressfields .wide{grid-column:1/-1}@media(max-width:600px){.ecommercechoices{grid-template-columns:1fr}#digitalBox>div[style*="grid-template-columns"]{grid-template-columns:1fr!important}.addressfields{grid-template-columns:1fr}.servicerow{grid-template-columns:1fr 1fr}.servicerow button{grid-column:1/-1}}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:13px;padding:12px 17px;font:inherit;font-weight:700;cursor:pointer;background:#7895ff;color:#081020}button.secondary{background:#1f2a4d;color:#e8edff;border:1px solid #394974}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.chip{background:#17213e;color:#e5eaff;border:1px solid #3d4e7c}.chat{height:380px;overflow:auto;background:#0d1429;border:1px solid #29375e;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}.msg{max-width:82%;padding:11px 13px;border-radius:15px;line-height:1.45;white-space:pre-wrap}.me{align-self:flex-end;background:#6f89ec;color:#071022}.bot{align-self:flex-start;background:#1d2949}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.stat{padding:10px 12px;border-radius:12px;background:#111b35;border:1px solid #2f3e69}.hidden{display:none}.summary{font-size:.9rem;line-height:1.55;max-height:260px;overflow:auto}.ok{color:#9be6b4}.error{color:#ff9fa9}@media(max-width:600px){.wrap{padding:18px 12px}.card{padding:16px}.msg{max-width:92%}}
 </style>
 </head>
 <body><div class="wrap">
@@ -43,6 +48,16 @@
   </div>
  </div>
 </div>
+<div id="ecommerceBox" class="hidden">
+ <div class="cataloghint" style="margin-bottom:10px">Si conectas Jumpseller o Shopify, no tendrás que cargar productos ni precios manualmente.</div>
+ <div class="ecommercechoices">
+  <button type="button" class="ecommercechoice" data-provider="jumpseller"><b>Jumpseller</b><span>Productos, precios, stock y pedidos desde tu tienda.</span></button>
+  <button type="button" class="ecommercechoice" data-provider="shopify"><b>Shopify</b><span>Productos, precios, stock y pedidos desde tu tienda.</span></button>
+  <button type="button" class="ecommercechoice" data-provider="otra plataforma"><b>Otra plataforma</b><span>Ingresar productos o servicios manualmente.</span></button>
+  <button type="button" class="ecommercechoice" data-provider="no tengo tienda online"><b>No tengo tienda online</b><span>Ingresar productos o servicios manualmente.</span></button>
+ </div>
+ <div id="ecommerceHint" class="cataloghint" style="margin-top:10px"></div>
+</div>
 <div id="serviceBox" class="hidden">
  <div class="cataloghint">Agrega tus productos o servicios. El precio es opcional.</div>
  <div id="serviceRows" class="servicebox"></div>
@@ -73,8 +88,21 @@ function refreshAssistantIdentity(){
 
 const $=id=>document.getElementById(id); const esc=s=>String(s??'');
 async function api(path,opt={}){const r=await fetch(API+path,{headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
-let currentQuestion=null,selectedMulti=new Set(),hasPhysicalAddress=null;
+let currentQuestion=null,selectedMulti=new Set(),hasPhysicalAddress=null,ecommerceProvider=null;
 function optionsFor(q){return q?.options||[]}
+function setEcommerceProvider(value){
+ ecommerceProvider=value;
+ document.querySelectorAll('.ecommercechoice').forEach(btn=>btn.classList.toggle('active',btn.dataset.provider===value));
+ const connected=['jumpseller','shopify'].includes(value);
+ $('ecommerceHint').textContent=connected
+  ? 'Perfecto. Omitiremos la carga manual de productos y precios. Después conecta tu tienda en Portal → Integraciones.'
+  : 'Perfecto. En el siguiente paso podrás agregar productos o servicios y el precio será opcional.';
+}
+function resetEcommerceProvider(){
+ ecommerceProvider=null;
+ document.querySelectorAll('.ecommercechoice').forEach(btn=>btn.classList.remove('active'));
+ $('ecommerceHint').textContent='';
+}
 function setPhysicalAddressChoice(value){
  hasPhysicalAddress=value;
  $('addressYes').classList.toggle('active',value===true);
@@ -116,10 +144,12 @@ function showQuestion(d){
  $('answer').value=''; $('chips').innerHTML='';
  $('digitalBox').classList.toggle('hidden',q?.kind!=='digital_presence');
  $('addressBox').classList.toggle('hidden',q?.kind!=='physical_address');
+ $('ecommerceBox').classList.toggle('hidden',q?.kind!=='ecommerce_provider');
  $('serviceBox').classList.toggle('hidden',q?.kind!=='service_catalog');
- $('answer').classList.toggle('hidden',q?.kind==='digital_presence'||q?.kind==='service_catalog'||q?.kind==='physical_address');
+ $('answer').classList.toggle('hidden',q?.kind==='digital_presence'||q?.kind==='service_catalog'||q?.kind==='physical_address'||q?.kind==='ecommerce_provider');
  if(q?.kind==='service_catalog')resetServiceRows();
  if(q?.kind==='physical_address')resetPhysicalAddress();
+ if(q?.kind==='ecommerce_provider')resetEcommerceProvider();
  if(q?.placeholder)$('answer').placeholder=q.placeholder;
  else $('answer').placeholder=q?.kind==='long_text'?'Puedes escribir varios detalles aquí...':'Escribe tu respuesta...';
 
@@ -139,6 +169,7 @@ function showQuestion(d){
  });
  if(q?.kind==='service_catalog')$('serviceRows').querySelector('.serviceName')?.focus();
  else if(q?.kind==='physical_address')$('addressYes').focus();
+ else if(q?.kind==='ecommerce_provider')document.querySelector('.ecommercechoice')?.focus();
  else if(q?.kind!=='digital_presence')$('answer').focus();
 }
 async function start(){try{$('startBtn').disabled=true;const d=await api('/core/onboarding/start',{method:'POST',body:'{}'});token=d.token;$('startCard').classList.add('hidden');$('onboarding').classList.remove('hidden');showQuestion(d)}catch(e){$('startError').textContent=e.message;$('startBtn').disabled=false}}
@@ -151,6 +182,9 @@ async function submitAnswer(){
    facebook:$('facebookUrl').value.trim(),
    tiktok:$('tiktokUrl').value.trim(),
   };
+ }else if(currentQuestion?.kind==='ecommerce_provider'){
+  if(!ecommerceProvider){$('status').textContent='Selecciona una opción para continuar.';$('status').className='error';return}
+  a=ecommerceProvider;
  }else if(currentQuestion?.kind==='physical_address'){
   if(hasPhysicalAddress===null){$('status').textContent='Indica si atiendes en una dirección física.';$('status').className='error';return}
   if(hasPhysicalAddress===true&&!$('physicalAddress').value.trim()){
@@ -199,5 +233,5 @@ async function submitAnswer(){
 }
 function addMsg(text,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}
 async function sendChat(){const text=$('chatInput').value.trim();if(!text)return;addMsg(text,'me');$('chatInput').value='';try{$('chatSend').disabled=true;$('chatStatus').textContent='Tu asistente está respondiendo...';const d=await api(`/core/demo/${token}/message`,{method:'POST',body:JSON.stringify({message:text})});addMsg(d.reply,'bot');const rest=d.plan?.mensajes_restantes;if(rest!==undefined&&rest!==null)$('remaining').textContent=rest+' mensajes restantes';$('chatStatus').textContent=''}catch(e){$('chatStatus').textContent=e.message;$('chatStatus').className='error'}finally{$('chatSend').disabled=false;$('chatInput').focus()}}
-$('startBtn').onclick=start;$('sendAnswer').onclick=submitAnswer;$('addServiceBtn').onclick=()=>addServiceRow();$('addressYes').onclick=()=>setPhysicalAddressChoice(true);$('addressNo').onclick=()=>setPhysicalAddressChoice(false);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitAnswer()}});$('openChat').onclick=()=>{$('chatCard').classList.remove('hidden');$('openChat').scrollIntoView({behavior:'smooth'});$('chatInput').focus()};$('chatSend').onclick=sendChat;$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
+$('startBtn').onclick=start;$('sendAnswer').onclick=submitAnswer;$('addServiceBtn').onclick=()=>addServiceRow();document.querySelectorAll('.ecommercechoice').forEach(btn=>btn.onclick=()=>setEcommerceProvider(btn.dataset.provider));$('addressYes').onclick=()=>setPhysicalAddressChoice(true);$('addressNo').onclick=()=>setPhysicalAddressChoice(false);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitAnswer()}});$('openChat').onclick=()=>{$('chatCard').classList.remove('hidden');$('openChat').scrollIntoView({behavior:'smooth'});$('chatInput').focus()};$('chatSend').onclick=sendChat;$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
 </script></body></html>
