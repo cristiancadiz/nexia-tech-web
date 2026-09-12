@@ -317,7 +317,7 @@
 }
 
 
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.formgrid label{display:grid;gap:7px;font-size:13px;font-weight:700}.formgrid .wide{grid-column:1/-1}.formgrid input,.formgrid textarea,.cfg-service input{width:100%;box-sizing:border-box}.formgrid textarea{min-height:90px;resize:vertical}.cfg-service{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,.7fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}.cfg-service:last-child{border-bottom:0}.cfg-service .svc-actions{display:flex;gap:6px}@media(max-width:760px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.cfg-service{grid-template-columns:1fr}.cfg-service .svc-actions{justify-content:flex-end}}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.formgrid label{display:grid;gap:7px;font-size:13px;font-weight:700}.formgrid .wide{grid-column:1/-1}.formgrid input,.formgrid textarea,.formgrid select,.cfg-service input{width:100%;box-sizing:border-box}.formgrid select{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:11px 12px;border-radius:10px}.formgrid textarea{min-height:90px;resize:vertical}.cfg-service{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,.7fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}.cfg-service:last-child{border-bottom:0}.cfg-service .svc-actions{display:flex;gap:6px}@media(max-width:760px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.cfg-service{grid-template-columns:1fr}.cfg-service .svc-actions{justify-content:flex-end}}
 </style>
 </head>
 <body>
@@ -413,6 +413,63 @@
   <div id="googleCalendarDetail" class="usagebox" style="margin-top:16px">Revisa el estado de la conexión.</div>
   <div class="toolbar"><button id="connectGoogleBtn" class="btn primary" onclick="connectGoogleCalendar()">Conectar Google Calendar</button><button id="disconnectGoogleBtn" class="btn danger hidden" onclick="disconnectGoogleCalendar()">Desconectar</button></div>
   <div class="small" style="margin-top:12px">La conexión es individual para cada empresa. Nexia no mezcla calendarios entre clientes. Si todavía no conectas Google Calendar, la agenda funciona como solicitud de reserva y no crea eventos reales.</div>
+ </div>
+
+ <div class="card" style="max-width:760px;margin-top:18px">
+  <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap">
+   <div style="max-width:520px">
+    <h3 style="margin:0 0 7px">Ecommerce</h3>
+    <p style="margin:0;color:var(--muted);line-height:1.55">Conecta Jumpseller o Shopify para consultar productos, precios, stock y estado de pedidos desde WhatsApp.</p>
+   </div>
+   <span id="ecommerceBadge" class="badge wait"><i class="dot"></i>No conectado</span>
+  </div>
+
+  <div id="ecommerceDetail" class="usagebox" style="margin-top:16px">Revisa el estado de la conexión.</div>
+
+  <div class="formgrid" style="margin-top:16px">
+   <label>Plataforma
+    <select id="ecommerceProvider" onchange="renderEcommerceFields()">
+     <option value="jumpseller">Jumpseller</option>
+     <option value="shopify">Shopify</option>
+    </select>
+   </label>
+
+   <label id="ecommerceStoreUrlLabel">URL de la tienda
+    <input id="ecommerceStoreUrl" placeholder="https://mitienda.cl">
+   </label>
+
+   <label id="ecommerceLoginKeyLabel">Jumpseller Login Key
+    <input id="ecommerceLoginKey" autocomplete="off" placeholder="Login Key">
+   </label>
+
+   <label id="ecommerceAuthTokenLabel">Jumpseller Auth Token
+    <input id="ecommerceAuthToken" type="password" autocomplete="new-password" placeholder="Auth Token">
+   </label>
+
+   <label id="ecommerceShopifyDomainLabel" class="hidden">Dominio Shopify
+    <input id="ecommerceShopifyDomain" placeholder="mitienda.myshopify.com">
+   </label>
+
+   <label id="ecommerceAccessTokenLabel" class="hidden">Admin API access token
+    <input id="ecommerceAccessToken" type="password" autocomplete="new-password" placeholder="shpat_...">
+   </label>
+  </div>
+
+  <div class="toolbar">
+   <button id="connectEcommerceBtn" class="btn primary" onclick="connectEcommerce()">Conectar tienda</button>
+   <button id="disconnectEcommerceBtn" class="btn danger hidden" onclick="disconnectEcommerce()">Desconectar</button>
+  </div>
+
+  <div id="ecommerceTestBox" class="hidden" style="margin-top:16px">
+   <div class="small" style="margin-bottom:8px">Prueba una búsqueda real:</div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input id="ecommerceTestQuery" style="flex:1;min-width:220px" placeholder="Ej: polera negra">
+    <button class="btn" onclick="testEcommerce()">Buscar</button>
+   </div>
+   <div id="ecommerceTestResult" class="usagebox" style="margin-top:10px"></div>
+  </div>
+
+  <div class="small" style="margin-top:12px">Primera versión en modo lectura: catálogo, precios, stock y estado de pedidos. Las credenciales se guardan cifradas por empresa.</div>
  </div>
 </section>
 
@@ -789,6 +846,7 @@ async function loadIntegrations(){
    connect.textContent='Conectar Google Calendar';disconnect.classList.add('hidden');
   }
  }catch(e){$('googleCalendarDetail').innerHTML=`<span class="error">${esc(e.message)}</span>`}
+ try{await loadEcommerceIntegration()}catch(e){$('ecommerceDetail').innerHTML=`<span class="error">${esc(e.message)}</span>`}
 }
 async function connectGoogleCalendar(){
  try{
@@ -811,6 +869,72 @@ function checkCalendarReturn(){
  setTimeout(()=>loadIntegrations(),300);
  if(s==='connected')setTimeout(()=>alert('Google Calendar quedó conectado correctamente.'),450);
  else if(s==='error')setTimeout(()=>alert('No pudimos completar la conexión con Google Calendar. Intenta nuevamente.'),450);
+}
+
+
+function renderEcommerceFields(){
+ const provider=$('ecommerceProvider').value;
+ const j=provider==='jumpseller';
+ $('ecommerceStoreUrlLabel').classList.toggle('hidden',!j);
+ $('ecommerceLoginKeyLabel').classList.toggle('hidden',!j);
+ $('ecommerceAuthTokenLabel').classList.toggle('hidden',!j);
+ $('ecommerceShopifyDomainLabel').classList.toggle('hidden',j);
+ $('ecommerceAccessTokenLabel').classList.toggle('hidden',j);
+}
+
+async function loadEcommerceIntegration(){
+ const d=await api('/portal/integraciones/ecommerce');
+ const badge=$('ecommerceBadge'),detail=$('ecommerceDetail');
+ if(d.conectado){
+  badge.className='badge exec';badge.innerHTML='<i class="dot"></i>Conectado';
+  detail.innerHTML=`<b>${d.provider==='shopify'?'Shopify':'Jumpseller'} conectado ✓</b><div class="small" style="margin-top:6px">${esc(d.store_domain||d.store_url||'Tienda conectada')} · modo lectura</div>`;
+  $('disconnectEcommerceBtn').classList.remove('hidden');
+  $('ecommerceTestBox').classList.remove('hidden');
+  $('ecommerceProvider').value=d.provider||'jumpseller';
+ }else{
+  badge.className='badge wait';badge.innerHTML='<i class="dot"></i>No conectado';
+  detail.innerHTML='<b>Sin ecommerce conectado</b><div class="small" style="margin-top:6px">Conecta Jumpseller o Shopify para usar productos, stock y pedidos reales.</div>';
+  $('disconnectEcommerceBtn').classList.add('hidden');
+  $('ecommerceTestBox').classList.add('hidden');
+ }
+ renderEcommerceFields();
+}
+
+async function connectEcommerce(){
+ const provider=$('ecommerceProvider').value;
+ const payload={provider};
+ if(provider==='jumpseller'){
+  payload.store_url=$('ecommerceStoreUrl').value.trim();
+  payload.login_key=$('ecommerceLoginKey').value.trim();
+  payload.auth_token=$('ecommerceAuthToken').value.trim();
+ }else{
+  payload.store_domain=$('ecommerceShopifyDomain').value.trim();
+  payload.access_token=$('ecommerceAccessToken').value.trim();
+ }
+ const btn=$('connectEcommerceBtn');
+ try{
+  btn.disabled=true;btn.textContent='Conectando…';
+  await api('/portal/integraciones/ecommerce',{method:'POST',body:JSON.stringify(payload)});
+  $('ecommerceLoginKey').value='';$('ecommerceAuthToken').value='';$('ecommerceAccessToken').value='';
+  await loadEcommerceIntegration();
+ }catch(e){alert(e.message)}
+ finally{btn.disabled=false;btn.textContent='Conectar tienda'}
+}
+
+async function disconnectEcommerce(){
+ if(!confirm('¿Desconectar la tienda online?'))return;
+ try{await api('/portal/integraciones/ecommerce',{method:'DELETE'});await loadEcommerceIntegration()}catch(e){alert(e.message)}
+}
+
+async function testEcommerce(){
+ const q=$('ecommerceTestQuery').value.trim();
+ if(!q)return;
+ const box=$('ecommerceTestResult');box.textContent='Consultando…';
+ try{
+  const d=await api('/portal/integraciones/ecommerce/probar',{method:'POST',body:JSON.stringify({query:q})});
+  const rows=d.productos||[];
+  box.innerHTML=rows.length?rows.map(x=>`<div style="padding:6px 0"><b>${esc(x.name||'Producto')}</b>${x.price?` · ${esc(String(x.price))}`:''}${x.stock!==null&&x.stock!==undefined?` · stock ${esc(String(x.stock))}`:''}</div>`).join(''):'No se encontraron productos.';
+ }catch(e){box.innerHTML=`<span class="error">${esc(e.message)}</span>`}
 }
 
 async function loadCompanies(){if(!state.me?.superadmin){$('companyAdminNote').classList.remove('hidden');$('companyTable').classList.add('hidden');return}try{const d=await api('/portal/admin/empresas');$('companyRows').innerHTML=(d.empresas||[]).map(x=>`<tr><td><b>${esc(x.nombre)}</b></td><td>${x.activo?'Activa':'Inactiva'}</td><td>${fmt(x.created_at)}</td><td class="small">${esc(x.id)}</td></tr>`).join('')}catch(e){$('companyRows').innerHTML=`<tr><td colspan="4" class="error">${esc(e.message)}</td></tr>`}}
