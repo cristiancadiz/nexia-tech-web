@@ -1,538 +1,762 @@
 <!doctype html>
 <html lang="es">
+
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nexia · Crea tu asistente</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Nexia Tech | Automatización e Inteligencia Artificial</title>
+
+<meta name="description" content="Nexia Tech crea asistentes virtuales, automatizaciones e integraciones con inteligencia artificial para empresas.">
+
 <style>
+
 :root{
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:#162033;
-  background:#f7faf8;
-  --green:#13a867;
-  --green-dark:#0b8751;
-  --green-soft:#eaf8f1;
-  --ink:#142033;
-  --muted:#667085;
-  --line:#e4e9e7;
-  --card:#ffffff;
-  --soft:#f6f8f7;
+  --bg:#050816;
+  --bg2:#0a1230;
+  --txt:#f7f9ff;
+  --muted:#a9b4d0;
+  --cyan:#4de7ff;
+  --violet:#8c6cff;
+  --green:#6dffb2;
+  --line:rgba(255,255,255,.12);
 }
-*{box-sizing:border-box}
-body{
+
+*{
+  box-sizing:border-box;
   margin:0;
-  min-height:100vh;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+  color:var(--txt);
   background:
-    radial-gradient(circle at 90% 0%,rgba(19,168,103,.08),transparent 32%),
-    linear-gradient(180deg,#fbfdfc 0%,#f5f8f6 100%);
-  color:var(--ink);
+    radial-gradient(circle at 15% 10%,rgba(77,231,255,.12),transparent 30%),
+    radial-gradient(circle at 85% 20%,rgba(140,108,255,.14),transparent 30%),
+    linear-gradient(180deg,var(--bg),#070c1e 45%,var(--bg));
+  line-height:1.6;
 }
-.wrap{max-width:980px;margin:auto;padding:22px 18px 72px}
-.brand{
-  display:flex;align-items:center;gap:10px;
-  font-weight:850;letter-spacing:.02em;font-size:1.08rem;color:#142033
+
+a{
+  text-decoration:none;
+  color:inherit;
 }
-.brand-dot{
-  width:34px;height:34px;border-radius:12px;
-  display:grid;place-items:center;
-  background:linear-gradient(145deg,#19bd75,#0e9459);
-  color:white;font-weight:900;box-shadow:0 8px 20px rgba(19,168,103,.22)
+
+.wrap{
+  width:min(1120px,92%);
+  margin:auto;
 }
-.hero{
-  display:grid;
-  grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);
-  gap:34px;
+
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(5,8,22,.75);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+
+nav{
+  min-height:74px;
+  display:flex;
   align-items:center;
-  padding:48px 0 18px;
+  justify-content:space-between;
+  gap:22px;
 }
-.hero-copy{padding:8px 0}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:7px;
-  background:var(--green-soft);color:var(--green-dark);
-  border:1px solid #caead9;border-radius:999px;
-  padding:8px 12px;font-weight:750;font-size:.88rem
+
+.brand{
+  font-weight:900;
+  letter-spacing:.08em;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-.hero h1{
-  font-size:clamp(2.45rem,6vw,4.35rem);
-  line-height:.98;letter-spacing:-.045em;
-  margin:18px 0 16px;max-width:760px
+
+.logo{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  box-shadow:0 0 28px rgba(77,231,255,.35);
 }
-.hero h1 span{color:var(--green)}
+
+.links{
+  display:flex;
+  gap:24px;
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  padding:0 20px;
+  border-radius:14px;
+  font-weight:800;
+  border:1px solid var(--line);
+}
+
+.primary{
+  border:0;
+  color:#041018;
+  background:linear-gradient(135deg,var(--cyan),var(--green));
+  box-shadow:0 12px 40px rgba(77,231,255,.18);
+}
+
+.hero{
+  min-height:78vh;
+  display:grid;
+  align-items:center;
+  padding:90px 0 70px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:56px;
+  align-items:center;
+}
+
+.tag{
+  display:inline-block;
+  padding:8px 12px;
+  border:1px solid rgba(77,231,255,.25);
+  background:rgba(77,231,255,.07);
+  border-radius:999px;
+  color:var(--cyan);
+  font-size:.84rem;
+  font-weight:800;
+  margin-bottom:18px;
+}
+
+h1{
+  font-size:clamp(2.8rem,7vw,5.6rem);
+  line-height:.98;
+  letter-spacing:-.055em;
+}
+
+.grad{
+  background:linear-gradient(90deg,var(--cyan),#bffaff,var(--violet));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
 .hero p{
   color:var(--muted);
-  font-size:1.08rem;line-height:1.62;
-  max-width:640px;margin:0 0 22px
+  font-size:1.1rem;
+  max-width:660px;
+  margin:24px 0 30px;
 }
-.quick-benefits{
-  display:flex;flex-wrap:wrap;gap:9px 14px;
-  margin:0 0 24px;color:#344054;font-size:.94rem;font-weight:650
+
+.actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
 }
-.quick-benefits span{display:flex;align-items:center;gap:6px}
-.quick-benefits b{color:var(--green)}
-.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-button{
-  border:0;border-radius:14px;padding:13px 18px;
-  font:inherit;font-weight:780;cursor:pointer;
-  background:var(--green);color:white;
-  box-shadow:0 8px 20px rgba(19,168,103,.18);
-  transition:.18s ease
+
+.visual{
+  min-height:440px;
+  border:1px solid var(--line);
+  border-radius:30px;
+  position:relative;
+  overflow:hidden;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 39px,
+      rgba(255,255,255,.035) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 39px,
+      rgba(255,255,255,.035) 40px
+    );
 }
-button:hover{transform:translateY(-1px);background:var(--green-dark)}
-button.secondary{
-  background:#fff;color:#344054;border:1px solid var(--line);
-  box-shadow:none
+
+.orb{
+  width:210px;
+  height:210px;
+  border-radius:50%;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      #d5fbff,
+      var(--cyan) 22%,
+      var(--violet) 58%,
+      transparent 72%
+    );
+  box-shadow:0 0 90px rgba(77,231,255,.25);
 }
-.cta-main{
-  font-size:1.02rem;padding:15px 22px;border-radius:15px
+
+.float{
+  position:absolute;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  background:rgba(8,14,35,.82);
+  backdrop-filter:blur(12px);
+  border-radius:14px;
+  font-size:.9rem;
 }
-.wa-cta{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  text-decoration:none;
-  background:#25D366;color:#fff;
-  border-radius:15px;padding:15px 22px;
-  font-weight:800;font-size:1.02rem;
-  box-shadow:0 8px 20px rgba(37,211,102,.20);
-  transition:.18s ease
+
+.f1{
+  top:48px;
+  left:28px;
 }
-.wa-cta:hover{transform:translateY(-1px);background:#1fb85a}
-.microcopy{font-size:.84rem;color:#7a8493;margin-top:10px}
-.preview{
-  background:#fff;border:1px solid #e2e8e5;border-radius:26px;
-  padding:16px;box-shadow:0 24px 70px rgba(18,42,29,.12);
-  transform:rotate(1deg)
+
+.f2{
+  right:24px;
+  top:135px;
 }
-.preview-top{
-  display:flex;align-items:center;gap:10px;
-  padding:4px 4px 13px;border-bottom:1px solid #eef1ef
+
+.f3{
+  left:46px;
+  bottom:48px;
 }
-.preview-avatar{
-  width:38px;height:38px;border-radius:50%;
-  background:#dff6e9;display:grid;place-items:center;font-size:1.1rem
+
+section{
+  padding:88px 0;
 }
-.preview-name{font-weight:800}.preview-status{font-size:.78rem;color:#22a365}
-.preview-chat{
-  background:#f6f4ee;
-  border-radius:18px;padding:14px;margin-top:14px;display:grid;gap:10px
+
+.head{
+  max-width:760px;
+  margin-bottom:36px;
 }
-.bubble{
-  max-width:88%;border-radius:14px;padding:10px 12px;
-  font-size:.89rem;line-height:1.38
+
+.head h2{
+  font-size:clamp(2rem,4.5vw,3.4rem);
+  line-height:1.05;
+  letter-spacing:-.035em;
 }
-.bubble.user{justify-self:end;background:#d9fdd3}
-.bubble.bot{justify-self:start;background:#fff;border:1px solid #ececec}
-.product-mini{
-  background:#fff;border-radius:14px;border:1px solid #e6e9e7;
-  overflow:hidden;display:grid;grid-template-columns:86px 1fr
+
+.head p,
+.card p,
+.step p,
+.cta p{
+  color:var(--muted);
 }
-.product-mini .photo{
-  background:linear-gradient(135deg,#dff4e8,#eef8f2);
-  display:grid;place-items:center;font-size:2rem;min-height:88px
+
+.cards,
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
 }
-.product-mini .info{padding:10px}
-.product-mini strong{display:block;margin-bottom:4px}
-.product-mini small{color:#667085}
-.product-mini a{
-  display:inline-block;margin-top:7px;color:#07874f;font-weight:750;text-decoration:none
-}
-.trust-strip{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:12px;margin:24px 0 8px
-}
-.trust-item{
-  background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;
-  display:flex;align-items:center;gap:10px
-}
-.trust-icon{
-  width:38px;height:38px;border-radius:12px;
-  display:grid;place-items:center;background:var(--green-soft)
-}
-.trust-item strong{display:block;font-size:.92rem}
-.trust-item span{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
 
 .card{
-  background:rgba(255,255,255,.97);
+  padding:28px;
   border:1px solid var(--line);
-  border-radius:22px;padding:22px;
-  box-shadow:0 14px 45px rgba(20,32,51,.07);
-  margin-top:18px
-}
-#startCard{
-  margin-top:10px;
-  text-align:center;
-  padding:22px 20px;
-  border-style:dashed;
-  box-shadow:none;
-  background:rgba(255,255,255,.72)
-}
-#startCard h2{margin:0 0 6px;font-size:1.08rem}
-#startCard p{margin:0 auto 14px;max-width:640px;font-size:.92rem}
-.muted{color:var(--muted)}
-.pill{
-  display:inline-block;padding:7px 11px;
-  border:1px solid #dce5e0;border-radius:999px;
-  color:#53605a;background:#fafcfb;font-size:.84rem
-}
-.progress{height:8px;background:#e8eeeb;border-radius:999px;overflow:hidden;margin:14px 0}
-.progress>div{height:100%;background:linear-gradient(90deg,#13a867,#4bc88a);width:0;transition:.3s}
-.question{font-size:1.28rem;font-weight:800;line-height:1.35;margin:10px 0 12px}
-textarea,input{
-  width:100%;border-radius:14px;border:1px solid #d8e0dc;background:#fff;
-  color:#182230;padding:14px;font:inherit;outline:none
-}
-textarea:focus,input:focus{border-color:#6bcf9f;box-shadow:0 0 0 3px rgba(19,168,103,.09)}
-textarea{min-height:96px;resize:vertical}
-.servicebox{display:grid;gap:10px}
-.servicerow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) auto;gap:8px;align-items:center}
-.servicerow button{padding:10px 12px;background:#f2f4f3;color:#38443e;box-shadow:none}
-.cataloghint{font-size:.86rem;color:#77827c;margin:6px 0 2px}
-.ecommercechoices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ecommercechoice{
-  display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;
-  background:#fff;color:#22302a;border:1px solid #dfe7e2;padding:14px;border-radius:14px;
-  box-shadow:none
-}
-.ecommercechoice:hover{background:#f7fbf9}
-.ecommercechoice span{font-size:.82rem;color:#77827c;font-weight:500;line-height:1.35}
-.ecommercechoice.active{outline:2px solid #57c58f;background:#eefaf4}
-.addressbox{display:grid;gap:10px}
-.addresschoice{display:flex;gap:10px;flex-wrap:wrap}
-.addresschoice button.active{outline:2px solid #57c58f;background:#eefaf4;color:#14633f}
-.addressfields{display:grid;grid-template-columns:1.4fr .8fr;gap:10px}
-.addressfields .wide{grid-column:1/-1}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-.chip{background:#fff;color:#344054;border:1px solid #dbe3df;box-shadow:none}
-.chip:hover{background:#eefaf4;color:#14633f}
-.chat{
-  height:380px;overflow:auto;background:#f6f4ee;border:1px solid #e1e5e2;
-  border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px
-}
-.msg{max-width:82%;padding:11px 13px;border-radius:15px;line-height:1.45;white-space:pre-wrap}
-.me{align-self:flex-end;background:#d9fdd3;color:#142033}
-.bot{align-self:flex-start;background:#fff;border:1px solid #e5e8e6}
-.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-.stat{padding:10px 12px;border-radius:12px;background:#f4f8f6;border:1px solid #e0e8e4}
-.hidden{display:none}
-.summary{font-size:.9rem;line-height:1.55;max-height:260px;overflow:auto}
-.ok{color:#148954}.error{color:#d92d20}
-#ready h2,#chatCard h2{color:#142033}
-@media(max-width:760px){
-  .hero{grid-template-columns:1fr;padding-top:34px;gap:22px}
-  .preview{transform:none}
-  .trust-strip{grid-template-columns:1fr}
-}
-@media(max-width:600px){
-  .wrap{padding:16px 12px 56px}
-  .hero h1{font-size:2.6rem}
-  .hero p{font-size:1rem}
-  .card{padding:17px}
-  .ecommercechoices{grid-template-columns:1fr}
-  #digitalBox>div[style*="grid-template-columns"]{grid-template-columns:1fr!important}
-  .addressfields{grid-template-columns:1fr}
-  .servicerow{grid-template-columns:1fr 1fr}
-  .servicerow button{grid-column:1/-1}
-  .msg{max-width:92%}
-  .cta-main{width:100%}
-  .wa-cta{width:100%}
-}
-</style>
-</head>
-<body><div class="wrap">
-<div class="brand"><span class="brand-dot">N</span><span>Nexia</span></div>
-
-<section class="hero">
-  <div class="hero-copy">
-    <span class="eyebrow">✨ Prueba gratis · Sin tarjeta</span>
-    <h1>Crea tu asistente de IA para <span>WhatsApp</span></h1>
-    <p>Atiende clientes, responde preguntas, agenda y vende automáticamente. Configúralo en pocos minutos y pruébalo antes de contratar.</p>
-
-    <div class="quick-benefits">
-      <span><b>✓</b> 50 mensajes incluidos</span>
-      <span><b>✓</b> 24 horas de prueba</span>
-      <span><b>✓</b> Portal incluido</span>
-    </div>
-
-    <div class="cta-row">
-      <button id="startBtn" class="cta-main">Crear mi asistente gratis →</button>
-      <a class="wa-cta"
-         href="https://wa.me/56950064242?text=Hola%2C%20quiero%20probar%20Nexia"
-         target="_blank"
-         rel="noopener noreferrer"
-         aria-label="Abrir el bot de Nexia en WhatsApp">
-        💬 Hablar con Nexia por WhatsApp
-      </a>
-    </div>
-    <div class="microcopy">No necesitas conocimientos técnicos ni conectar nada para comenzar.</div>
-    <div id="startError" class="error" style="margin-top:10px"></div>
-  </div>
-
-  <div class="preview" aria-label="Ejemplo de conversación con Nexia">
-    <div class="preview-top">
-      <div class="preview-avatar">✨</div>
-      <div>
-        <div class="preview-name">Tu asistente Nexia</div>
-        <div class="preview-status">● Disponible</div>
-      </div>
-    </div>
-    <div class="preview-chat">
-      <div class="bubble user">¿Tienen productos para la caída del cabello?</div>
-      <div class="bubble bot">Sí 👋 Encontré opciones disponibles para ti:</div>
-      <div class="product-mini">
-        <div class="photo">🧴</div>
-        <div class="info">
-          <strong>Shampoo Ortiga Romero</strong>
-          <small>$6.490 · Disponible</small>
-          <a href="javascript:void(0)">Ver producto →</a>
-        </div>
-      </div>
-      <div class="bubble user">¿También puedo agendar?</div>
-      <div class="bubble bot">Claro. Puedo ayudarte a coordinar una hora y confirmar la reserva.</div>
-    </div>
-  </div>
-</section>
-
-<div class="trust-strip">
-  <div class="trust-item">
-    <div class="trust-icon">⚡</div>
-    <div><strong>En pocos minutos</strong><span>Configura lo básico y comienza.</span></div>
-  </div>
-  <div class="trust-item">
-    <div class="trust-icon">💬</div>
-    <div><strong>50 mensajes gratis</strong><span>Prueba conversaciones reales.</span></div>
-  </div>
-  <div class="trust-item">
-    <div class="trust-icon">🔒</div>
-    <div><strong>Sin tarjeta</strong><span>Conoce Nexia antes de contratar.</span></div>
-  </div>
-</div>
-
-<section id="startCard">
-  <h2>¿Listo para probarlo?</h2>
-  <p class="muted">Pulsa el botón de arriba. Te haremos preguntas simples sobre tu negocio para preparar el asistente.</p>
-</section>
-<section id="onboarding" class="card hidden">
-<div class="pill">Configuración guiada</div>
-<div class="progress"><div id="bar"></div></div><div id="pct" class="muted">0%</div>
-<div id="question" class="question"></div>
-<p id="help" class="muted"></p>
-<div id="chips" class="chips"></div>
-<div id="digitalBox" class="hidden">
- <div class="cataloghint" style="margin-bottom:10px">Todos estos campos son opcionales.</div>
- <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-  <input id="webUrl" placeholder="🌐 Sitio web: https://miempresa.cl">
-  <input id="instagramUrl" placeholder="📸 Instagram: @miempresa o enlace">
-  <input id="facebookUrl" placeholder="📘 Facebook: nombre o enlace">
-  <input id="tiktokUrl" placeholder="🎵 TikTok: @miempresa o enlace">
- </div>
- <div class="cataloghint" style="margin-top:10px">
-   Si agregas una web, en el siguiente paso podrás autorizar que se use su información pública para responder consultas.
- </div>
-</div>
-<div id="addressBox" class="hidden">
- <div class="addressbox">
-  <div class="addresschoice">
-   <button type="button" id="addressYes" class="secondary">Sí, atiendo presencialmente</button>
-   <button type="button" id="addressNo" class="secondary">No tengo atención física</button>
-  </div>
-  <div id="addressFields" class="hidden addressfields">
-   <input id="physicalAddress" placeholder="Dirección, ej. Av. Libertad 1234">
-   <input id="physicalComuna" placeholder="Comuna, ej. Viña del Mar">
-   <input id="physicalReference" class="wide" placeholder="Referencia opcional, ej. Local 4, segundo piso">
-   <input id="googleMapsUrl" class="wide" placeholder="Enlace de Google Maps opcional (si lo dejas vacío, se genera automáticamente)">
-  </div>
- </div>
-</div>
-<div id="ecommerceBox" class="hidden">
- <div class="cataloghint" style="margin-bottom:10px">Si conectas Jumpseller o Shopify, no tendrás que cargar productos ni precios manualmente.</div>
- <div class="ecommercechoices">
-  <button type="button" class="ecommercechoice" data-provider="jumpseller"><b>Jumpseller</b><span>Productos, precios, stock y pedidos desde tu tienda.</span></button>
-  <button type="button" class="ecommercechoice" data-provider="shopify"><b>Shopify</b><span>Productos, precios, stock y pedidos desde tu tienda.</span></button>
-  <button type="button" class="ecommercechoice" data-provider="otra plataforma"><b>Otra plataforma</b><span>Ingresar productos o servicios manualmente.</span></button>
-  <button type="button" class="ecommercechoice" data-provider="no tengo tienda online"><b>No tengo tienda online</b><span>Ingresar productos o servicios manualmente.</span></button>
- </div>
- <div id="ecommerceHint" class="cataloghint" style="margin-top:10px"></div>
-</div>
-<div id="serviceBox" class="hidden">
- <div class="cataloghint">Agrega tus productos o servicios. El precio es opcional.</div>
- <div id="serviceRows" class="servicebox"></div>
- <div class="actions"><button type="button" class="secondary" id="addServiceBtn">＋ Agregar otro</button></div>
-</div>
-<textarea id="answer" placeholder="Escribe tu respuesta..."></textarea>
-<div class="actions"><button id="sendAnswer">Continuar</button></div>
-<p id="status" class="muted"></p>
-</section>
-<section id="ready" class="card hidden"><div class="pill">Prueba activa</div><h2>Tu asistente está listo 🚀</h2><p class="muted">Puedes probarlo por WhatsApp, en el simulador web y también vivir la experiencia completa del Portal Nexia.</p><div id="portalAccessNote" class="card" style="margin:14px 0;background:#f3fbf7;color:#173b2b;border-color:#cfe9dc"><strong>🔐 Acceso a tu Portal Nexia</strong><p id="portalEmailText" style="margin:9px 0 0;line-height:1.65">Estamos preparando tus datos de acceso...</p></div><div id="demoStats" class="stats"></div><div id="whatsappReady" class="card hidden" style="margin-top:12px;background:#0e162d"><strong>WhatsApp conectado a tu prueba</strong><p id="whatsappText" class="muted" style="margin-bottom:10px"></p><div class="actions"><button id="openWhatsapp">Probar por WhatsApp</button></div></div><details><summary>Ver configuración entendida</summary><pre id="summary" class="summary"></pre></details><div class="actions"><button id="openWhatsappMain" class="hidden">Probar por WhatsApp</button><button id="openChat">Probar en simulador web</button><button id="openPortal">Ver mi Portal</button></div></section>
-<section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 id="chatTitle" style="margin-bottom:4px">Habla con tu asistente</h2></div><div id="remaining" class="stat">50 mensajes</div></div><div id="chat" class="chat"></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
-</div>
-<script>
-const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');let token=null,summary={};
-function refreshAssistantIdentity(){
- const nombre=(summary.nombre_asistente||'tu asistente').trim();
- const negocio=(summary.nombre_negocio||'tu negocio').trim();
- if($('chatTitle')) $('chatTitle').textContent='Habla con '+nombre;
- const chat=$('chat');
- if(chat && !chat.dataset.welcome){
-   const div=document.createElement('div');
-   div.className='msg bot';
-   div.textContent='¡Hola! 👋 Soy '+nombre+', el asistente virtual de '+negocio+'. ¿En qué te puedo ayudar?';
-   chat.appendChild(div);
-   chat.dataset.welcome='1';
- }
+  background:rgba(255,255,255,.05);
+  border-radius:22px;
 }
 
-const $=id=>document.getElementById(id); const esc=s=>String(s??'');
-async function api(path,opt={}){const r=await fetch(API+path,{headers:{'Content-Type':'application/json',...(opt.headers||{})},...opt});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
-let currentQuestion=null,selectedMulti=new Set(),hasPhysicalAddress=null,ecommerceProvider=null;
-function optionsFor(q){return q?.options||[]}
-function setEcommerceProvider(value){
- ecommerceProvider=value;
- document.querySelectorAll('.ecommercechoice').forEach(btn=>btn.classList.toggle('active',btn.dataset.provider===value));
- const connected=['jumpseller','shopify'].includes(value);
- $('ecommerceHint').textContent=connected
-  ? 'Perfecto. Omitiremos la carga manual de productos y precios. Después conecta tu tienda en Portal → Integraciones.'
-  : 'Perfecto. En el siguiente paso podrás agregar productos o servicios y el precio será opcional.';
+.icon{
+  font-size:1.5rem;
+  margin-bottom:18px;
 }
-function resetEcommerceProvider(){
- ecommerceProvider=null;
- document.querySelectorAll('.ecommercechoice').forEach(btn=>btn.classList.remove('active'));
- $('ecommerceHint').textContent='';
-}
-function setPhysicalAddressChoice(value){
- hasPhysicalAddress=value;
- $('addressYes').classList.toggle('active',value===true);
- $('addressNo').classList.toggle('active',value===false);
- $('addressFields').classList.toggle('hidden',value!==true);
- if(value===true)$('physicalAddress').focus();
-}
-function resetPhysicalAddress(){
- hasPhysicalAddress=null;
- $('addressYes').classList.remove('active');
- $('addressNo').classList.remove('active');
- $('addressFields').classList.add('hidden');
- $('physicalAddress').value='';
- $('physicalComuna').value='';
- $('physicalReference').value='';
- $('googleMapsUrl').value='';
-}
-function addServiceRow(nombre='',precio=''){
- const row=document.createElement('div');row.className='servicerow';
- row.innerHTML=`<input class="serviceName" placeholder="Producto o servicio" value="${String(nombre).replace(/"/g,'&quot;')}"><input class="servicePrice" placeholder="Precio opcional, ej. $19.990" value="${String(precio).replace(/"/g,'&quot;')}"><button type="button" title="Eliminar">Eliminar</button>`;
- row.querySelector('button').onclick=()=>{if($('serviceRows').children.length>1)row.remove();else{row.querySelector('.serviceName').value='';row.querySelector('.servicePrice').value=''}};
- $('serviceRows').appendChild(row);
-}
-function resetServiceRows(){
- $('serviceRows').innerHTML='';
- addServiceRow();
-}
-function getServiceCatalog(){
- return [...$('serviceRows').querySelectorAll('.servicerow')].map(row=>({
-  nombre:row.querySelector('.serviceName').value.trim(),
-  precio:row.querySelector('.servicePrice').value.trim()
- })).filter(x=>x.nombre);
-}
-function showQuestion(d){
- summary=d.summary||summary; currentQuestion=d.question; selectedMulti=new Set();
- const q=currentQuestion;
- $('bar').style.width=(d.progress||0)+'%'; $('pct').textContent=(d.progress||0)+'%';
- $('question').textContent=q?.text||''; $('help').textContent=q?.help||'';
- $('answer').value=''; $('chips').innerHTML='';
- $('digitalBox').classList.toggle('hidden',q?.kind!=='digital_presence');
- $('addressBox').classList.toggle('hidden',q?.kind!=='physical_address');
- $('ecommerceBox').classList.toggle('hidden',q?.kind!=='ecommerce_provider');
- $('serviceBox').classList.toggle('hidden',q?.kind!=='service_catalog');
- $('answer').classList.toggle('hidden',q?.kind==='digital_presence'||q?.kind==='service_catalog'||q?.kind==='physical_address'||q?.kind==='ecommerce_provider');
- if(q?.kind==='service_catalog')resetServiceRows();
- if(q?.kind==='physical_address')resetPhysicalAddress();
- if(q?.kind==='ecommerce_provider')resetEcommerceProvider();
- if(q?.placeholder)$('answer').placeholder=q.placeholder;
- else $('answer').placeholder=q?.kind==='long_text'?'Puedes escribir varios detalles aquí...':'Escribe tu respuesta...';
 
- const opts=optionsFor(q);
- opts.forEach(v=>{
-  const b=document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=v;
-  b.onclick=()=>{
-   if(q?.kind==='multi_choice'){
-    if(selectedMulti.has(v)){selectedMulti.delete(v);b.style.outline=''}
-    else{selectedMulti.add(v);b.style.outline='2px solid #a9b8ff'}
-    $('answer').value=[...selectedMulti].join(', ');
-   }else{
-    $('answer').value=v; submitAnswer();
-   }
-  };
-  $('chips').appendChild(b)
- });
- if(q?.kind==='service_catalog')$('serviceRows').querySelector('.serviceName')?.focus();
- else if(q?.kind==='physical_address')$('addressYes').focus();
- else if(q?.kind==='ecommerce_provider')document.querySelector('.ecommercechoice')?.focus();
- else if(q?.kind!=='digital_presence')$('answer').focus();
+.card h3,
+.step h3{
+  margin-bottom:9px;
 }
-async function start(){try{$('startBtn').disabled=true;const d=await api('/core/onboarding/start',{method:'POST',body:'{}'});token=d.token;document.querySelector('.hero')?.classList.add('hidden');document.querySelector('.trust-strip')?.classList.add('hidden');$('startCard').classList.add('hidden');$('onboarding').classList.remove('hidden');showQuestion(d);$('onboarding').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){$('startError').textContent=e.message;$('startBtn').disabled=false}}
-async function submitAnswer(){
- let a;
- if(currentQuestion?.kind==='digital_presence'){
-  a={
-   web:$('webUrl').value.trim(),
-   instagram:$('instagramUrl').value.trim(),
-   facebook:$('facebookUrl').value.trim(),
-   tiktok:$('tiktokUrl').value.trim(),
-  };
- }else if(currentQuestion?.kind==='ecommerce_provider'){
-  if(!ecommerceProvider){$('status').textContent='Selecciona una opción para continuar.';$('status').className='error';return}
-  a=ecommerceProvider;
- }else if(currentQuestion?.kind==='physical_address'){
-  if(hasPhysicalAddress===null){$('status').textContent='Indica si atiendes en una dirección física.';$('status').className='error';return}
-  if(hasPhysicalAddress===true&&!$('physicalAddress').value.trim()){
-   $('status').textContent='Ingresa la dirección donde atiendes clientes.';$('status').className='error';return
+
+.step{
+  padding:28px;
+  border-top:1px solid var(--line);
+}
+
+.step strong{
+  color:var(--cyan);
+  font-size:.84rem;
+  letter-spacing:.1em;
+}
+
+.cta{
+  padding:48px;
+  border:1px solid rgba(77,231,255,.25);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 15% 0%,rgba(77,231,255,.12),transparent 35%),
+    rgba(255,255,255,.04);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:28px;
+  align-items:center;
+}
+
+.cta h2{
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.08;
+}
+
+footer{
+  border-top:1px solid var(--line);
+  padding:32px 0;
+  color:var(--muted);
+}
+
+.foot{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+/* ===============================
+   WHATSAPP FLOTANTE
+================================ */
+
+.nexia-wa-wrapper{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.nexia-wa-label{
+  background:#0b1024;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.14);
+  padding:10px 14px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:700;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  transition:.2s ease;
+}
+
+.nexia-wa-button{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#25D366;
+  color:white;
+  box-shadow:0 14px 35px rgba(0,0,0,.30);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.nexia-wa-wrapper:hover .nexia-wa-button{
+  transform:scale(1.08);
+  box-shadow:0 18px 45px rgba(0,0,0,.36);
+}
+
+.nexia-wa-wrapper:hover .nexia-wa-label{
+  transform:translateX(-3px);
+}
+
+@media(max-width:850px){
+
+  .links{
+    display:none;
   }
-  a={
-   tiene_direccion:hasPhysicalAddress,
-   direccion:$('physicalAddress').value.trim(),
-   comuna:$('physicalComuna').value.trim(),
-   referencia:$('physicalReference').value.trim(),
-   google_maps_url:$('googleMapsUrl').value.trim()
-  };
- }else if(currentQuestion?.kind==='service_catalog'){
-  const items=getServiceCatalog();
-  if(!items.length){$('status').textContent='Agrega al menos un producto o servicio.';$('status').className='error';return}
-  a={items};
- }else{
-  a=$('answer').value.trim();
-  if(!a)return;
- }
- try{
-  $('sendAnswer').disabled=true;$('status').textContent='Guardando...';$('status').className='muted';
-  const d=await api(`/core/onboarding/${token}/answer`,{method:'POST',body:JSON.stringify({answer:a})});
-  summary=d.summary||summary;
-  if(d.complete){
-   $('onboarding').classList.add('hidden');$('ready').classList.remove('hidden');
-   $('summary').textContent=JSON.stringify(summary,null,2); refreshAssistantIdentity();
-   const correoPortal=summary.email_contacto||'';
-   const accesoPortal=d.portal_acceso||summary.portal_acceso||{};
-   let clavePortal=(accesoPortal.clave||accesoPortal.password||'').trim();
-   if(!clavePortal&&correoPortal.includes('@')){
-     const local=correoPortal.split('@')[0].trim().toLowerCase();
-     clavePortal=local.length>=6?local:(local+'nexia');
-   }
-   $('portalEmailText').innerHTML=correoPortal
-     ? `<strong>Correo:</strong> ${correoPortal}<br><strong>Clave inicial:</strong> ${clavePortal||'Generada automáticamente'}<br><span class="muted">Tu clave inicial corresponde a la parte de tu correo antes del @. Si esa parte es muy corta, Nexia la completa automáticamente.</span>`
-     : `Tu acceso al Portal Nexia fue creado automáticamente.`;
-   $('openPortal').onclick=()=>window.open(`https://nexia-tech.com/portal.html?demo_token=${encodeURIComponent(token)}`,'_blank');
-   $('demoStats').innerHTML='<div class="stat">50 mensajes gratis</div><div class="stat">24 horas</div><div class="stat">Portal incluido</div>';
-   if(d.whatsapp?.enabled&&d.whatsapp?.wa_url){
-    $('whatsappReady').classList.remove('hidden');
-    $('whatsappText').textContent='Abre WhatsApp y envía el mensaje preescrito. Se abrirá automáticamente esta misma prueba con tu asistente.';
-    $('openWhatsapp').onclick=()=>window.open(d.whatsapp.wa_url,'_blank');
-    $('openWhatsappMain').classList.remove('hidden');
-    $('openWhatsappMain').onclick=()=>window.open(d.whatsapp.wa_url,'_blank');
-   }else{
-    $('openWhatsappMain').classList.add('hidden');
-    $('whatsappReady').classList.add('hidden');
-   }
-  }else showQuestion(d);
-  $('status').textContent=''
- }catch(e){$('status').textContent=e.message;$('status').className='error'}
- finally{$('sendAnswer').disabled=false}
+
+  .grid,
+  .cards,
+  .steps,
+  .cta{
+    grid-template-columns:1fr;
+  }
+
+  .visual{
+    min-height:340px;
+  }
+
+  .hero{
+    padding-top:64px;
+  }
+
+  .cta{
+    padding:34px 24px;
+  }
 }
-function addMsg(text,who){const d=document.createElement('div');d.className='msg '+who;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}
-async function sendChat(){const text=$('chatInput').value.trim();if(!text)return;addMsg(text,'me');$('chatInput').value='';try{$('chatSend').disabled=true;$('chatStatus').textContent='Tu asistente está respondiendo...';const d=await api(`/core/demo/${token}/message`,{method:'POST',body:JSON.stringify({message:text})});addMsg(d.reply,'bot');const rest=d.plan?.mensajes_restantes;if(rest!==undefined&&rest!==null)$('remaining').textContent=rest+' mensajes restantes';$('chatStatus').textContent=''}catch(e){$('chatStatus').textContent=e.message;$('chatStatus').className='error'}finally{$('chatSend').disabled=false;$('chatInput').focus()}}
-$('startBtn').onclick=start;$('sendAnswer').onclick=submitAnswer;$('addServiceBtn').onclick=()=>addServiceRow();document.querySelectorAll('.ecommercechoice').forEach(btn=>btn.onclick=()=>setEcommerceProvider(btn.dataset.provider));$('addressYes').onclick=()=>setPhysicalAddressChoice(true);$('addressNo').onclick=()=>setPhysicalAddressChoice(false);$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitAnswer()}});$('openChat').onclick=()=>{$('chatCard').classList.remove('hidden');$('openChat').scrollIntoView({behavior:'smooth'});$('chatInput').focus()};$('chatSend').onclick=sendChat;$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
-</script></body></html>
+
+@media(max-width:600px){
+
+  .nexia-wa-wrapper{
+    right:16px;
+    bottom:16px;
+  }
+
+  .nexia-wa-label{
+    display:none;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="wrap">
+
+<nav>
+
+<a class="brand" href="#inicio">
+
+<span class="logo"></span>
+
+NEXIA TECH
+
+</a>
+
+<div class="links">
+
+<a href="#servicios">Servicios</a>
+<a href="#proceso">Cómo trabajamos</a>
+<a href="#contacto">Contacto</a>
+
+</div>
+
+<a
+class="btn"
+href="mailto:contacto@nexia-tech.com"
+>
+Hablemos
+</a>
+
+</nav>
+
+</div>
+
+</header>
+
+<main>
+
+<section class="hero" id="inicio">
+
+<div class="wrap grid">
+
+<div>
+
+<span class="tag">
+AUTOMATIZACIÓN + INTELIGENCIA ARTIFICIAL
+</span>
+
+<h1>
+
+Tecnología que
+
+<span class="grad">
+trabaja por tu empresa.
+</span>
+
+</h1>
+
+<p>
+
+En Nexia Tech desarrollamos asistentes virtuales,
+automatizaciones e integraciones que ayudan a las empresas
+a responder clientes, gestionar reservas y optimizar procesos.
+
+</p>
+
+<div class="actions">
+
+<a
+class="btn primary"
+href="https://wa.me/56950064242?text=Hola%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quisiera%20hablar%20con%20un%20ejecutivo."
+target="_blank"
+rel="noopener noreferrer"
+>
+Quiero automatizar mi empresa
+</a>
+
+<a
+class="btn"
+href="#servicios"
+>
+Ver servicios
+</a>
+
+</div>
+
+</div>
+
+<div class="visual">
+
+<div class="orb"></div>
+
+<div class="float f1">
+● Asistente IA activo
+</div>
+
+<div class="float f2">
+⚡ Automatización 24/7
+</div>
+
+<div class="float f3">
+✓ Integración con tus herramientas
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="servicios">
+
+<div class="wrap">
+
+<div class="head">
+
+<span class="tag">
+SOLUCIONES
+</span>
+
+<h2>
+Automatizamos tareas para que puedas enfocarte en crecer.
+</h2>
+
+<p>
+Soluciones simples para negocios y empresas que quieren
+incorporar tecnología sin complicarse.
+</p>
+
+</div>
+
+<div class="cards">
+
+<article class="card">
+
+<div class="icon">💬</div>
+
+<h3>
+Asistentes para WhatsApp
+</h3>
+
+<p>
+Automatiza respuestas, consultas, captación de clientes
+y atención con asistentes inteligentes.
+</p>
+
+</article>
+
+<article class="card">
+
+<div class="icon">📅</div>
+
+<h3>
+Reservas automáticas
+</h3>
+
+<p>
+Conecta la atención con calendarios y disponibilidad real
+para agendar citas automáticamente.
+</p>
+
+</article>
+
+<article class="card">
+
+<div class="icon">⚙️</div>
+
+<h3>
+Automatización de procesos
+</h3>
+
+<p>
+Integramos herramientas y reducimos tareas manuales repetitivas
+para mejorar tiempos y productividad.
+</p>
+
+</article>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="proceso">
+
+<div class="wrap">
+
+<div class="head">
+
+<span class="tag">
+METODOLOGÍA
+</span>
+
+<h2>
+De una necesidad a una solución funcionando.
+</h2>
+
+</div>
+
+<div class="steps">
+
+<div class="step">
+
+<strong>
+01 · ANALIZAMOS
+</strong>
+
+<h3>
+Entendemos tu proceso
+</h3>
+
+<p>
+Revisamos qué necesitas automatizar y dónde podemos
+generar mayor impacto.
+</p>
+
+</div>
+
+<div class="step">
+
+<strong>
+02 · CONSTRUIMOS
+</strong>
+
+<h3>
+Desarrollamos la solución
+</h3>
+
+<p>
+Configuramos el asistente, automatización o integración
+según tu negocio.
+</p>
+
+</div>
+
+<div class="step">
+
+<strong>
+03 · IMPLEMENTAMOS
+</strong>
+
+<h3>
+Lo dejamos funcionando
+</h3>
+
+<p>
+Probamos el flujo y lo conectamos a tus canales y herramientas.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="contacto">
+
+<div class="wrap">
+
+<div class="cta">
+
+<div>
+
+<span class="tag">
+CONVERSEMOS
+</span>
+
+<h2>
+¿Tienes un proceso que quieres automatizar?
+</h2>
+
+<p>
+Cuéntanos qué necesitas y revisemos cómo Nexia Tech
+puede ayudarte.
+</p>
+
+</div>
+
+<a
+class="btn primary"
+href="https://wa.me/56950064242?text=Hola%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quisiera%20hablar%20con%20un%20ejecutivo."
+target="_blank"
+rel="noopener noreferrer"
+>
+Hablar por WhatsApp
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+
+<div class="wrap foot">
+
+<div>
+© <span id="year"></span> Nexia Tech.
+</div>
+
+<div>
+Automatización · Inteligencia Artificial · Integraciones
+</div>
+
+</div>
+
+</footer>
+
+<!-- BOTÓN FLOTANTE WHATSAPP -->
+
+<div class="nexia-wa-wrapper">
+
+<span class="nexia-wa-label">
+Hablar con un ejecutivo
+</span>
+
+<a
+href="https://wa.me/56950064242?text=Hola%2C%20vengo%20desde%20la%20web%20de%20Nexia%20Tech%20y%20quisiera%20hablar%20con%20un%20ejecutivo."
+target="_blank"
+rel="noopener noreferrer"
+class="nexia-wa-button"
+aria-label="Hablar con un ejecutivo por WhatsApp"
+>
+
+<svg
+viewBox="0 0 24 24"
+width="36"
+height="36"
+xmlns="http://www.w3.org/2000/svg"
+aria-hidden="true"
+>
+<path
+fill="currentColor"
+d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.173.198-.297.298-.495.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.208-.242-.58-.487-.502-.669-.511l-.57-.01c-.198 0-.52.074-.792.372-.273.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374A9.86 9.86 0 012.16 11.993C2.16 6.525 6.608 2.077 12.075 2.077c2.648 0 5.137 1.033 7.007 2.906a9.852 9.852 0 012.9 7.011c-.003 5.468-4.451 9.915-9.931 9.915m8.429-18.364A11.815 11.815 0 0012.084 0C5.55 0 .232 5.318.229 11.852a11.82 11.82 0 001.58 5.918L.13 23.897l6.27-1.644a11.82 11.82 0 005.68 1.447h.005c6.533 0 11.851-5.318 11.854-11.852a11.821 11.821 0 00-3.459-8.427Z"
+/>
+</svg>
+
+</a>
+
+</div>
+
+<script>
+document.getElementById("year").textContent =
+new Date().getFullYear();
+</script>
+
+</body>
+</html>
