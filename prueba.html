@@ -342,7 +342,7 @@ textarea{min-height:96px;resize:vertical}
 <div class="actions"><button id="sendAnswer">Continuar</button></div>
 <p id="status" class="muted"></p>
 </section>
-<section id="ready" class="card hidden"><div class="pill">Prueba activa</div><h2>Tu asistente está listo 🚀</h2><p class="muted">Puedes probarlo por WhatsApp, en el simulador web y también vivir la experiencia completa del Portal Nexia.</p><div id="portalAccessNote" class="card" style="margin:14px 0;background:#eef2ff;color:#172554"><strong>Acceso al Portal sin contraseña</strong><p id="portalEmailText" style="margin:7px 0 0">Usaremos el correo ingresado durante la configuración para asociar tu acceso y enviarte avisos relacionados con la prueba.</p></div><div id="demoStats" class="stats"></div><div id="whatsappReady" class="card hidden" style="margin-top:12px;background:#0e162d"><strong>WhatsApp conectado a tu prueba</strong><p id="whatsappText" class="muted" style="margin-bottom:10px"></p><div class="actions"><button id="openWhatsapp">Probar por WhatsApp</button></div></div><details><summary>Ver configuración entendida</summary><pre id="summary" class="summary"></pre></details><div class="actions"><button id="openWhatsappMain" class="hidden">Probar por WhatsApp</button><button id="openChat">Probar en simulador web</button><button id="openPortal">Ver mi Portal</button></div></section>
+<section id="ready" class="card hidden"><div class="pill">Prueba activa</div><h2>Tu asistente está listo 🚀</h2><p class="muted">Puedes probarlo por WhatsApp, en el simulador web y también vivir la experiencia completa del Portal Nexia.</p><div id="portalAccessNote" class="card" style="margin:14px 0;background:#f3fbf7;color:#173b2b;border-color:#cfe9dc"><strong>🔐 Acceso a tu Portal Nexia</strong><p id="portalEmailText" style="margin:9px 0 0;line-height:1.65">Estamos preparando tus datos de acceso...</p></div><div id="demoStats" class="stats"></div><div id="whatsappReady" class="card hidden" style="margin-top:12px;background:#0e162d"><strong>WhatsApp conectado a tu prueba</strong><p id="whatsappText" class="muted" style="margin-bottom:10px"></p><div class="actions"><button id="openWhatsapp">Probar por WhatsApp</button></div></div><details><summary>Ver configuración entendida</summary><pre id="summary" class="summary"></pre></details><div class="actions"><button id="openWhatsappMain" class="hidden">Probar por WhatsApp</button><button id="openChat">Probar en simulador web</button><button id="openPortal">Ver mi Portal</button></div></section>
 <section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 id="chatTitle" style="margin-bottom:4px">Habla con tu asistente</h2></div><div id="remaining" class="stat">50 mensajes</div></div><div id="chat" class="chat"></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
 </div>
 <script>
@@ -488,7 +488,15 @@ async function submitAnswer(){
    $('onboarding').classList.add('hidden');$('ready').classList.remove('hidden');
    $('summary').textContent=JSON.stringify(summary,null,2); refreshAssistantIdentity();
    const correoPortal=summary.email_contacto||'';
-   $('portalEmailText').textContent=correoPortal?`Usaremos ${correoPortal} para asociar tu acceso al Portal Nexia y enviarte avisos de la prueba. No necesitas contraseña durante esta prueba.`:'Tu prueba incluye acceso temporal al Portal Nexia sin contraseña.';
+   const accesoPortal=d.portal_acceso||summary.portal_acceso||{};
+   let clavePortal=(accesoPortal.clave||accesoPortal.password||'').trim();
+   if(!clavePortal&&correoPortal.includes('@')){
+     const local=correoPortal.split('@')[0].trim().toLowerCase();
+     clavePortal=local.length>=6?local:(local+'nexia');
+   }
+   $('portalEmailText').innerHTML=correoPortal
+     ? `<strong>Correo:</strong> ${correoPortal}<br><strong>Clave inicial:</strong> ${clavePortal||'Generada automáticamente'}<br><span class="muted">Tu clave inicial corresponde a la parte de tu correo antes del @. Si esa parte es muy corta, Nexia la completa automáticamente.</span>`
+     : `Tu acceso al Portal Nexia fue creado automáticamente.`;
    $('openPortal').onclick=()=>window.open(`https://nexia-tech.com/portal.html?demo_token=${encodeURIComponent(token)}`,'_blank');
    $('demoStats').innerHTML='<div class="stat">50 mensajes gratis</div><div class="stat">24 horas</div><div class="stat">Portal incluido</div>';
    if(d.whatsapp?.enabled&&d.whatsapp?.wa_url){
