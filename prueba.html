@@ -4,18 +4,293 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nexia · Crea tu asistente</title>
 <style>
-:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#0b1020;color:#edf2ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0,#18244b 0,transparent 40%),#0b1020}.wrap{max-width:860px;margin:auto;padding:28px 18px 70px}.brand{font-weight:800;letter-spacing:.06em}.muted{color:#9caaca}.card{background:rgba(18,26,50,.92);border:1px solid #2b3a67;border-radius:22px;padding:22px;box-shadow:0 20px 70px rgba(0,0,0,.25);margin-top:18px}.hero h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.02;margin:10px 0}.hero p{font-size:1.05rem;line-height:1.6;max-width:650px}.pill{display:inline-block;padding:7px 11px;border:1px solid #3c4d80;border-radius:999px;color:#c9d4f5;font-size:.86rem}.progress{height:8px;background:#243052;border-radius:999px;overflow:hidden;margin:14px 0}.progress>div{height:100%;background:linear-gradient(90deg,#7c9cff,#8a7cff);width:0;transition:.3s}.question{font-size:1.25rem;font-weight:750;line-height:1.4;margin:10px 0 16px}textarea,input{width:100%;border-radius:14px;border:1px solid #35456f;background:#0e162d;color:white;padding:14px;font:inherit;outline:none}textarea{min-height:100px;resize:vertical}.servicebox{display:grid;gap:10px}.servicerow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) auto;gap:8px;align-items:center}.servicerow button{padding:10px 12px;background:#2a365c;color:#fff}.cataloghint{font-size:.86rem;color:#9caaca;margin:6px 0 2px}
+:root{
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#162033;
+  background:#f7faf8;
+  --green:#13a867;
+  --green-dark:#0b8751;
+  --green-soft:#eaf8f1;
+  --ink:#142033;
+  --muted:#667085;
+  --line:#e4e9e7;
+  --card:#ffffff;
+  --soft:#f6f8f7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(19,168,103,.08),transparent 32%),
+    linear-gradient(180deg,#fbfdfc 0%,#f5f8f6 100%);
+  color:var(--ink);
+}
+.wrap{max-width:980px;margin:auto;padding:22px 18px 72px}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  font-weight:850;letter-spacing:.02em;font-size:1.08rem;color:#142033
+}
+.brand-dot{
+  width:34px;height:34px;border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#19bd75,#0e9459);
+  color:white;font-weight:900;box-shadow:0 8px 20px rgba(19,168,103,.22)
+}
+.hero{
+  display:grid;
+  grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);
+  gap:34px;
+  align-items:center;
+  padding:48px 0 18px;
+}
+.hero-copy{padding:8px 0}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--green-soft);color:var(--green-dark);
+  border:1px solid #caead9;border-radius:999px;
+  padding:8px 12px;font-weight:750;font-size:.88rem
+}
+.hero h1{
+  font-size:clamp(2.45rem,6vw,4.35rem);
+  line-height:.98;letter-spacing:-.045em;
+  margin:18px 0 16px;max-width:760px
+}
+.hero h1 span{color:var(--green)}
+.hero p{
+  color:var(--muted);
+  font-size:1.08rem;line-height:1.62;
+  max-width:640px;margin:0 0 22px
+}
+.quick-benefits{
+  display:flex;flex-wrap:wrap;gap:9px 14px;
+  margin:0 0 24px;color:#344054;font-size:.94rem;font-weight:650
+}
+.quick-benefits span{display:flex;align-items:center;gap:6px}
+.quick-benefits b{color:var(--green)}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+button{
+  border:0;border-radius:14px;padding:13px 18px;
+  font:inherit;font-weight:780;cursor:pointer;
+  background:var(--green);color:white;
+  box-shadow:0 8px 20px rgba(19,168,103,.18);
+  transition:.18s ease
+}
+button:hover{transform:translateY(-1px);background:var(--green-dark)}
+button.secondary{
+  background:#fff;color:#344054;border:1px solid var(--line);
+  box-shadow:none
+}
+.cta-main{
+  font-size:1.02rem;padding:15px 22px;border-radius:15px
+}
+.microcopy{font-size:.84rem;color:#7a8493;margin-top:10px}
+.preview{
+  background:#fff;border:1px solid #e2e8e5;border-radius:26px;
+  padding:16px;box-shadow:0 24px 70px rgba(18,42,29,.12);
+  transform:rotate(1deg)
+}
+.preview-top{
+  display:flex;align-items:center;gap:10px;
+  padding:4px 4px 13px;border-bottom:1px solid #eef1ef
+}
+.preview-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:#dff6e9;display:grid;place-items:center;font-size:1.1rem
+}
+.preview-name{font-weight:800}.preview-status{font-size:.78rem;color:#22a365}
+.preview-chat{
+  background:#f6f4ee;
+  border-radius:18px;padding:14px;margin-top:14px;display:grid;gap:10px
+}
+.bubble{
+  max-width:88%;border-radius:14px;padding:10px 12px;
+  font-size:.89rem;line-height:1.38
+}
+.bubble.user{justify-self:end;background:#d9fdd3}
+.bubble.bot{justify-self:start;background:#fff;border:1px solid #ececec}
+.product-mini{
+  background:#fff;border-radius:14px;border:1px solid #e6e9e7;
+  overflow:hidden;display:grid;grid-template-columns:86px 1fr
+}
+.product-mini .photo{
+  background:linear-gradient(135deg,#dff4e8,#eef8f2);
+  display:grid;place-items:center;font-size:2rem;min-height:88px
+}
+.product-mini .info{padding:10px}
+.product-mini strong{display:block;margin-bottom:4px}
+.product-mini small{color:#667085}
+.product-mini a{
+  display:inline-block;margin-top:7px;color:#07874f;font-weight:750;text-decoration:none
+}
+.trust-strip{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin:24px 0 8px
+}
+.trust-item{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;
+  display:flex;align-items:center;gap:10px
+}
+.trust-icon{
+  width:38px;height:38px;border-radius:12px;
+  display:grid;place-items:center;background:var(--green-soft)
+}
+.trust-item strong{display:block;font-size:.92rem}
+.trust-item span{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
+
+.card{
+  background:rgba(255,255,255,.97);
+  border:1px solid var(--line);
+  border-radius:22px;padding:22px;
+  box-shadow:0 14px 45px rgba(20,32,51,.07);
+  margin-top:18px
+}
+#startCard{
+  margin-top:10px;
+  text-align:center;
+  padding:22px 20px;
+  border-style:dashed;
+  box-shadow:none;
+  background:rgba(255,255,255,.72)
+}
+#startCard h2{margin:0 0 6px;font-size:1.08rem}
+#startCard p{margin:0 auto 14px;max-width:640px;font-size:.92rem}
+.muted{color:var(--muted)}
+.pill{
+  display:inline-block;padding:7px 11px;
+  border:1px solid #dce5e0;border-radius:999px;
+  color:#53605a;background:#fafcfb;font-size:.84rem
+}
+.progress{height:8px;background:#e8eeeb;border-radius:999px;overflow:hidden;margin:14px 0}
+.progress>div{height:100%;background:linear-gradient(90deg,#13a867,#4bc88a);width:0;transition:.3s}
+.question{font-size:1.28rem;font-weight:800;line-height:1.35;margin:10px 0 12px}
+textarea,input{
+  width:100%;border-radius:14px;border:1px solid #d8e0dc;background:#fff;
+  color:#182230;padding:14px;font:inherit;outline:none
+}
+textarea:focus,input:focus{border-color:#6bcf9f;box-shadow:0 0 0 3px rgba(19,168,103,.09)}
+textarea{min-height:96px;resize:vertical}
+.servicebox{display:grid;gap:10px}
+.servicerow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) auto;gap:8px;align-items:center}
+.servicerow button{padding:10px 12px;background:#f2f4f3;color:#38443e;box-shadow:none}
+.cataloghint{font-size:.86rem;color:#77827c;margin:6px 0 2px}
 .ecommercechoices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ecommercechoice{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:#17213e;color:#e5eaff;border:1px solid #3d4e7c;padding:14px;border-radius:14px}
-.ecommercechoice span{font-size:.82rem;color:#9caaca;font-weight:500;line-height:1.35}
-.ecommercechoice.active{outline:2px solid #a9b8ff;background:#25325a}
-.addressbox{display:grid;gap:10px}.addresschoice{display:flex;gap:10px;flex-wrap:wrap}.addresschoice button.active{outline:2px solid #a9b8ff;background:#25325a}.addressfields{display:grid;grid-template-columns:1.4fr .8fr;gap:10px}.addressfields .wide{grid-column:1/-1}@media(max-width:600px){.ecommercechoices{grid-template-columns:1fr}#digitalBox>div[style*="grid-template-columns"]{grid-template-columns:1fr!important}.addressfields{grid-template-columns:1fr}.servicerow{grid-template-columns:1fr 1fr}.servicerow button{grid-column:1/-1}}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:13px;padding:12px 17px;font:inherit;font-weight:700;cursor:pointer;background:#7895ff;color:#081020}button.secondary{background:#1f2a4d;color:#e8edff;border:1px solid #394974}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.chip{background:#17213e;color:#e5eaff;border:1px solid #3d4e7c}.chat{height:380px;overflow:auto;background:#0d1429;border:1px solid #29375e;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}.msg{max-width:82%;padding:11px 13px;border-radius:15px;line-height:1.45;white-space:pre-wrap}.me{align-self:flex-end;background:#6f89ec;color:#071022}.bot{align-self:flex-start;background:#1d2949}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.stat{padding:10px 12px;border-radius:12px;background:#111b35;border:1px solid #2f3e69}.hidden{display:none}.summary{font-size:.9rem;line-height:1.55;max-height:260px;overflow:auto}.ok{color:#9be6b4}.error{color:#ff9fa9}@media(max-width:600px){.wrap{padding:18px 12px}.card{padding:16px}.msg{max-width:92%}}
+.ecommercechoice{
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;
+  background:#fff;color:#22302a;border:1px solid #dfe7e2;padding:14px;border-radius:14px;
+  box-shadow:none
+}
+.ecommercechoice:hover{background:#f7fbf9}
+.ecommercechoice span{font-size:.82rem;color:#77827c;font-weight:500;line-height:1.35}
+.ecommercechoice.active{outline:2px solid #57c58f;background:#eefaf4}
+.addressbox{display:grid;gap:10px}
+.addresschoice{display:flex;gap:10px;flex-wrap:wrap}
+.addresschoice button.active{outline:2px solid #57c58f;background:#eefaf4;color:#14633f}
+.addressfields{display:grid;grid-template-columns:1.4fr .8fr;gap:10px}
+.addressfields .wide{grid-column:1/-1}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{background:#fff;color:#344054;border:1px solid #dbe3df;box-shadow:none}
+.chip:hover{background:#eefaf4;color:#14633f}
+.chat{
+  height:380px;overflow:auto;background:#f6f4ee;border:1px solid #e1e5e2;
+  border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px
+}
+.msg{max-width:82%;padding:11px 13px;border-radius:15px;line-height:1.45;white-space:pre-wrap}
+.me{align-self:flex-end;background:#d9fdd3;color:#142033}
+.bot{align-self:flex-start;background:#fff;border:1px solid #e5e8e6}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat{padding:10px 12px;border-radius:12px;background:#f4f8f6;border:1px solid #e0e8e4}
+.hidden{display:none}
+.summary{font-size:.9rem;line-height:1.55;max-height:260px;overflow:auto}
+.ok{color:#148954}.error{color:#d92d20}
+#ready h2,#chatCard h2{color:#142033}
+@media(max-width:760px){
+  .hero{grid-template-columns:1fr;padding-top:34px;gap:22px}
+  .preview{transform:none}
+  .trust-strip{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .wrap{padding:16px 12px 56px}
+  .hero h1{font-size:2.6rem}
+  .hero p{font-size:1rem}
+  .card{padding:17px}
+  .ecommercechoices{grid-template-columns:1fr}
+  #digitalBox>div[style*="grid-template-columns"]{grid-template-columns:1fr!important}
+  .addressfields{grid-template-columns:1fr}
+  .servicerow{grid-template-columns:1fr 1fr}
+  .servicerow button{grid-column:1/-1}
+  .msg{max-width:92%}
+  .cta-main{width:100%}
+}
 </style>
 </head>
 <body><div class="wrap">
-<div class="brand">NEXIA TECH</div>
-<section class="hero"><span class="pill">Configura tu asistente en 3 minutos</span><h1>Tu negocio. Tu asistente. Listo para conversar.</h1><p class="muted">Configura tu asistente para tu negocio en pocos minutos y pruébalo gratis con 50 mensajes totales durante 24 horas. Luego puedes llevar la experiencia a WhatsApp.</p></section>
-<section id="startCard" class="card"><h2>Comenzar prueba</h2><p class="muted">No necesitas configurar integraciones técnicas para comenzar. Configura los datos básicos de tu negocio y después prueba tu asistente en el simulador o por WhatsApp.</p><button id="startBtn">Crear mi asistente</button><div id="startError" class="error"></div></section>
+<div class="brand"><span class="brand-dot">N</span><span>Nexia</span></div>
+
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">✨ Prueba gratis · Sin tarjeta</span>
+    <h1>Crea tu asistente de IA para <span>WhatsApp</span></h1>
+    <p>Atiende clientes, responde preguntas, agenda y vende automáticamente. Configúralo en pocos minutos y pruébalo antes de contratar.</p>
+
+    <div class="quick-benefits">
+      <span><b>✓</b> 50 mensajes incluidos</span>
+      <span><b>✓</b> 24 horas de prueba</span>
+      <span><b>✓</b> Portal incluido</span>
+    </div>
+
+    <div class="cta-row">
+      <button id="startBtn" class="cta-main">Crear mi asistente gratis →</button>
+    </div>
+    <div class="microcopy">No necesitas conocimientos técnicos ni conectar nada para comenzar.</div>
+    <div id="startError" class="error" style="margin-top:10px"></div>
+  </div>
+
+  <div class="preview" aria-label="Ejemplo de conversación con Nexia">
+    <div class="preview-top">
+      <div class="preview-avatar">✨</div>
+      <div>
+        <div class="preview-name">Tu asistente Nexia</div>
+        <div class="preview-status">● Disponible</div>
+      </div>
+    </div>
+    <div class="preview-chat">
+      <div class="bubble user">¿Tienen productos para la caída del cabello?</div>
+      <div class="bubble bot">Sí 👋 Encontré opciones disponibles para ti:</div>
+      <div class="product-mini">
+        <div class="photo">🧴</div>
+        <div class="info">
+          <strong>Shampoo Ortiga Romero</strong>
+          <small>$6.490 · Disponible</small>
+          <a href="javascript:void(0)">Ver producto →</a>
+        </div>
+      </div>
+      <div class="bubble user">¿También puedo agendar?</div>
+      <div class="bubble bot">Claro. Puedo ayudarte a coordinar una hora y confirmar la reserva.</div>
+    </div>
+  </div>
+</section>
+
+<div class="trust-strip">
+  <div class="trust-item">
+    <div class="trust-icon">⚡</div>
+    <div><strong>En pocos minutos</strong><span>Configura lo básico y comienza.</span></div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-icon">💬</div>
+    <div><strong>50 mensajes gratis</strong><span>Prueba conversaciones reales.</span></div>
+  </div>
+  <div class="trust-item">
+    <div class="trust-icon">🔒</div>
+    <div><strong>Sin tarjeta</strong><span>Conoce Nexia antes de contratar.</span></div>
+  </div>
+</div>
+
+<section id="startCard">
+  <h2>¿Listo para probarlo?</h2>
+  <p class="muted">Pulsa el botón de arriba. Te haremos preguntas simples sobre tu negocio para preparar el asistente.</p>
+</section>
 <section id="onboarding" class="card hidden">
 <div class="pill">Configuración guiada</div>
 <div class="progress"><div id="bar"></div></div><div id="pct" class="muted">0%</div>
@@ -172,7 +447,7 @@ function showQuestion(d){
  else if(q?.kind==='ecommerce_provider')document.querySelector('.ecommercechoice')?.focus();
  else if(q?.kind!=='digital_presence')$('answer').focus();
 }
-async function start(){try{$('startBtn').disabled=true;const d=await api('/core/onboarding/start',{method:'POST',body:'{}'});token=d.token;$('startCard').classList.add('hidden');$('onboarding').classList.remove('hidden');showQuestion(d)}catch(e){$('startError').textContent=e.message;$('startBtn').disabled=false}}
+async function start(){try{$('startBtn').disabled=true;const d=await api('/core/onboarding/start',{method:'POST',body:'{}'});token=d.token;document.querySelector('.hero')?.classList.add('hidden');document.querySelector('.trust-strip')?.classList.add('hidden');$('startCard').classList.add('hidden');$('onboarding').classList.remove('hidden');showQuestion(d);$('onboarding').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){$('startError').textContent=e.message;$('startBtn').disabled=false}}
 async function submitAnswer(){
  let a;
  if(currentQuestion?.kind==='digital_presence'){
