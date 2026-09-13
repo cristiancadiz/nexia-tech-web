@@ -84,6 +84,16 @@ button.secondary{
 .cta-main{
   font-size:1.02rem;padding:15px 22px;border-radius:15px
 }
+.wa-cta{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  text-decoration:none;
+  background:#25D366;color:#fff;
+  border-radius:15px;padding:15px 22px;
+  font-weight:800;font-size:1.02rem;
+  box-shadow:0 8px 20px rgba(37,211,102,.20);
+  transition:.18s ease
+}
+.wa-cta:hover{transform:translateY(-1px);background:#1fb85a}
 .microcopy{font-size:.84rem;color:#7a8493;margin-top:10px}
 .preview{
   background:#fff;border:1px solid #e2e8e5;border-radius:26px;
@@ -222,6 +232,7 @@ textarea{min-height:96px;resize:vertical}
   .servicerow button{grid-column:1/-1}
   .msg{max-width:92%}
   .cta-main{width:100%}
+  .wa-cta{width:100%}
 }
 </style>
 </head>
@@ -242,6 +253,13 @@ textarea{min-height:96px;resize:vertical}
 
     <div class="cta-row">
       <button id="startBtn" class="cta-main">Crear mi asistente gratis →</button>
+      <a class="wa-cta"
+         href="https://wa.me/56950064242?text=Hola%2C%20quiero%20probar%20Nexia"
+         target="_blank"
+         rel="noopener noreferrer"
+         aria-label="Abrir el bot de Nexia en WhatsApp">
+        💬 Hablar con Nexia por WhatsApp
+      </a>
     </div>
     <div class="microcopy">No necesitas conocimientos técnicos ni conectar nada para comenzar.</div>
     <div id="startError" class="error" style="margin-top:10px"></div>
