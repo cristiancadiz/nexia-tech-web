@@ -16,7 +16,7 @@
     .choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.choice{border:1px solid var(--line);border-radius:12px;padding:11px 12px;display:flex;gap:9px;align-items:center;cursor:pointer;background:#fff}.choice input{width:auto;margin:0}.choice:has(input:checked){background:var(--soft);border-color:#8db39a}
     .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.inline input[type="checkbox"]{width:auto}.note{padding:14px 15px;border-radius:12px;background:#f7faf8;border:1px solid var(--line);font-size:13px;color:var(--muted)}
     .actions{display:flex;gap:12px;justify-content:flex-end;align-items:center} button{border:0;border-radius:12px;padding:14px 20px;font-weight:750;font-size:15px;cursor:pointer}.primary{background:var(--brand);color:#fff}.primary:hover{background:#0f2f18}.secondary{background:#edf1ee;color:var(--text)}
-    .status{display:none;margin-top:16px;padding:13px 15px;border-radius:12px;background:#ecf8ef;border:1px solid #b8dec3;color:#215b31}.small{font-size:12px;color:var(--muted);margin-top:6px}.money-wrap{display:none}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+    .status{display:none;margin-top:16px;padding:13px 15px;border-radius:12px;background:#ecf8ef;border:1px solid #b8dec3;color:#215b31}.status.error{background:#fff0f0;border-color:#efc0c0;color:#9f2525}.primary:disabled{opacity:.6;cursor:wait}.small{font-size:12px;color:var(--muted);margin-top:6px}.money-wrap{display:none}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
     @media(max-width:720px){.grid{grid-template-columns:1fr}.choices{grid-template-columns:1fr 1fr}.hero,.card{padding:21px}} @media(max-width:460px){.choices{grid-template-columns:1fr}.actions{flex-direction:column-reverse}button{width:100%}}
   </style>
 </head>
@@ -108,21 +108,116 @@
 </main>
 
 <script>
+const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');
+const params=new URLSearchParams(location.search);
+const token=params.get('token')||'';
+const previewMode=!token;
 const form=document.getElementById('interesadoForm');
 const requiereMinimo=document.getElementById('requiereMinimo');
 const moneyWrap=document.getElementById('moneyWrap');
 const montoMinimo=document.getElementById('montoMinimo');
 const statusBox=document.getElementById('status');
-requiereMinimo.addEventListener('change',()=>{moneyWrap.style.display=requiereMinimo.checked?'block':'none';montoMinimo.required=requiereMinimo.checked;if(!requiereMinimo.checked)montoMinimo.value='';});
-const params=new URLSearchParams(location.search);if(params.get('telefono'))document.getElementById('telefono').value='+'+params.get('telefono').replace(/\D/g,'');
-function seleccionados(nombre){return [...document.querySelectorAll(`input[name="${nombre}"]:checked`)].map(x=>x.value)}
-form.addEventListener('submit',async(e)=>{e.preventDefault();if(!form.reportValidity())return;const productos=seleccionados('productos');const comunas=seleccionados('comunas');if(!productos.length){alert('Selecciona al menos un tipo de producto.');return;}if(!comunas.length&&!document.getElementById('otrasComunas').value.trim()){alert('Selecciona al menos una comuna o escribe una comuna adicional.');return;}
-const payload={nombre:document.getElementById('nombre').value.trim(),apellido:document.getElementById('apellido').value.trim(),telefono:document.getElementById('telefono').value.trim(),correo:document.getElementById('correo').value.trim(),productos,comunas,otras_comunas:document.getElementById('otrasComunas').value.trim(),dias:document.getElementById('dias').value.trim(),horario:document.getElementById('horario').value.trim(),transporte:document.getElementById('transporte').value,capacidad:document.getElementById('capacidad').value.trim(),acepta_retiros_gratis:document.getElementById('aceptaGratis').checked,monto_minimo:requiereMinimo.checked?Number(montoMinimo.value||0):null,observaciones:document.getElementById('observaciones').value.trim(),activo:document.getElementById('activo').checked,consentimiento:document.getElementById('consentimiento').checked};
-console.log('INTERESADO PAYLOAD:',payload);
-/* CONEXIÓN REAL: reemplaza con el endpoint Nexia/Supabase.
-const res=await fetch('/api/convocatorias/interesados',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('No fue posible registrar al interesado'); */
-statusBox.style.display='block';statusBox.textContent='Registro preparado correctamente. Falta conectar este formulario al endpoint de Nexia/Supabase.';statusBox.scrollIntoView({behavior:'smooth',block:'center'});
+const submitBtn=form.querySelector('button[type="submit"]');
+
+function showStatus(message,isError=false){
+  statusBox.style.display='block';
+  statusBox.classList.toggle('error',isError);
+  statusBox.textContent=message;
+  statusBox.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+async function req(path,opt={}){
+  const r=await fetch(API+path,{...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);
+  return d;
+}
+
+requiereMinimo.addEventListener('change',()=>{
+  moneyWrap.style.display=requiereMinimo.checked?'block':'none';
+  montoMinimo.required=requiereMinimo.checked;
+  if(!requiereMinimo.checked)montoMinimo.value='';
 });
+
+if(params.get('telefono'))document.getElementById('telefono').value='+'+params.get('telefono').replace(/\D/g,'');
+function seleccionados(nombre){return [...document.querySelectorAll(`input[name="${nombre}"]:checked`)].map(x=>x.value)}
+function listaTexto(v){return String(v||'').split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean)}
+
+function renderChoices(name,items){
+  const first=document.querySelector(`input[name="${name}"]`);
+  if(!first||!items.length)return;
+  const box=first.closest('.choices');
+  box.innerHTML=items.map(x=>`<label class="choice"><input type="checkbox" name="${name}" value="${String(x).replace(/"/g,'&quot;')}"> ${x}</label>`).join('');
+}
+
+async function loadPublicConfig(){
+  if(previewMode){
+    showStatus('Vista previa: el formulario está listo. El registro real funcionará al abrir un enlace generado por Nexia.',false);
+    return;
+  }
+  try{
+    const d=await req('/public/convocatorias/interesados/config?token='+encodeURIComponent(token));
+    const c=d.config||{};
+    if(Array.isArray(c.tipos_producto)&&c.tipos_producto.length)renderChoices('productos',c.tipos_producto);
+    if(Array.isArray(c.comunas)&&c.comunas.length)renderChoices('comunas',c.comunas);
+  }catch(e){
+    showStatus(e.message,true);
+    submitBtn.disabled=true;
+  }
+}
+
+form.addEventListener('reset',()=>{
+  setTimeout(()=>{
+    moneyWrap.style.display='none';
+    statusBox.style.display='none';
+  },0);
+});
+
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  if(!form.reportValidity())return;
+  const productos=seleccionados('productos');
+  let comunas=seleccionados('comunas');
+  const extra=listaTexto(document.getElementById('otrasComunas').value);
+  comunas=[...new Set([...comunas,...extra])];
+  if(!productos.length){showStatus('Selecciona al menos un tipo de producto.',true);return;}
+  if(!comunas.length){showStatus('Selecciona al menos una comuna o escribe una comuna adicional.',true);return;}
+  if(previewMode){showStatus('Vista previa correcta. Para guardar el registro debes abrir el enlace público generado por Nexia.',false);return;}
+
+  const payload={
+    token,
+    nombre:document.getElementById('nombre').value.trim(),
+    apellido:document.getElementById('apellido').value.trim(),
+    telefono:document.getElementById('telefono').value.trim(),
+    correo:document.getElementById('correo').value.trim(),
+    tipos_producto:productos,
+    comunas,
+    dias_disponibles:listaTexto(document.getElementById('dias').value),
+    horarios:listaTexto(document.getElementById('horario').value),
+    medio_transporte:document.getElementById('transporte').value,
+    capacidad:document.getElementById('capacidad').value.trim(),
+    acepta_retiro_sin_aporte:document.getElementById('aceptaGratis').checked,
+    aporte_minimo:requiereMinimo.checked?Number(montoMinimo.value||0):null,
+    activo:document.getElementById('activo').checked,
+    consentimiento:document.getElementById('consentimiento').checked
+  };
+
+  try{
+    submitBtn.disabled=true;
+    const original=submitBtn.textContent;
+    submitBtn.textContent='Registrando…';
+    const d=await req('/public/convocatorias/interesados',{method:'POST',body:JSON.stringify(payload)});
+    showStatus('✅ '+(d.mensaje||'Registro completado correctamente.'),false);
+    submitBtn.textContent='Registro completado';
+    submitBtn.disabled=true;
+  }catch(err){
+    showStatus(err.message,true);
+    submitBtn.disabled=false;
+    submitBtn.textContent='Registrar interesado';
+  }
+});
+
+loadPublicConfig();
 </script>
 </body>
 </html>
