@@ -184,6 +184,9 @@
             <select id="comuna" required>
               <option value="">Selecciona una comuna</option>
             </select>
+            <div style="font-size:12px;color:#66736d;margin-top:6px">
+              Se muestran solo comunas con recolectores activos disponibles.
+            </div>
           </div>
 
           <div>
@@ -445,54 +448,20 @@
         '<b>✓ Ya tenemos tu número de WhatsApp</b><br>Se utilizará el número desde el cual estás conversando.';
     }
 
-    const comunasBase = [
-      'Santiago',
-      'Providencia',
-      'Ñuñoa',
-      'Macul',
-      'Peñalolén',
-      'La Florida',
-      'Puente Alto',
-      'San Joaquín',
-      'San Miguel',
-      'Pedro Aguirre Cerda',
-      'Lo Espejo',
-      'La Cisterna',
-      'El Bosque',
-      'San Ramón',
-      'La Granja',
-      'San Bernardo',
-      'Estación Central',
-      'Maipú',
-      'Cerrillos',
-      'Quinta Normal',
-      'Recoleta',
-      'Independencia',
-      'Conchalí',
-      'Renca',
-      'Quilicura',
-      'Huechuraba',
-      'Vitacura',
-      'Las Condes',
-      'Lo Barnechea',
-      'Otra'
-    ];
-    const comunasConfig = Array.isArray(config.comunas)
+    const comunas = Array.isArray(config.comunas)
       ? config.comunas.map(x => String(x || '').trim()).filter(Boolean)
       : [];
 
-    // Siempre mezclar las comunas configuradas con la lista base.
-    // Así, aunque Supabase devuelva solo "Otra" o una lista incompleta,
-    // el selector seguirá mostrando comunas reales.
-    const comunas = [...new Set([
-      ...comunasConfig.filter(x => x.toLowerCase() !== 'otra'),
-      ...comunasBase.filter(x => x.toLowerCase() !== 'otra'),
-      'Otra'
-    ])];
-
-    $('comuna').innerHTML =
-      '<option value="">Selecciona una comuna</option>' +
-      comunas.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    if (comunas.length) {
+      $('comuna').innerHTML =
+        '<option value="">Selecciona una comuna</option>' +
+        comunas.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      $('comuna').disabled = false;
+    } else {
+      $('comuna').innerHTML =
+        '<option value="">No hay comunas con recolectores disponibles</option>';
+      $('comuna').disabled = true;
+    }
 
     const defaultTypes = ['Textil','Electrónicos','Cartón / papel','Plástico','Vidrio','Metales','Muebles','Orgánicos','Otros'];
     const types = Array.isArray(config.tipos_producto) && config.tipos_producto.length
