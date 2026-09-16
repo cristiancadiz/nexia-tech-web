@@ -1,0 +1,406 @@
+<!-- =========================================================
+     HTML 1 — FORMULARIO DE CONVOCATORIA / SOLICITUD DE RETIRO
+     ========================================================= -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Participar en convocatoria</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      background:#f4f7f6;
+      font-family:Arial,Helvetica,sans-serif;
+      color:#1f2937;
+    }
+
+    .wrap{
+      max-width:820px;
+      margin:40px auto;
+      padding:20px;
+    }
+
+    .card{
+      background:#fff;
+      border-radius:22px;
+      padding:32px;
+      box-shadow:0 12px 35px rgba(0,0,0,.08);
+    }
+
+    .badge{
+      display:inline-block;
+      background:#e9f8ef;
+      color:#157347;
+      padding:8px 13px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:12px;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:32px;
+    }
+
+    .intro{
+      margin:0 0 28px;
+      color:#6b7280;
+      line-height:1.6;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .full{
+      grid-column:1/-1;
+    }
+
+    label{
+      display:block;
+      font-weight:700;
+      font-size:14px;
+      margin-bottom:7px;
+    }
+
+    input,
+    select,
+    textarea{
+      width:100%;
+      border:1px solid #d1d5db;
+      border-radius:12px;
+      padding:13px 14px;
+      font-size:15px;
+      background:#fff;
+      outline:none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus{
+      border-color:#1f8f59;
+      box-shadow:0 0 0 3px rgba(31,143,89,.10);
+    }
+
+    textarea{
+      resize:vertical;
+      min-height:100px;
+    }
+
+    .phone-box{
+      background:#f0fdf4;
+      border:1px solid #bbf7d0;
+      padding:14px;
+      border-radius:12px;
+    }
+
+    .phone-box strong{
+      color:#166534;
+    }
+
+    .check-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:9px;
+      border:1px solid #e5e7eb;
+      padding:15px;
+      border-radius:12px;
+    }
+
+    .check{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:400;
+      margin:0;
+    }
+
+    .check input{
+      width:auto;
+    }
+
+    .switch-line{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:14px;
+      background:#f8fafc;
+      border-radius:12px;
+    }
+
+    .switch-line input{
+      width:auto;
+    }
+
+    .payment-panel{
+      display:none;
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:18px;
+      margin-top:10px;
+    }
+
+    .payment-summary{
+      margin-top:15px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      overflow:hidden;
+    }
+
+    .payment-row{
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+      padding:11px 14px;
+      border-bottom:1px solid #eee;
+    }
+
+    .payment-row:last-child{
+      border-bottom:0;
+    }
+
+    .net{
+      font-weight:800;
+      color:#157347;
+    }
+
+    button{
+      width:100%;
+      border:0;
+      border-radius:14px;
+      padding:16px;
+      background:#173d22;
+      color:#fff;
+      font-size:16px;
+      font-weight:800;
+      cursor:pointer;
+      margin-top:24px;
+    }
+
+    button:hover{
+      opacity:.94;
+    }
+
+    .note{
+      font-size:13px;
+      color:#6b7280;
+      line-height:1.5;
+      margin-top:10px;
+    }
+
+    #mensaje{
+      display:none;
+      margin-top:20px;
+      padding:15px;
+      border-radius:12px;
+    }
+
+    #mensaje.ok{
+      display:block;
+      background:#dcfce7;
+      color:#166534;
+    }
+
+    #mensaje.error{
+      display:block;
+      background:#fee2e2;
+      color:#991b1b;
+    }
+
+    @media(max-width:650px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      .full{
+        grid-column:auto;
+      }
+
+      .check-grid{
+        grid-template-columns:1fr;
+      }
+
+      .card{
+        padding:22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <div class="card">
+
+    <span class="badge">Convocatoria</span>
+
+    <h1>Solicitar retiro</h1>
+
+    <p class="intro">
+      Completa tus datos para publicar una solicitud y encontrar personas
+      interesadas en realizar el retiro.
+    </p>
+
+    <form id="convocatoriaForm">
+
+      <input type="hidden" id="workspace_id" name="workspace_id">
+      <input type="hidden" id="conversation_id" name="conversation_id">
+      <input type="hidden" id="telefono" name="telefono">
+
+      <div class="grid">
+
+        <div>
+          <label>Nombre *</label>
+          <input type="text" name="nombre" required>
+        </div>
+
+        <div>
+          <label>Apellido *</label>
+          <input type="text" name="apellido" required>
+        </div>
+
+        <div class="full">
+
+          <label>WhatsApp</label>
+
+          <div class="phone-box">
+            <strong>✓ Ya tenemos tu número de WhatsApp</strong>
+            <div id="telefonoVisible">
+              Se utilizará el número desde el cual estás conversando.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="full">
+          <label>Dirección de retiro *</label>
+          <input
+            type="text"
+            name="direccion"
+            placeholder="Ej: Av. Principal 1234, departamento 402"
+            required
+          >
+        </div>
+
+        <div>
+          <label>Comuna *</label>
+          <input
+            type="text"
+            name="comuna"
+            placeholder="Ej: Santiago"
+            required
+          >
+        </div>
+
+        <div>
+          <label>Cantidad de bultos *</label>
+          <input
+            type="number"
+            name="cantidad_bultos"
+            min="1"
+            value="1"
+            required
+          >
+        </div>
+
+        <div>
+          <label>Día de retiro *</label>
+          <input type="date" name="fecha_retiro" required>
+        </div>
+
+        <div>
+          <label>Horario *</label>
+
+          <select name="horario_retiro" required>
+            <option value="">Selecciona</option>
+            <option>08:00 - 10:00</option>
+            <option>10:00 - 12:00</option>
+            <option>12:00 - 14:00</option>
+            <option>14:00 - 16:00</option>
+            <option>16:00 - 18:00</option>
+            <option>18:00 - 20:00</option>
+            <option>Horario flexible</option>
+          </select>
+
+        </div>
+
+        <div class="full">
+
+          <label>Tipo de producto o material *</label>
+
+          <div class="check-grid">
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="textil">
+              Textil
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="electronicos">
+              Electrónicos
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="carton">
+              Cartón / papel
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="plastico">
+              Plástico
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="vidrio">
+              Vidrio
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="metal">
+              Metales
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="muebles">
+              Muebles
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="organicos">
+              Orgánicos
+            </label>
+
+            <label class="check">
+              <input type="checkbox" name="productos" value="otros">
+              Otros
+            </label>
+
+          </div>
+
+        </div>
+
+        <div>
+          <label>Peso aproximado</label>
+          <input
+            type="text"
+            name="peso_aproximado"
+            placeholder="Ej: 30 kg"
+          >
+        </div>
+
+        <div>
+          <label>Tipo de inmueble</label>
+
+         
