@@ -1,16 +1,620 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Convocatoria · Nexia</title>
-<style>:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#15231c;background:#f5f8f6;--g:#139d63;--line:#dfe8e3;--muted:#67736d}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fbfdfc,#f2f7f4);min-height:100vh}.wrap{max-width:860px;margin:auto;padding:28px 16px 70px}.brand{font-weight:900;margin-bottom:25px}.brand b{color:var(--g)}.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 16px 50px rgba(20,50,34,.07)}h1{font-size:clamp(2rem,6vw,3.3rem);letter-spacing:-.045em;line-height:1;margin:5px 0 14px}p{color:var(--muted);line-height:1.55}.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.wide{grid-column:1/-1}label{font-size:.86rem;font-weight:750;color:#38443e;display:grid;gap:6px}input,select,textarea{width:100%;padding:12px 13px;border:1px solid #d7e0db;border-radius:12px;background:#fff;font:inherit;color:#15231c;outline:none}textarea{min-height:90px;resize:vertical}.checks{display:flex;flex-wrap:wrap;gap:8px}.check{display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:#fafcfa;font-size:.86rem}.check input{width:auto}.phone-note{padding:12px 14px;background:#edf8f2;border-radius:13px;color:#286247;font-size:.88rem;margin:10px 0 16px}.actions{display:flex;gap:10px;align-items:center;margin-top:18px;flex-wrap:wrap}.form-actions{position:sticky;bottom:0;z-index:20;margin:24px -24px -24px;padding:14px 24px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(8px)}.form-actions button{width:100%;font-size:1rem;padding:15px 18px}button,.btn{border:0;border-radius:13px;padding:13px 18px;background:var(--g);color:#fff;font-weight:800;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}.btn.secondary{background:#eef4f0;color:#234c37}.msg{margin-top:14px;padding:13px;border-radius:12px}.ok{background:#edf9f2;color:#18643d}.err{background:#fff0f0;color:#a22323}.hidden{display:none}.matchbox{display:grid;gap:8px;margin:18px 0;padding:16px;border:1px solid var(--line);border-radius:15px;background:#fafcfa}.money{font-size:1.3rem;font-weight:900;color:var(--g)}@media(max-width:650px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.card{padding:18px}}</style></head>
-<body><div class="wrap"><div class="brand"><b>NEXIA</b> · Convocatorias</div>
-<section id="formCard" class="card hidden"><h1 id="title">Solicitar retiro</h1><p id="description">Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.</p><div id="phoneNote" class="phone-note hidden"></div><div class="grid">
-<label>Nombre<input id="nombre"></label><label>Apellido<input id="apellido"></label><label class="wide">Dirección de retiro<input id="direccion" placeholder="Calle, número, depto/casa"></label><label>Comuna<select id="comuna"></select></label><label>Fecha de retiro<input id="fecha" type="date"></label><label>Horario o franja horaria<input id="horario" placeholder="Ej: 14:00 a 18:00"></label><label>Cantidad de bultos<input id="bultos" type="number" min="1" value="1"></label><label id="pesoWrap">Peso aproximado (opcional)<input id="peso" placeholder="Ej: 20 kg"></label>
-<div class="wide"><label>Tipo de producto/material</label><div id="tipos" class="checks" style="margin-top:7px"></div></div>
-<label id="inmuebleWrap">Tipo de inmueble<select id="inmueble"><option value="">Selecciona</option><option>Casa</option><option>Departamento</option><option>Local</option><option>Oficina</option><option>Bodega</option><option>Otro</option></select></label><label id="pisoWrap">Piso<input id="piso"></label><label id="ascensorWrap">¿Hay ascensor?<select id="ascensor"><option value="">No aplica / no sé</option><option value="true">Sí</option><option value="false">No</option></select></label><label id="vehiculoWrap">¿Requiere vehículo?<select id="vehiculo"><option value="">No sé</option><option value="true">Sí</option><option value="false">No</option></select></label>
-<div id="montoWrap" class="wide" style="border:1px solid var(--line);border-radius:15px;padding:14px"><label style="display:flex;grid-template-columns:auto 1fr;align-items:center"><input id="ofreceMonto" type="checkbox" style="width:auto"> Quiero ofrecer un monto por el retiro</label><div id="montoFields" class="grid hidden" style="margin-top:12px"><label>Monto ofrecido (CLP)<input id="monto" type="number" min="0" step="1000" placeholder="10000"></label><label>Forma de pago<select id="pago"><option value="">Selecciona</option><option>Transferencia</option><option>Efectivo</option><option>Mercado Pago</option><option>Otro</option></select></label><label class="wide" style="display:flex;grid-template-columns:auto 1fr;align-items:center"><input id="negociable" type="checkbox" style="width:auto"> El monto es negociable</label><div id="commissionPreview" class="wide phone-note hidden"></div></div></div>
-<label id="obsWrap" class="wide">Observaciones<textarea id="obs"></textarea></label></div><div class="actions form-actions"><button id="sendBtn" type="button">Publicar solicitud de retiro</button></div><div id="formMsg"></div></section>
-<section id="matchCard" class="card hidden"><div id="matchContent">Cargando solicitud…</div><div class="actions"><button id="claimBtn">Tomar solicitud</button><a id="portalBtn" class="btn secondary hidden" target="_blank">Abrir Portal Nexia</a></div><div id="matchMsg"></div></section><section id="loading" class="card"><b>Cargando…</b></section></div>
-<script>const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');const Q=new URLSearchParams(location.search),token=Q.get('token')||'',match=Q.get('match')||'';const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));async function req(path,opt={}){const r=await fetch(API+path,{...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}}),d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}function b(id){const v=$(id).value;return v===''?null:v==='true'}function types(){return [...document.querySelectorAll('#tipos input:checked')].map(x=>x.value)}
-async function loadForm(){const d=await req('/public/convocatorias/config?token='+encodeURIComponent(token)),c=d.config||{};$('title').textContent=c.nombre_publico||'Participar en convocatoria';$('description').textContent=c.descripcion||'Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.';if(d.telefono){$('phoneNote').classList.remove('hidden');$('phoneNote').innerHTML=`✓ <b>Ya tenemos tu número de WhatsApp</b><br>Se utilizará el número desde el cual estás conversando.`}const cs=c.comunas||[];$('comuna').innerHTML='<option value="">Selecciona una comuna</option>'+cs.map(x=>`<option>${esc(x)}</option>`).join('')+(cs.length?'':'<option>Otra</option>');const ts=c.tipos_producto||[];$('tipos').innerHTML=(ts.length?ts:['Textil','Electrónicos','Cartón','Plástico','Vidrio','Metales','Muebles','Aceite','Orgánicos','Otros']).map(x=>`<label class="check"><input type="checkbox" value="${esc(x)}"> ${esc(x)}</label>`).join('');const f=c.campos||{};window.__convConfig=c;[['pesoWrap','peso'],['inmuebleWrap','tipo_inmueble'],['pisoWrap','piso'],['ascensorWrap','ascensor'],['vehiculoWrap','requiere_vehiculo'],['obsWrap','observaciones'],['montoWrap','monto']].forEach(([id,k])=>$(id).classList.toggle('hidden',f[k]===false));if(c.pago_retiro_habilitado){$('pago').value='Mercado Pago';$('pago').disabled=true}updateCommissionPreview();$('loading').classList.add('hidden');$('formCard').classList.remove('hidden')}
-function updateCommissionPreview(){const c=window.__convConfig||{},box=$('commissionPreview');if(!box)return;const total=Number($('monto')?.value||0),pct=Math.max(0,Math.min(100,Number(c.comision_porcentaje??10)));if(!$('ofreceMonto')?.checked||!total){box.classList.add('hidden');box.innerHTML='';return}const fee=Math.round(total*pct)/100,net=Math.max(0,total-fee);box.classList.remove('hidden');box.innerHTML=`<b>${esc(c.comision_nombre||'Comisión de gestión')}:</b> ${pct.toLocaleString('es-CL')}% · $${Math.round(fee).toLocaleString('es-CL')}<br><b>Monto neto estimado para quien realiza el retiro:</b> $${Math.round(net).toLocaleString('es-CL')}${c.pago_retiro_habilitado?'<br>Pago configurado: Mercado Pago':''}`}
-$('ofreceMonto').onchange=()=>{$('montoFields').classList.toggle('hidden',!$('ofreceMonto').checked);updateCommissionPreview()};$('monto').oninput=updateCommissionPreview;$('sendBtn').onclick=async()=>{const data={token,nombre:$('nombre').value.trim(),apellido:$('apellido').value.trim(),direccion_retiro:$('direccion').value.trim(),comuna:$('comuna').value,fecha_retiro:$('fecha').value,horario_retiro:$('horario').value.trim(),cantidad_bultos:$('bultos').value,tipos_producto:types(),peso_aprox:$('peso').value.trim(),tipo_inmueble:$('inmueble').value,piso:$('piso').value.trim(),ascensor:b('ascensor'),requiere_vehiculo:b('vehiculo'),observaciones:$('obs').value.trim(),monto_ofrecido:$('ofreceMonto').checked?$('monto').value:null,forma_pago:$('ofreceMonto').checked?$('pago').value:'',monto_negociable:$('ofreceMonto').checked&&$('negociable').checked};const faltan=[];if(!data.nombre)faltan.push('nombre');if(!data.apellido)faltan.push('apellido');if(!data.direccion_retiro)faltan.push('dirección');if(!data.comuna)faltan.push('comuna');if(!data.fecha_retiro)faltan.push('día de retiro');if(!data.horario_retiro)faltan.push('horario');if(!data.tipos_producto.length)faltan.push('tipo de producto/material');if(faltan.length){$('formMsg').innerHTML=`<div class="msg err">Completa: ${esc(faltan.join(', '))}.</div>`;return;}try{$('sendBtn').disabled=true;const d=await req('/public/convocatorias/solicitudes',{method:'POST',body:JSON.stringify(data)});$('formMsg').innerHTML=`<div class="msg ok">✅ ${esc(d.mensaje)}</div>`;$('sendBtn').classList.add('hidden')}catch(e){$('formMsg').innerHTML=`<div class="msg err">${esc(e.message)}</div>`}finally{$('sendBtn').disabled=false}}
-async function loadMatch(){const d=await req('/public/convocatorias/match/'+encodeURIComponent(match)),s=d.solicitud||{},m=d.match||{},money=s.monto_ofrecido==null?'Sin aporte':('$'+Number(s.monto_ofrecido).toLocaleString('es-CL')+' CLP'),net=s.monto_neto_interesado==null?'':('$'+Number(s.monto_neto_interesado).toLocaleString('es-CL')+' CLP');$('matchContent').innerHTML=`<h1>Solicitud disponible</h1><p>Coincide con tu cobertura registrada.</p><div class="matchbox"><div><b>Comuna:</b> ${esc(s.comuna||'—')}</div><div><b>Producto/material:</b> ${esc((s.tipos_producto||[]).join(', '))}</div><div><b>Bultos:</b> ${esc(s.cantidad_bultos||1)}</div><div><b>Retiro:</b> ${esc(s.fecha_retiro||'A coordinar')} · ${esc(s.horario_retiro||'A coordinar')}</div><div class="money">${esc(money)}</div>${net?`<div><b>Neto estimado para ti:</b> ${esc(net)}</div>`:''}</div>`+(m.estado==='tomado'&&s.direccion_retiro?`<div class="msg ok"><b>Datos del retiro</b><br>${esc(s.nombre||'')} ${esc(s.apellido||'')}<br>${esc(s.direccion_retiro)}<br>WhatsApp: +${esc(s.telefono||'')}</div>`:'');if(m.estado!=='notificado'){$('claimBtn').classList.add('hidden');$('matchMsg').innerHTML=m.estado==='tomado'?'<div class="msg ok">Esta solicitud fue adjudicada a ti.</div>':'<div class="msg err">Esta solicitud ya no está disponible.</div>'}$('loading').classList.add('hidden');$('matchCard').classList.remove('hidden')}
-$('claimBtn').onclick=async()=>{try{$('claimBtn').disabled=true;const d=await req('/public/convocatorias/match/'+encodeURIComponent(match)+'/tomar',{method:'POST',body:'{}'});$('matchMsg').innerHTML=`<div class="msg ok">✅ ${esc(d.mensaje)}<br><br><b>Retiro:</b> ${esc(d.solicitud?.direccion_retiro||'')}<br><b>WhatsApp:</b> +${esc(d.solicitud?.telefono||'')}</div>`;$('claimBtn').classList.add('hidden');if(d.portal_url){$('portalBtn').href=d.portal_url;$('portalBtn').classList.remove('hidden')}}catch(e){$('matchMsg').innerHTML=`<div class="msg err">${esc(e.message)}</div>`;$('claimBtn').classList.add('hidden')}finally{$('claimBtn').disabled=false}};(async()=>{try{if(match)await loadMatch();else if(token)await loadForm();else throw new Error('Enlace incompleto')}catch(e){$('loading').innerHTML=`<div class="msg err">${esc(e.message)}</div>`}})();</script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solicitar retiro · Nexia</title>
+  <style>
+    :root{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      color:#17231d;
+      background:#f3f7f5;
+      --green:#149b60;
+      --green-dark:#0c7b49;
+      --line:#d7e1dc;
+      --muted:#66736d;
+      --danger:#a52323;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;overflow-y:auto}
+    body{background:#f3f7f5}
+    .wrap{max-width:760px;margin:0 auto;padding:28px 16px 70px}
+    .card{
+      background:#fff;
+      border-radius:22px;
+      box-shadow:0 15px 45px rgba(23,55,38,.08);
+      padding:30px;
+      overflow:visible;
+    }
+    .badge{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#eaf8ef;
+      color:#087340;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    h1{font-size:32px;line-height:1.15;margin:0 0 8px}
+    .lead{margin:0 0 26px;color:var(--muted);font-size:16px;line-height:1.5}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .full{grid-column:1/-1}
+    label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}
+    input,select,textarea{
+      width:100%;
+      border:1px solid #cfd9d4;
+      border-radius:12px;
+      padding:12px 13px;
+      font:inherit;
+      color:#111;
+      background:#fff;
+      min-height:43px;
+    }
+    textarea{min-height:90px;resize:vertical}
+    input:focus,select:focus,textarea:focus{
+      outline:2px solid rgba(20,155,96,.16);
+      border-color:var(--green);
+    }
+    .phone-note{
+      border:1px solid #aee9c7;
+      background:#ecfbf2;
+      color:#155f39;
+      border-radius:12px;
+      padding:13px 15px;
+      line-height:1.35;
+    }
+    .types-box{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:14px 16px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px 24px;
+    }
+    .type-check{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      font-size:14px;
+      font-weight:500;
+      margin:0;
+    }
+    .type-check input{width:14px;height:14px;min-height:0}
+    .section-box{
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:15px;
+      background:#fbfdfc;
+    }
+    .inline-check{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      font-weight:600;
+      margin:0;
+    }
+    .inline-check input{width:15px;height:15px;min-height:0}
+    .hidden{display:none !important}
+    .actions{
+      margin-top:24px;
+      padding-top:18px;
+      border-top:1px solid #e7ece9;
+    }
+    #sendBtn{
+      width:100%;
+      border:0;
+      border-radius:13px;
+      padding:15px 18px;
+      font:inherit;
+      font-weight:800;
+      font-size:16px;
+      background:var(--green);
+      color:#fff;
+      cursor:pointer;
+    }
+    #sendBtn:hover{background:var(--green-dark)}
+    #sendBtn:disabled{opacity:.6;cursor:wait}
+    .msg{margin-top:14px;padding:13px 14px;border-radius:11px;line-height:1.4}
+    .ok{background:#ebf9f1;color:#17643d}
+    .err{background:#fff0f0;color:var(--danger)}
+    .loading{padding:35px;text-align:center;color:var(--muted)}
+    .matchbox{
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:16px;
+      background:#fbfdfc;
+      line-height:1.65;
+      margin:16px 0;
+    }
+    .money{font-size:21px;font-weight:800;color:var(--green)}
+    .secondary-link{
+      display:inline-block;
+      margin-top:10px;
+      text-decoration:none;
+      color:#155f39;
+      background:#edf5f0;
+      padding:11px 14px;
+      border-radius:11px;
+      font-weight:700;
+    }
+    @media(max-width:650px){
+      .wrap{padding:14px 10px 50px}
+      .card{padding:20px 16px;border-radius:16px}
+      .grid{grid-template-columns:1fr}
+      .full{grid-column:auto}
+      .types-box{grid-template-columns:1fr}
+      h1{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section id="loading" class="card loading">Cargando formulario…</section>
+
+    <section id="formCard" class="card hidden">
+      <span class="badge">Convocatoria</span>
+      <h1 id="title">Solicitar retiro</h1>
+      <p id="description" class="lead">Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.</p>
+
+      <form id="requestForm" novalidate>
+        <div class="grid">
+          <div>
+            <label for="nombre">Nombre *</label>
+            <input id="nombre" autocomplete="given-name" required>
+          </div>
+
+          <div>
+            <label for="apellido">Apellido</label>
+            <input id="apellido" autocomplete="family-name">
+          </div>
+
+          <div class="full">
+            <label>WhatsApp</label>
+            <div id="phoneNote" class="phone-note">Se utilizará el número desde el cual estás conversando.</div>
+          </div>
+
+          <div class="full">
+            <label for="direccion">Dirección de retiro *</label>
+            <input id="direccion" placeholder="Calle, número, depto/casa" autocomplete="street-address" required>
+          </div>
+
+          <div>
+            <label for="comuna">Comuna *</label>
+            <select id="comuna" required>
+              <option value="">Selecciona una comuna</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="bultos">Cantidad de bultos *</label>
+            <input id="bultos" type="number" min="1" value="1" required>
+          </div>
+
+          <div>
+            <label for="fecha">Día de retiro</label>
+            <input id="fecha" type="date">
+          </div>
+
+          <div>
+            <label for="horario">Horario *</label>
+            <input id="horario" placeholder="Ej: Horario flexible / 14:00 a 18:00" required>
+          </div>
+
+          <div class="full">
+            <label>Tipo de producto o material *</label>
+            <div id="tipos" class="types-box"></div>
+          </div>
+
+          <div id="pesoWrap">
+            <label for="peso">Peso aproximado</label>
+            <input id="peso" placeholder="Ej: 30 kg">
+          </div>
+
+          <div id="inmuebleWrap">
+            <label for="inmueble">Tipo de inmueble</label>
+            <select id="inmueble">
+              <option value="">Selecciona</option>
+              <option>Casa</option>
+              <option>Departamento</option>
+              <option>Local</option>
+              <option>Oficina</option>
+              <option>Bodega</option>
+              <option>Otro</option>
+            </select>
+          </div>
+
+          <div id="pisoWrap">
+            <label for="piso">Piso</label>
+            <input id="piso">
+          </div>
+
+          <div id="ascensorWrap">
+            <label for="ascensor">¿Hay ascensor?</label>
+            <select id="ascensor">
+              <option value="">No aplica / no sé</option>
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+
+          <div id="vehiculoWrap">
+            <label for="vehiculo">¿Requiere vehículo?</label>
+            <select id="vehiculo">
+              <option value="">No sé</option>
+              <option value="true">Sí</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+
+          <div id="obsWrap" class="full">
+            <label for="obs">Observaciones</label>
+            <textarea id="obs" placeholder="Detalles adicionales del retiro"></textarea>
+          </div>
+
+          <div id="montoWrap" class="full section-box">
+            <label class="inline-check">
+              <input id="ofreceMonto" type="checkbox">
+              Quiero ofrecer un monto por el retiro
+            </label>
+
+            <div id="montoFields" class="grid hidden" style="margin-top:14px">
+              <div>
+                <label for="monto">Monto ofrecido (CLP)</label>
+                <input id="monto" type="number" min="0" step="1000" placeholder="10000">
+              </div>
+              <div>
+                <label for="pago">Forma de pago</label>
+                <select id="pago">
+                  <option value="">Selecciona</option>
+                  <option>Transferencia</option>
+                  <option>Efectivo</option>
+                  <option>Mercado Pago</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="full">
+                <label class="inline-check">
+                  <input id="negociable" type="checkbox">
+                  El monto es negociable
+                </label>
+              </div>
+              <div id="commissionPreview" class="full phone-note hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="sendBtn" type="submit">Publicar solicitud de retiro</button>
+        </div>
+
+        <div id="formMsg"></div>
+      </form>
+    </section>
+
+    <section id="matchCard" class="card hidden">
+      <span class="badge">Convocatoria</span>
+      <div id="matchContent"></div>
+      <button id="claimBtn" type="button">Tomar solicitud</button>
+      <br>
+      <a id="portalBtn" class="secondary-link hidden" target="_blank">Abrir Portal Nexia</a>
+      <div id="matchMsg"></div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const API = (new URLSearchParams(location.search).get('api') || 'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/, '');
+  const Q = new URLSearchParams(location.search);
+  const token = Q.get('token') || '';
+  const match = Q.get('match') || '';
+  const previewMode = !token && !match;
+  const $ = (id) => document.getElementById(id);
+
+  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (m) => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[m]));
+
+  async function req(path, options = {}) {
+    const response = await fetch(API + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      }
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data.ok === false) {
+      throw new Error(data.error || `Error ${response.status}`);
+    }
+    return data;
+  }
+
+  function boolValue(id) {
+    const value = $(id).value;
+    if (value === '') return null;
+    return value === 'true';
+  }
+
+  function selectedTypes() {
+    return [...document.querySelectorAll('#tipos input[type="checkbox"]:checked')]
+      .map((input) => input.value);
+  }
+
+  function setVisibleByConfig(config) {
+    const fields = config.campos || {};
+    const pairs = [
+      ['pesoWrap', 'peso'],
+      ['inmuebleWrap', 'tipo_inmueble'],
+      ['pisoWrap', 'piso'],
+      ['ascensorWrap', 'ascensor'],
+      ['vehiculoWrap', 'requiere_vehiculo'],
+      ['obsWrap', 'observaciones'],
+      ['montoWrap', 'monto']
+    ];
+    pairs.forEach(([id, key]) => {
+      $(id).classList.toggle('hidden', fields[key] === false);
+    });
+  }
+
+  function updateCommissionPreview() {
+    const config = window.__convConfig || {};
+    const box = $('commissionPreview');
+    const enabled = $('ofreceMonto').checked;
+    const amount = Number($('monto').value || 0);
+
+    if (!enabled || !amount) {
+      box.classList.add('hidden');
+      box.innerHTML = '';
+      return;
+    }
+
+    const pct = Math.max(0, Math.min(100, Number(config.comision_porcentaje ?? 10)));
+    const fee = Math.round(amount * pct / 100);
+    const net = Math.max(0, amount - fee);
+
+    box.classList.remove('hidden');
+    box.innerHTML =
+      `<b>${esc(config.comision_nombre || 'Comisión de gestión')}:</b> ${pct.toLocaleString('es-CL')}% · $${fee.toLocaleString('es-CL')}<br>` +
+      `<b>Monto neto estimado para quien realiza el retiro:</b> $${net.toLocaleString('es-CL')}`;
+  }
+
+
+  async function loadPreviewForm() {
+    const config = {
+      nombre_publico: 'Solicitar retiro',
+      descripcion: 'Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.',
+      comunas: ['San Bernardo','El Bosque','La Cisterna','Pedro Aguirre Cerda','Lo Espejo','Otra'],
+      tipos_producto: ['Textil','Electrónicos','Cartón / papel','Plástico','Vidrio','Metales','Muebles','Orgánicos','Otros'],
+      campos: {
+        peso: true,
+        tipo_inmueble: true,
+        piso: true,
+        ascensor: true,
+        requiere_vehiculo: true,
+        observaciones: true,
+        monto: true
+      },
+      pago_retiro_habilitado: false,
+      comision_porcentaje: 10,
+      comision_nombre: 'Comisión de gestión'
+    };
+
+    window.__convConfig = config;
+    $('title').textContent = config.nombre_publico;
+    $('description').textContent = config.descripcion;
+    $('phoneNote').innerHTML =
+      '<b>Vista previa</b><br>En producción se usará automáticamente el número de WhatsApp desde el enlace generado por Nexia.';
+
+    $('comuna').innerHTML =
+      '<option value="">Selecciona una comuna</option>' +
+      config.comunas.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+
+    $('tipos').innerHTML = config.tipos_producto.map((x) =>
+      `<label class="type-check"><input type="checkbox" value="${esc(x)}"><span>${esc(x)}</span></label>`
+    ).join('');
+
+    setVisibleByConfig(config);
+    $('loading').classList.add('hidden');
+    $('formCard').classList.remove('hidden');
+
+    const note = document.createElement('div');
+    note.className = 'msg ok';
+    note.style.marginBottom = '16px';
+    note.innerHTML = '<b>Modo vista previa.</b> El botón no guardará una solicitud hasta que abras el enlace real enviado por WhatsApp.';
+    $('formCard').insertBefore(note, $('requestForm'));
+  }
+
+  async function loadForm() {
+    const data = await req('/public/convocatorias/config?token=' + encodeURIComponent(token));
+    const config = data.config || {};
+    window.__convConfig = config;
+
+    $('title').textContent = config.nombre_publico || 'Solicitar retiro';
+    $('description').textContent =
+      config.descripcion ||
+      'Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.';
+
+    if (data.telefono) {
+      $('phoneNote').innerHTML =
+        '<b>✓ Ya tenemos tu número de WhatsApp</b><br>Se utilizará el número desde el cual estás conversando.';
+    }
+
+    const comunas = Array.isArray(config.comunas) ? config.comunas : [];
+    $('comuna').innerHTML =
+      '<option value="">Selecciona una comuna</option>' +
+      comunas.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join('') +
+      (comunas.length ? '' : '<option value="Otra">Otra</option>');
+
+    const defaultTypes = ['Textil','Electrónicos','Cartón / papel','Plástico','Vidrio','Metales','Muebles','Orgánicos','Otros'];
+    const types = Array.isArray(config.tipos_producto) && config.tipos_producto.length
+      ? config.tipos_producto
+      : defaultTypes;
+
+    $('tipos').innerHTML = types.map((x) =>
+      `<label class="type-check"><input type="checkbox" value="${esc(x)}"><span>${esc(x)}</span></label>`
+    ).join('');
+
+    setVisibleByConfig(config);
+
+    if (config.pago_retiro_habilitado) {
+      $('pago').value = 'Mercado Pago';
+      $('pago').disabled = true;
+    }
+
+    $('loading').classList.add('hidden');
+    $('formCard').classList.remove('hidden');
+  }
+
+  $('ofreceMonto').addEventListener('change', () => {
+    $('montoFields').classList.toggle('hidden', !$('ofreceMonto').checked);
+    updateCommissionPreview();
+  });
+
+  $('monto').addEventListener('input', updateCommissionPreview);
+
+  $('requestForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    $('formMsg').innerHTML = '';
+
+    if (previewMode) {
+      $('formMsg').innerHTML = '<div class="msg ok"><b>Vista previa:</b> el formulario está correcto. Para guardar una solicitud real, ábrelo desde el enlace que Nexia envía por WhatsApp.</div>';
+      return;
+    }
+
+    const payload = {
+      token,
+      nombre: $('nombre').value.trim(),
+      apellido: $('apellido').value.trim(),
+      direccion_retiro: $('direccion').value.trim(),
+      comuna: $('comuna').value,
+      fecha_retiro: $('fecha').value,
+      horario_retiro: $('horario').value.trim(),
+      cantidad_bultos: $('bultos').value,
+      tipos_producto: selectedTypes(),
+      peso_aprox: $('peso').value.trim(),
+      tipo_inmueble: $('inmueble').value,
+      piso: $('piso').value.trim(),
+      ascensor: boolValue('ascensor'),
+      requiere_vehiculo: boolValue('vehiculo'),
+      observaciones: $('obs').value.trim(),
+      monto_ofrecido: $('ofreceMonto').checked ? $('monto').value : null,
+      forma_pago: $('ofreceMonto').checked ? $('pago').value : '',
+      monto_negociable: $('ofreceMonto').checked && $('negociable').checked
+    };
+
+    const missing = [];
+    if (!payload.nombre) missing.push('nombre');
+    if (!payload.direccion_retiro) missing.push('dirección de retiro');
+    if (!payload.comuna) missing.push('comuna');
+    if (!payload.horario_retiro) missing.push('horario');
+    if (!payload.tipos_producto.length) missing.push('tipo de producto/material');
+
+    if (missing.length) {
+      $('formMsg').innerHTML =
+        `<div class="msg err">Falta completar: ${esc(missing.join(', '))}.</div>`;
+      return;
+    }
+
+    try {
+      $('sendBtn').disabled = true;
+      $('sendBtn').textContent = 'Publicando…';
+
+      const result = await req('/public/convocatorias/solicitudes', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      $('formMsg').innerHTML =
+        `<div class="msg ok">✅ ${esc(result.mensaje || 'Solicitud publicada correctamente.')}</div>`;
+      $('sendBtn').classList.add('hidden');
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } catch (error) {
+      $('formMsg').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+    } finally {
+      $('sendBtn').disabled = false;
+      $('sendBtn').textContent = 'Publicar solicitud de retiro';
+    }
+  });
+
+  async function loadMatch() {
+    const data = await req('/public/convocatorias/match/' + encodeURIComponent(match));
+    const s = data.solicitud || {};
+    const m = data.match || {};
+    const money = s.monto_ofrecido == null
+      ? 'Sin aporte'
+      : '$' + Number(s.monto_ofrecido).toLocaleString('es-CL') + ' CLP';
+
+    $('matchContent').innerHTML = `
+      <h1>Solicitud disponible</h1>
+      <p class="lead">Coincide con tu cobertura registrada.</p>
+      <div class="matchbox">
+        <div><b>Comuna:</b> ${esc(s.comuna || '—')}</div>
+        <div><b>Producto/material:</b> ${esc((s.tipos_producto || []).join(', '))}</div>
+        <div><b>Bultos:</b> ${esc(s.cantidad_bultos || 1)}</div>
+        <div><b>Retiro:</b> ${esc(s.fecha_retiro || 'A coordinar')} · ${esc(s.horario_retiro || 'A coordinar')}</div>
+        <div class="money">${esc(money)}</div>
+      </div>
+    `;
+
+    if (m.estado !== 'notificado') {
+      $('claimBtn').classList.add('hidden');
+      $('matchMsg').innerHTML =
+        m.estado === 'tomado'
+          ? '<div class="msg ok">Esta solicitud fue adjudicada a ti.</div>'
+          : '<div class="msg err">Esta solicitud ya no está disponible.</div>';
+    }
+
+    $('loading').classList.add('hidden');
+    $('matchCard').classList.remove('hidden');
+  }
+
+  $('claimBtn').addEventListener('click', async () => {
+    try {
+      $('claimBtn').disabled = true;
+      const data = await req('/public/convocatorias/match/' + encodeURIComponent(match) + '/tomar', {
+        method: 'POST',
+        body: '{}'
+      });
+
+      $('matchMsg').innerHTML =
+        `<div class="msg ok">✅ ${esc(data.mensaje || 'Solicitud tomada correctamente.')}` +
+        (data.solicitud?.direccion_retiro ? `<br><br><b>Retiro:</b> ${esc(data.solicitud.direccion_retiro)}` : '') +
+        (data.solicitud?.telefono ? `<br><b>WhatsApp:</b> +${esc(data.solicitud.telefono)}` : '') +
+        `</div>`;
+
+      $('claimBtn').classList.add('hidden');
+
+      if (data.portal_url) {
+        $('portalBtn').href = data.portal_url;
+        $('portalBtn').classList.remove('hidden');
+      }
+    } catch (error) {
+      $('matchMsg').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+    } finally {
+      $('claimBtn').disabled = false;
+    }
+  });
+
+  (async () => {
+    try {
+      if (match) {
+        await loadMatch();
+      } else if (token) {
+        await loadForm();
+      } else {
+        await loadPreviewForm();
+      }
+    } catch (error) {
+      $('loading').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+    }
+  })();
+})();
+</script>
+</body>
+</html>
