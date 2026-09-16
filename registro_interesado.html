@@ -1,223 +1,1447 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registro de interesado | Nexia</title>
-  <meta name="description" content="Formulario de registro para interesados en recibir oportunidades de retiro." />
-  <style>
-    :root{--bg:#f5f7f6;--card:#fff;--text:#17201b;--muted:#66736c;--line:#dbe3de;--brand:#173d22;--brand2:#285f35;--soft:#edf5ef;--danger:#b42318}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eef4f0 0,#f8faf9 260px);color:var(--text)}
-    .wrap{max-width:980px;margin:0 auto;padding:34px 18px 60px}.hero{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:34px;border-radius:24px;box-shadow:0 18px 50px rgba(23,61,34,.16);margin-bottom:24px}
-    .tag{display:inline-flex;padding:7px 11px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;font-size:13px;margin-bottom:14px} h1{margin:0 0 10px;font-size:clamp(30px,5vw,46px);line-height:1.04}.hero p{margin:0;max-width:760px;font-size:16px;line-height:1.6;color:#eaf4ed}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;margin-bottom:18px;box-shadow:0 8px 28px rgba(25,50,35,.05)} .section-title{font-size:20px;margin:0 0 6px}.section-help{margin:0 0 20px;color:var(--muted);font-size:14px}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.full{grid-column:1/-1} label{display:block;font-weight:650;font-size:14px;margin-bottom:7px}.req{color:var(--danger)}
-    input,select,textarea{width:100%;border:1px solid #cfd9d3;border-radius:12px;padding:13px 14px;font:inherit;color:var(--text);background:#fff;outline:none;transition:.18s ease} input:focus,select:focus,textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 4px rgba(40,95,53,.10)} textarea{min-height:110px;resize:vertical}
-    .choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.choice{border:1px solid var(--line);border-radius:12px;padding:11px 12px;display:flex;gap:9px;align-items:center;cursor:pointer;background:#fff}.choice input{width:auto;margin:0}.choice:has(input:checked){background:var(--soft);border-color:#8db39a}
-    .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.inline input[type="checkbox"]{width:auto}.note{padding:14px 15px;border-radius:12px;background:#f7faf8;border:1px solid var(--line);font-size:13px;color:var(--muted)}
-    .actions{display:flex;gap:12px;justify-content:flex-end;align-items:center} button{border:0;border-radius:12px;padding:14px 20px;font-weight:750;font-size:15px;cursor:pointer}.primary{background:var(--brand);color:#fff}.primary:hover{background:#0f2f18}.secondary{background:#edf1ee;color:var(--text)}
-    .status{display:none;margin-top:16px;padding:13px 15px;border-radius:12px;background:#ecf8ef;border:1px solid #b8dec3;color:#215b31}.status.error{background:#fff0f0;border-color:#efc0c0;color:#9f2525}.primary:disabled{opacity:.6;cursor:wait}.small{font-size:12px;color:var(--muted);margin-top:6px}.money-wrap{display:none}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
-    @media(max-width:720px){.grid{grid-template-columns:1fr}.choices{grid-template-columns:1fr 1fr}.hero,.card{padding:21px}} @media(max-width:460px){.choices{grid-template-columns:1fr}.actions{flex-direction:column-reverse}button{width:100%}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal Nexia</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--brand:#111827;--soft:#f8fafc;--ok:#067647;--warn:#b54708;--blue:#175cd3;--danger:#b42318;--shadow:0 10px 30px rgba(15,23,42,.06);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink)}button,input,textarea,select{font:inherit}.hidden{display:none!important}.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.side{background:#0b1220;color:white;padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}.logo{font-weight:900;font-size:22px;letter-spacing:.08em;padding:6px 10px 22px}.logo span{font-weight:500;color:#94a3b8;font-size:11px;display:block;letter-spacing:.16em;margin-top:3px}.nav{display:grid;gap:6px}.nav button{border:0;background:transparent;color:#cbd5e1;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;font-weight:650}.nav button:hover,.nav button.active{background:#182235;color:white}.sidefoot{margin-top:auto;border-top:1px solid #263248;padding:14px 10px 0;color:#94a3b8;font-size:12px}.main{padding:26px;min-width:0}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}.title h1{margin:0;font-size:25px}.title p{margin:4px 0 0;color:var(--muted);font-size:14px}.user{display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--line);border-radius:12px;padding:8px 10px}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#eef2ff;font-weight:800}.btn{border:1px solid var(--line);background:white;color:var(--ink);padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.btn.good{background:#067647;color:white;border-color:#067647}.btn.danger{background:#fff;color:var(--danger);border-color:#fecdca}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:var(--shadow)}.metric .k{font-size:12px;color:var(--muted);font-weight:700}.metric .v{font-size:28px;font-weight:850;margin-top:8px}.metric .s{font-size:12px;color:var(--muted);margin-top:5px}.section{margin-top:18px}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.sectionhead h2{font-size:17px;margin:0}.grid2{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}.tablewrap{overflow:auto;background:white;border:1px solid var(--line);border-radius:14px}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:12px 13px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.table th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#fafafa}.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800}.badge.bot{background:#eff8ff;color:#175cd3}.badge.exec{background:#ecfdf3;color:#067647}.badge.wait{background:#fffaeb;color:#b54708}.badge.end{background:#f2f4f7;color:#475467}.dot{width:7px;height:7px;border-radius:50%;background:currentColor}.inbox{display:grid;grid-template-columns:330px minmax(0,1fr);height:calc(100vh - 115px);background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);min-height:0}.convlist{border-right:1px solid var(--line);overflow:auto}.search{padding:12px;border-bottom:1px solid var(--line)}.search input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px}.conv{padding:13px;border-bottom:1px solid var(--line);cursor:pointer}.conv:hover,.conv.active{background:#f8fafc}.convtop{display:flex;justify-content:space-between;gap:8px}.convname{font-weight:800}.small{font-size:12px;color:var(--muted)}.elapsed{font-size:11px;color:var(--blue);font-weight:750;white-space:nowrap}.refreshing{opacity:.65;pointer-events:none}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chatpane{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;min-height:0}.chathead{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.chatbody{padding:18px;overflow:auto;background:#f8fafc;display:flex;flex-direction:column;gap:9px;min-width:0;min-height:0}.msg{max-width:75%;padding:10px 12px;border-radius:13px;font-size:13px;white-space:pre-wrap;line-height:1.45;overflow-wrap:anywhere;word-break:break-word}.msg.in{background:white;border:1px solid var(--line);align-self:flex-start}.msg.out{background:#111827;color:white;align-self:flex-end}.composer{border-top:1px solid var(--line);padding:12px;background:white;position:sticky;bottom:0;z-index:8}.composerrow{display:flex;gap:9px}.composer textarea{flex:1;resize:none;min-height:46px;max-height:110px;border:1px solid var(--line);border-radius:10px;padding:11px}.empty{height:100%;display:grid;place-items:center;color:var(--muted);text-align:center;padding:30px}.loginwrap{min-height:100vh;display:grid;place-items:center;background:linear-gradient(145deg,#0b1220,#182235)}.login{width:min(420px,92vw);background:white;border-radius:20px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.25)}.login h1{margin:0 0 4px}.login p{color:var(--muted);margin:0 0 22px}.field{margin:12px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px}.error{color:var(--danger);font-size:13px;margin-top:10px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.select{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:white}.panelnote{padding:13px;border-radius:11px;background:#fffaeb;color:#7a2e0e;font-size:13px;border:1px solid #fedf89}.bars{display:grid;gap:11px}.barrow{display:grid;grid-template-columns:130px 1fr 45px;gap:10px;align-items:center;font-size:12px}.bar{height:8px;background:#eef2f6;border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;background:#344054;border-radius:99px}.mobiletop{display:none}.page{display:none}.page.active{display:block}@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.inbox{grid-template-columns:280px 1fr}}@media(max-width:760px){.shell{display:block}.side{display:none}.mobiletop{display:flex;background:#0b1220;color:white;padding:12px;gap:8px;overflow:auto}.mobiletop button{white-space:nowrap;background:#182235;color:white;border:0;border-radius:9px;padding:9px}.main{padding:14px}.cards{grid-template-columns:1fr 1fr}.inbox{grid-template-columns:1fr;height:auto}.convlist{max-height:280px;border-right:0;border-bottom:1px solid var(--line)}.chatpane{height:620px}.top{align-items:flex-start}.user .small{display:none}}@media(max-width:460px){.cards{grid-template-columns:1fr}.msg{max-width:88%}}
+.plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:16px 0}.plan-card{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);position:relative}.plan-card.featured{border:2px solid #111827}.plan-badge{position:absolute;right:16px;top:16px;background:#111827;color:#fff;font-size:10px;font-weight:850;padding:6px 8px;border-radius:999px}.plan-name{font-size:19px;font-weight:900}.plan-msg{font-size:13px;color:var(--muted);margin-top:4px}.price-old{text-decoration:line-through;color:#98a2b3;font-size:13px;margin-top:18px}.price-now{font-size:32px;font-weight:900;margin:2px 0 14px}.price-now small{font-size:12px;color:var(--muted);font-weight:600}.usagebox{padding:16px;background:#f8fafc;border:1px solid var(--line);border-radius:14px;margin-bottom:14px}.progress{height:10px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:#111827;border-radius:99px}.pay-status{padding:13px 14px;border-radius:12px;margin:0 0 14px;font-size:13px}.pay-status.ok{background:#ecfdf3;color:#067647;border:1px solid #abefc6}.pay-status.warn{background:#fffaeb;color:#b54708;border:1px solid #fedf89}.setupbox{margin-top:14px;padding:18px;border:1px solid #abefc6;background:#f6fef9;border-radius:14px}.setupbox input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin:8px 0}.history{margin-top:18px}@media(max-width:760px){.plan-grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   NEXIA MOBILE RESPONSIVE FIX
+   Solo modifica pantallas <= 760px. Escritorio queda intacto.
+   ============================================================ */
+@media(max-width:760px){
+  html,body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  #appView,
+  .shell,
+  .main,
+  .page,
+  .section,
+  .card,
+  .tablewrap,
+  .inbox,
+  .chatpane{
+    min-width:0;
+    max-width:100%;
+  }
+
+  .main{
+    width:100%;
+    padding:12px;
+  }
+
+  .mobiletop{
+    position:sticky;
+    top:0;
+    z-index:50;
+    width:100%;
+    max-width:100vw;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+
+  .mobiletop::-webkit-scrollbar{display:none}
+
+  .top{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+    width:100%;
+  }
+
+  .title,
+  .user{
+    min-width:0;
+    width:100%;
+  }
+
+  .title h1,
+  .title p{
+    overflow-wrap:anywhere;
+  }
+
+  .user{
+    justify-content:space-between;
+    padding:8px;
+  }
+
+  .user > div:nth-child(2){
+    min-width:0;
+    flex:1;
+  }
+
+  #userName,
+  #userRole{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .cards{
+    grid-template-columns:1fr;
+    width:100%;
+    gap:12px;
+  }
+
+  .grid2{
+    grid-template-columns:1fr;
+  }
+
+  .sectionhead{
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+
+  .sectionhead > div{
+    min-width:0;
+  }
+
+  .sectionhead .btn{
+    max-width:100%;
+  }
+
+  .tablewrap{
+    width:100%;
+    max-width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .table{
+    min-width:max-content;
+  }
+
+  .inbox{
+    display:block;
+    width:100%;
+    height:auto;
+    overflow:visible;
+  }
+
+  .convlist{
+    width:100%;
+    max-height:42vh;
+    border-right:0;
+    border-bottom:1px solid var(--line);
+  }
+
+  .conv{
+    min-width:0;
+  }
+
+  .convtop{
+    min-width:0;
+  }
+
+  .convname{
+    min-width:0;
+    max-width:72%;
+  }
+
+  .chatpane{
+    width:100%;
+    height:auto;
+    min-height:0;
+  }
+
+  #chatActive.chatpane{
+    display:grid !important;
+    grid-template-rows:auto minmax(280px,1fr) auto;
+    height:min(68vh,620px);
+    min-height:0;
+  }
+
+  .chathead{
+    width:100%;
+    padding:12px;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .chathead > div{
+    min-width:0;
+    max-width:100%;
+  }
+
+  #chatName,
+  #chatMeta,
+  #chatElapsed{
+    overflow-wrap:anywhere;
+  }
+
+  .toolbar{
+    width:100%;
+  }
+
+  .toolbar .btn{
+    flex:1 1 140px;
+  }
+
+  .chatbody{
+    min-width:0;
+    width:100%;
+    padding:12px;
+  }
+
+  .msg{
+    max-width:92%;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
+
+  .composer{
+    width:100%;
+    padding:10px;
+  }
+
+  .composerrow{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:8px;
+  }
+
+  .composer textarea{
+    width:100%;
+    min-width:0;
+  }
+
+  .composerrow .btn{
+    width:100%;
+  }
+
+  .plan-grid{
+    grid-template-columns:1fr;
+  }
+
+  .plan-card{
+    min-width:0;
+    width:100%;
+  }
+
+  .plan-badge{
+    position:static;
+    display:inline-flex;
+    margin-bottom:10px;
+  }
+
+  .price-now{
+    font-size:28px;
+    overflow-wrap:anywhere;
+  }
+
+  .usagebox{
+    min-width:0;
+    overflow:hidden;
+  }
+
+  .usagebox > div{
+    flex-wrap:wrap;
+  }
+
+  .barrow{
+    grid-template-columns:minmax(90px,.9fr) minmax(100px,1.4fr) 40px;
+    gap:7px;
+  }
+
+  .panelnote,
+  .small,
+  p,
+  h1,h2,h3{
+    overflow-wrap:anywhere;
+  }
+
+  input,
+  textarea,
+  select,
+  button{
+    max-width:100%;
+  }
+}
+
+@media(max-width:460px){
+  .main{
+    padding:10px;
+  }
+
+  .card{
+    padding:14px;
+    border-radius:14px;
+  }
+
+  .metric .v{
+    font-size:25px;
+  }
+
+  .user{
+    gap:7px;
+  }
+
+  .avatar{
+    width:32px;
+    height:32px;
+    flex:0 0 32px;
+  }
+
+  #logoutBtn{
+    padding:8px 10px;
+  }
+
+  .mobiletop button{
+    padding:8px 10px;
+    font-size:13px;
+  }
+
+  .convname{
+    max-width:66%;
+  }
+
+  #chatActive.chatpane{
+    height:66vh;
+  }
+
+  .msg{
+    max-width:95%;
+  }
+
+  .barrow{
+    grid-template-columns:90px minmax(80px,1fr) 34px;
+  }
+}
+
+
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.formgrid label{display:grid;gap:7px;font-size:13px;font-weight:700}.formgrid .wide{grid-column:1/-1}.formgrid input,.formgrid textarea,.formgrid select,.cfg-service input{width:100%;box-sizing:border-box}.formgrid select{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:11px 12px;border-radius:10px}.formgrid textarea{min-height:90px;resize:vertical}.cfg-service{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,.7fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}.cfg-service:last-child{border-bottom:0}.cfg-service .svc-actions{display:flex;gap:6px}@media(max-width:760px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.cfg-service{grid-template-columns:1fr}.cfg-service .svc-actions{justify-content:flex-end}}
+
+/* ==========================================================
+   NEXIA CALENDAR
+   ========================================================== */
+.agenda-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.agenda-tabs .btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.calendar-wrap{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.calendar-toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+.calendar-toolbar label{font-size:12px;color:var(--muted);font-weight:700;display:grid;gap:6px}
+.calendar-toolbar select{min-width:160px;border:1px solid var(--line);background:white;color:var(--ink);padding:9px 10px;border-radius:10px}
+#nexiaCalendar{min-height:650px}
+.fc .fc-toolbar-title{font-size:1.25rem}
+.fc .fc-button{background:#111827;border-color:#111827}
+.fc .fc-button:hover{background:#1f2937;border-color:#1f2937}
+.fc .fc-button-primary:not(:disabled).fc-button-active{background:#334155;border-color:#334155}
+.fc .fc-daygrid-event{border-radius:7px;padding:2px 5px}
+.fc .fc-timegrid-event{border-radius:8px}
+.fc-event.estado-confirmada{background:#067647!important;border-color:#067647!important}
+.fc-event.estado-cancelada{background:#98a2b3!important;border-color:#98a2b3!important;opacity:.65}
+.fc-event.estado-pendiente{background:#b54708!important;border-color:#b54708!important}
+.calendar-modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:grid;place-items:center;z-index:9999;padding:18px}
+.calendar-modal{width:min(520px,100%);background:#fff;border-radius:18px;padding:22px;box-shadow:0 30px 90px rgba(15,23,42,.28)}
+.calendar-modal h3{margin:0 0 14px}
+.calendar-detail{display:grid;grid-template-columns:130px 1fr;gap:9px 12px;font-size:14px}
+.calendar-detail b{color:var(--muted)}
+.calendar-modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px}
+@media(max-width:700px){
+ #nexiaCalendar{min-height:520px}
+ .fc .fc-toolbar{display:grid;gap:8px}
+ .fc .fc-toolbar-chunk{display:flex;justify-content:center;flex-wrap:wrap}
+ .calendar-detail{grid-template-columns:1fr}
+}
+
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
 </head>
 <body>
-<main class="wrap">
-  <section class="hero">
-    <div class="tag">Convocatorias · Registro de interesado</div>
-    <h1>Quiero recibir oportunidades de retiro</h1>
-    <p>Registra tus datos, los tipos de productos que puedes retirar y las comunas donde tienes cobertura. Cuando exista una solicitud compatible, podremos notificarte para que la tomes desde el portal.</p>
-  </section>
+<div id="loginView" class="loginwrap">
+  <div class="login"><h1>NEXIA</h1><p>Portal de operaciones</p>
+    <div class="field"><label>Correo</label><input id="email" type="email" placeholder="contacto@nexia-tech.com"></div>
+    <div class="field"><label>Contraseña</label><input id="password" type="password" placeholder="••••••••"></div>
+    <button id="loginBtn" class="btn primary" style="width:100%">Ingresar</button>
+    <div id="loginError" class="error"></div><div class="small" style="margin-top:14px">Durante la prueba gratuita puedes ingresar sin contraseña desde el botón <strong>Ver mi Portal</strong> al finalizar la configuración.</div>
+  </div>
+</div>
+<div id="appView" class="hidden">
+<div class="mobiletop" id="mobileNav"></div>
+<div class="shell">
+<aside class="side"><div class="logo">NEXIA<span>OPERATIONS PORTAL</span></div><nav class="nav" id="nav"></nav><div class="sidefoot"><div id="scopeText">Cargando...</div><div id="versionText" style="margin-top:5px"></div></div></aside>
+<main class="main">
+  <div class="top"><div class="title"><h1 id="pageTitle">Inicio</h1><p id="pageSubtitle">Resumen de tu operación</p></div><div class="user"><div class="avatar" id="avatar">N</div><div><div id="userName" style="font-size:13px;font-weight:800">Usuario</div><div id="userRole" class="small"></div></div><button class="btn" id="logoutBtn">Salir</button></div></div>
 
-  <form id="interesadoForm" novalidate>
-    <section class="card">
-      <h2 class="section-title">Datos de contacto</h2><p class="section-help">Información que utilizaremos para identificarte y enviarte oportunidades.</p>
-      <div class="grid">
-        <div><label for="nombre">Nombre <span class="req">*</span></label><input id="nombre" name="nombre" autocomplete="given-name" required></div>
-        <div><label for="apellido">Apellido <span class="req">*</span></label><input id="apellido" name="apellido" autocomplete="family-name" required></div>
-        <div><label for="telefono">WhatsApp <span class="req">*</span></label><input id="telefono" name="telefono" type="tel" placeholder="+56 9 1234 5678" required><div class="small">Si vienes desde WhatsApp, este dato puede cargarse automáticamente.</div></div>
-        <div><label for="correo">Correo electrónico <span class="req">*</span></label><input id="correo" name="correo" type="email" autocomplete="email" required></div>
+<section id="page-dashboard" class="page active">
+ <div class="cards">
+  <div class="card metric"><div class="k">CONVERSACIONES</div><div class="v" id="mConv">0</div><div class="s">Total registradas</div></div>
+  <div class="card metric"><div class="k">SOLICITUDES PENDIENTES</div><div class="v" id="mHandoff">0</div><div class="s">Esperando atención humana</div></div>
+  <div class="card metric"><div class="k">MENSAJES</div><div class="v" id="mMsg">0</div><div class="s">Entrantes + salientes</div></div>
+  <div class="card metric"><div class="k">EMPRESAS</div><div class="v" id="mEmp">1</div><div class="s" id="mEmpSub">Tu espacio de trabajo</div></div>
+ </div>
+ <div class="section grid2"><div class="card"><div class="sectionhead"><h2>Actividad por empresa</h2></div><div id="statsBars" class="bars"></div></div><div class="card"><div class="sectionhead"><h2>Atención humana</h2><button class="btn" onclick="go('conversations')">Ver bandeja</button></div><div id="handoffMini"></div></div></div>
+</section>
+
+<section id="page-assistant" class="page">
+ <div class="sectionhead">
+  <div>
+   <h2>Probar mi asistente</h2>
+   <div class="small">Continúa con el mismo asistente asociado a tu empresa, tanto en prueba como con un plan activo.</div>
+  </div>
+ </div>
+ <div class="card" style="max-width:760px">
+  <h3 style="margin-top:0">🤖 Tu asistente en WhatsApp</h3>
+  <p id="assistantIntro" style="line-height:1.55">Comprobando el estado de tu asistente…</p>
+  <div id="assistantPlan" class="panelnote" style="margin:14px 0"></div>
+  <div class="toolbar">
+   <button id="openAssistantBtn" class="btn good" onclick="openMyAssistant()">Abrir mi asistente</button>
+   <button class="btn" onclick="loadMyAssistant()">↻ Actualizar estado</button>
+  </div>
+  <div id="assistantInfo" class="small" style="margin-top:12px"></div>
+ </div>
+</section>
+
+<section id="page-conversations" class="page">
+ <div class="sectionhead"><div><h2>Conversaciones</h2><div class="small">Última actualización: <span id="convUpdated">—</span></div></div><button id="refreshConvBtn" class="btn" onclick="refreshConversations()">↻ Actualizar</button></div>
+ <div class="inbox"><div class="convlist"><div class="search"><input id="convSearch" placeholder="Buscar cliente, empresa o mensaje"></div><div id="convList"></div></div><div class="chatpane"><div id="chatEmpty" class="empty">Selecciona una conversación para ver el historial.</div><div id="chatActive" class="chatpane hidden" style="display:contents"><div class="chathead"><div><div id="chatName" style="font-weight:850"></div><div id="chatMeta" class="small"></div><div id="chatElapsed" class="elapsed" style="margin-top:4px"></div></div><div class="toolbar"><span id="chatStatus"></span><button id="takeBtn" class="btn good">Tomar conversación</button><button id="closeBtn" class="btn danger">Devolver al bot</button></div></div><div id="chatBody" class="chatbody"></div><div class="composer"><div class="composerrow"><textarea id="messageInput" placeholder="Escribe una respuesta..."></textarea><button id="sendBtn" class="btn primary">Enviar</button></div><div id="sendInfo" class="small" style="margin-top:6px"></div></div></div></div></div>
+</section>
+
+<section id="page-agenda" class="page">
+ <div class="sectionhead">
+  <div>
+   <h2>Agenda</h2>
+   <div id="agendaSyncStatus" class="small">Google Calendar se sincroniza con Nexia.</div>
+  </div>
+  <div class="toolbar">
+   <button class="btn" onclick="syncAgenda()">↻ Sincronizar Calendar</button>
+   <button class="btn" onclick="refreshAgendaAll()">Actualizar</button>
+  </div>
+ </div>
+
+ <div class="cards">
+  <div class="card metric"><div class="k">RESERVAS</div><div class="v" id="aRes">0</div></div>
+  <div class="card metric"><div class="k">SOLICITUDES DE AGENDA</div><div class="v" id="aSol">0</div></div>
+ </div>
+
+ <div class="sectionhead" style="margin-top:18px">
+  <div class="agenda-tabs">
+   <button id="agendaTabCalendar" class="btn active" onclick="setAgendaView('calendar')">Calendario</button>
+   <button id="agendaTabList" class="btn" onclick="setAgendaView('list')">Lista</button>
+  </div>
+ </div>
+
+ <div id="agendaCalendarView">
+  <div class="calendar-wrap">
+   <div class="calendar-toolbar">
+    <label>Estado
+     <select id="agendaStatusFilter" onchange="reloadCalendar()">
+      <option value="">Todos</option>
+      <option value="confirmada">Confirmadas</option>
+      <option value="cancelada">Canceladas</option>
+      <option value="pendiente">Pendientes</option>
+     </select>
+    </label>
+    <label>Servicio
+     <select id="agendaServiceFilter" onchange="reloadCalendar()">
+      <option value="">Todos los servicios</option>
+     </select>
+    </label>
+   </div>
+   <div id="nexiaCalendar"></div>
+  </div>
+ </div>
+
+ <div id="agendaListView" class="hidden">
+  <div class="panelnote" style="margin-bottom:14px">
+   Las citas creadas o modificadas en Google Calendar se reflejan aquí. Reprogramar o cancelar desde Nexia también actualiza Google Calendar.
+  </div>
+  <div class="section tablewrap">
+   <table class="table">
+    <thead><tr><th>Tipo</th><th>Cliente</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Origen</th><th>Acciones</th></tr></thead>
+    <tbody id="agendaRows"></tbody>
+   </table>
+  </div>
+ </div>
+</section>
+
+<section id="page-interested" class="page"><div class="sectionhead"><h2>Personas interesadas</h2></div><div class="card"><p style="margin-top:0">Este módulo queda preparado para centralizar contactos captados por ventas, formularios y conversaciones.</p><div class="panelnote">La V1.9 crea la tabla de interesados, pero el agente de ventas todavía debe conectarse explícitamente a esa tabla para capturarlos automáticamente. No se inventan contactos.</div></div></section>
+
+<section id="page-convocations" class="page">
+  <div class="card" id="cvInterestedLinkCard" style="margin-bottom:16px">
+    <div class="row between" style="gap:14px;align-items:flex-start;flex-wrap:wrap">
+      <div>
+        <div class="k">REGISTRO DE INTERESADOS</div>
+        <h3 style="margin:4px 0 6px">Enlace público para interesados</h3>
+        <div class="small">Genera un enlace para que recicladores o personas interesadas se registren sin entrar al Portal Nexia.</div>
       </div>
-    </section>
-
-    <section class="card">
-      <h2 class="section-title">Tipos de productos</h2><p class="section-help">Puedes seleccionar más de una categoría.</p>
-      <div class="choices">
-        <label class="choice"><input type="checkbox" name="productos" value="textil"> Textil</label>
-        <label class="choice"><input type="checkbox" name="productos" value="electronicos"> Electrónicos</label>
-        <label class="choice"><input type="checkbox" name="productos" value="carton"> Cartón / papel</label>
-        <label class="choice"><input type="checkbox" name="productos" value="plastico"> Plástico</label>
-        <label class="choice"><input type="checkbox" name="productos" value="vidrio"> Vidrio</label>
-        <label class="choice"><input type="checkbox" name="productos" value="metales"> Metales</label>
-        <label class="choice"><input type="checkbox" name="productos" value="muebles"> Muebles</label>
-        <label class="choice"><input type="checkbox" name="productos" value="aceite"> Aceite</label>
-        <label class="choice"><input type="checkbox" name="productos" value="organicos"> Orgánicos</label>
-        <label class="choice"><input type="checkbox" name="productos" value="otros"> Otros</label>
+      <button class="btn primary" id="cvGenerateInterestedLinkBtn" type="button">Generar link</button>
+    </div>
+    <div id="cvInterestedLinkWrap" class="hidden" style="margin-top:14px">
+      <div class="small" style="margin-bottom:6px">Enlace generado</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input id="cvInterestedLinkInput" readonly style="flex:1;min-width:260px">
+        <button class="btn" id="cvCopyInterestedLinkBtn" type="button">Copiar link</button>
+        <a class="btn" id="cvOpenInterestedLinkBtn" target="_blank" rel="noopener">Abrir</a>
       </div>
-    </section>
+      <div id="cvInterestedLinkMsg" class="small" style="margin-top:8px"></div>
+    </div>
+  </div>
 
-    <section class="card">
-      <h2 class="section-title">Cobertura</h2><p class="section-help">Indica las comunas donde puedes realizar retiros. Puedes seleccionar varias.</p>
-      <div class="choices">
-        <label class="choice"><input type="checkbox" name="comunas" value="Santiago"> Santiago</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="Providencia"> Providencia</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="Ñuñoa"> Ñuñoa</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="San Miguel"> San Miguel</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="Pedro Aguirre Cerda"> Pedro Aguirre Cerda</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="San Bernardo"> San Bernardo</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="La Cisterna"> La Cisterna</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="Estación Central"> Estación Central</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="Maipú"> Maipú</label>
-        <label class="choice"><input type="checkbox" name="comunas" value="otra"> Otra</label>
-      </div>
-      <div style="margin-top:14px"><label for="otrasComunas">Otras comunas</label><input id="otrasComunas" name="otras_comunas" placeholder="Ej.: Quilicura, Recoleta, Independencia"></div>
-    </section>
+ <div class="sectionhead"><div><h2>Convocatorias y matching</h2><div class="small">Solicitudes, interesados y adjudicación al primero que tome la oportunidad.</div></div><button class="btn" onclick="loadConvocations()">↻ Actualizar</button></div>
+ <div class="cards"><div class="card metric"><div class="k">DISPONIBLES</div><div class="v" id="cvAvailable">0</div><div class="s">Esperando interesado</div></div><div class="card metric"><div class="k">EN GESTIÓN</div><div class="v" id="cvManaging">0</div><div class="s">Tomadas / trabajando</div></div><div class="card metric"><div class="k">COMPLETADAS</div><div class="v" id="cvDone">0</div><div class="s">Conexiones realizadas</div></div><div class="card metric"><div class="k">INTERESADOS</div><div class="v" id="cvInterestedCount">0</div><div class="s">Cobertura activa</div></div></div>
+ <div class="card" style="margin-top:18px"><div class="sectionhead"><div><h3 style="margin:0">Configuración del módulo</h3><div class="small">Configurable por empresa, sin tocar código.</div></div><label style="display:flex;align-items:center;gap:8px;font-weight:800"><input id="cvActive" type="checkbox" style="width:auto"> Activo</label></div><div class="formgrid"><label>Nombre público<input id="cvName" placeholder="Solicitud de reciclaje"></label><label class="wide">Descripción<textarea id="cvDescription"></textarea></label><label class="wide">Palabras de activación<textarea id="cvTriggers" placeholder="participar en convocatoria&#10;solicitar retiro&#10;quiero reciclar"></textarea></label><label class="wide">Tipos de producto/material<textarea id="cvProducts" placeholder="Textil, Cartón, Electrónicos, Plástico"></textarea></label><label class="wide">Comunas<textarea id="cvCommunes" placeholder="Santiago, Recoleta, Independencia"></textarea></label></div><div style="margin-top:13px"><b>Campos adicionales</b><div class="chips" style="margin-top:8px"><label class="chip"><input id="cvFieldPeso" type="checkbox" style="width:auto"> Peso</label><label class="chip"><input id="cvFieldInmueble" type="checkbox" style="width:auto"> Inmueble</label><label class="chip"><input id="cvFieldPiso" type="checkbox" style="width:auto"> Piso</label><label class="chip"><input id="cvFieldAscensor" type="checkbox" style="width:auto"> Ascensor</label><label class="chip"><input id="cvFieldVehiculo" type="checkbox" style="width:auto"> Vehículo</label><label class="chip"><input id="cvFieldObs" type="checkbox" style="width:auto"> Observaciones</label><label class="chip"><input id="cvFieldMonto" type="checkbox" style="width:auto"> Aporte por retiro</label></div></div><div class="card" style="margin-top:16px;background:#f8fbf9"><div class="sectionhead"><div><h4 style="margin:0">Pago por retiro y comisión</h4><div class="small">Cada empresa decide si aplica cobro y qué porcentaje retiene. No queda amarrado a La Ortiga.</div></div><label style="display:flex;align-items:center;gap:8px;font-weight:800"><input id="cvMpEnabled" type="checkbox" style="width:auto"> Usar Mercado Pago</label></div><div class="formgrid"><label>Comisión de la empresa (%)<input id="cvCommission" type="number" min="0" max="100" step="0.1" value="10"></label><label>Nombre de la comisión<input id="cvCommissionName" placeholder="Comisión de gestión"></label><label class="wide"><span class="small">Ejemplo: si el retiro vale $10.000 y la comisión es 10%, la empresa registra $1.000 de comisión y $9.000 netos para quien realiza el retiro.</span></label></div><div class="panelnote" style="margin-top:10px">La configuración económica y el cálculo quedan guardados por solicitud. El split automático real requiere conectar la cuenta Mercado Pago de la empresa; Nexia no inventará pagos ni IDs de transacción.</div></div><div class="actions"><button class="btn primary" onclick="saveConvocationsConfig()">Guardar configuración</button></div><div id="cvConfigMsg" class="small"></div></div>
+ <div class="card" style="margin-top:18px"><div class="sectionhead"><div><h3 style="margin:0">Registrar interesado</h3><div class="small">Recibirá avisos cuando coincidan comuna + producto/material.</div></div></div><div class="formgrid"><label>Nombre<input id="ciName"></label><label>Apellido<input id="ciLast"></label><label>WhatsApp<input id="ciPhone" placeholder="569..."></label><label>Correo<input id="ciEmail" type="email"></label><label class="wide">Tipos de producto/material<input id="ciProducts" placeholder="Textil, Cartón, Electrónicos"></label><label class="wide">Comunas donde retira<input id="ciCommunes" placeholder="Santiago, Recoleta"></label><label>Días disponibles<input id="ciDays" placeholder="Lunes, Martes, Sábado"></label><label>Horarios<input id="ciHours" placeholder="09:00-13:00"></label><label>Medio de transporte<input id="ciTransport" placeholder="Camioneta, auto, bicicleta"></label><label>Capacidad<input id="ciCapacity" placeholder="Hasta 10 bultos"></label><label>Aporte mínimo opcional<input id="ciMinAmount" type="number" min="0" placeholder="5000"></label><label style="display:flex;align-items:center;gap:8px"><input id="ciFree" type="checkbox" checked style="width:auto"> Acepta retiros sin aporte</label></div><div class="actions"><button class="btn" onclick="createConvInterested()">Agregar interesado</button></div><div id="ciMsg" class="small"></div></div>
+ <div class="section"><div class="sectionhead"><h3>Solicitudes</h3></div><div class="tablewrap"><table class="table"><thead><tr><th>Fecha</th><th>Solicitante</th><th>Comuna</th><th>Producto/material</th><th>Bultos</th><th>Aporte</th><th>Estado</th><th>Asignado</th><th>Acciones</th></tr></thead><tbody id="cvRequestRows"></tbody></table></div></div>
+ <div class="section"><div class="sectionhead"><h3>Interesados registrados</h3></div><div class="tablewrap"><table class="table"><thead><tr><th>Nombre</th><th>Contacto</th><th>Productos</th><th>Comunas</th><th>Aporte</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="cvInterestedRows"></tbody></table></div></div>
+</section>
 
-    <section class="card">
-      <h2 class="section-title">Disponibilidad y capacidad</h2><p class="section-help">Esto permitirá mejorar los futuros matches.</p>
-      <div class="grid">
-        <div><label for="dias">Días disponibles</label><input id="dias" name="dias" placeholder="Ej.: lunes a sábado"></div>
-        <div><label for="horario">Horario habitual</label><input id="horario" name="horario" placeholder="Ej.: 09:00 a 18:00"></div>
-        <div><label for="transporte">Medio de transporte</label><select id="transporte" name="transporte"><option value="">Seleccionar</option><option>A pie / transporte público</option><option>Bicicleta</option><option>Motocicleta</option><option>Automóvil</option><option>Furgón</option><option>Camioneta</option><option>Camión</option><option>Otro</option></select></div>
-        <div><label for="capacidad">Capacidad aproximada</label><input id="capacidad" name="capacidad" placeholder="Ej.: hasta 10 bultos"></div>
-      </div>
-    </section>
+<section id="page-statistics" class="page"><div class="sectionhead"><h2>Estadísticas</h2><button class="btn" onclick="loadStats()">Actualizar</button></div><div class="cards"><div class="card metric"><div class="k">RECIBIDOS</div><div class="v" id="sIn">0</div></div><div class="card metric"><div class="k">ENVIADOS</div><div class="v" id="sOut">0</div></div><div class="card metric"><div class="k">TOTAL</div><div class="v" id="sTotal">0</div></div><div class="card metric"><div class="k">CONVERSACIONES</div><div class="v" id="sConv">0</div></div></div><div class="section card"><div class="sectionhead"><h2>Detalle por empresa</h2></div><div id="statsDetail" class="bars"></div></div></section>
 
-    <section class="card">
-      <h2 class="section-title">Condiciones económicas</h2><p class="section-help">Configura si aceptas retiros gratuitos o si requieres un monto mínimo.</p>
-      <div class="inline"><input id="aceptaGratis" name="acepta_retiros_gratis" type="checkbox" value="true"><label for="aceptaGratis" style="margin:0">Acepto solicitudes de retiro sin monto ofrecido</label></div>
-      <div class="inline" style="margin-top:14px"><input id="requiereMinimo" type="checkbox"><label for="requiereMinimo" style="margin:0">Quiero definir un monto mínimo para recibir solicitudes</label></div>
-      <div class="money-wrap" id="moneyWrap" style="margin-top:14px;max-width:320px"><label for="montoMinimo">Monto mínimo CLP</label><input id="montoMinimo" name="monto_minimo" type="number" min="0" step="100" placeholder="5000"></div>
-    </section>
+<section id="page-consumption" class="page">
+ <div class="sectionhead"><div><h2>Consumo y planes</h2><div class="small">Cada plan dura hasta 30 días o hasta consumir sus mensajes, lo que ocurra primero.</div></div><button class="btn" onclick="loadConsumption()">↻ Actualizar</button></div>
+ <div id="paymentStatus"></div>
+ <div id="currentUsage" class="usagebox">Cargando plan actual…</div>
+ <div class="plan-grid" id="planGrid">
+  <div class="plan-card"><div class="plan-name">Nexia 500</div><div class="plan-msg">500 mensajes para tu asistente y atención desde el Portal.</div><div class="price-old">Antes $19.990</div><div class="price-now">$15.990 <small>CLP</small></div><button class="btn primary" style="width:100%" onclick="buyPlan('nexia_500',this)">Comprar 500 mensajes</button></div>
+  <div class="plan-card featured"><span class="plan-badge">MÁS CAPACIDAD</span><div class="plan-name">Nexia 1000</div><div class="plan-msg">1.000 mensajes para mayor volumen de atención.</div><div class="price-old">Antes $39.990</div><div class="price-now">$29.990 <small>CLP</small></div><button class="btn primary" style="width:100%" onclick="buyPlan('nexia_1000',this)">Comprar 1.000 mensajes</button></div>
+ </div>
+ <div id="paidSetup" class="setupbox hidden"><b>Tu pago fue aprobado 🎉</b><div class="small" style="margin-top:5px">Crea una contraseña para convertir tu acceso temporal en una cuenta permanente del Portal Nexia.</div><input id="newPaidPassword" type="password" minlength="8" placeholder="Nueva contraseña (mínimo 8 caracteres)"><button class="btn good" onclick="createPaidAccess()">Crear mi acceso permanente</button><div id="setupInfo" class="small" style="margin-top:8px"></div></div>
+ <div class="history"><div class="sectionhead"><h2>Historial de compras</h2></div><div class="tablewrap"><table class="table"><thead><tr><th>Fecha</th><th>Plan</th><th>Mensajes</th><th>Monto</th><th>Estado</th><th>Payment ID</th></tr></thead><tbody id="paymentRows"></tbody></table></div></div>
+ <div class="section"><div class="sectionhead"><h2>Detalle de consumo</h2></div><div class="tablewrap"><table class="table"><thead><tr><th>Empresa</th><th>Plan</th><th>Estado</th><th>Usados</th><th>Límite</th><th>Inicio prueba</th><th>Fin prueba</th></tr></thead><tbody id="consRows"></tbody></table></div></div>
+</section>
 
-    <section class="card">
-      <h2 class="section-title">Información adicional</h2>
-      <div class="grid">
-        <div class="full"><label for="observaciones">Observaciones</label><textarea id="observaciones" name="observaciones" placeholder="Cuéntanos cualquier condición especial, material que no retires, limitaciones de tamaño, etc."></textarea></div>
-        <div class="full"><label class="inline"><input id="activo" name="activo" type="checkbox" value="true" checked> Quiero recibir nuevas oportunidades compatibles con mi cobertura y categorías.</label></div>
-        <div class="full"><label class="inline"><input id="consentimiento" name="consentimiento" type="checkbox" required> Acepto que mis datos sean utilizados para gestionar convocatorias y contactos asociados. <span class="req">*</span></label></div>
-      </div>
-      <div class="note" style="margin-top:18px">La dirección exacta y los datos privados de una solicitud deberían mostrarse únicamente al interesado que efectivamente tome la oportunidad desde el portal.</div>
-    </section>
+<section id="page-demos" class="page">
+ <div class="sectionhead"><div><h2>Pruebas Nexia</h2><div class="small">Supervisa pruebas, uso y acceso al asistente.</div></div><button class="btn" onclick="loadDemos()">Actualizar</button></div>
+ <div class="cards">
+  <div class="card metric"><div class="k">PRUEBAS ACTIVAS</div><div class="v" id="dActive">0</div><div class="s">Disponibles ahora</div></div>
+  <div class="card metric"><div class="k">CREADAS</div><div class="v" id="dTotal">0</div><div class="s">Pruebas registradas</div></div>
+  <div class="card metric"><div class="k">AGOTADAS / VENCIDAS</div><div class="v" id="dEnded">0</div><div class="s">Requieren reactivación o plan</div></div>
+  <div class="card metric"><div class="k">MENSAJES USADOS</div><div class="v" id="dMessages">0</div><div class="s">Consumo total de pruebas</div></div>
+ </div>
+ <div class="section tablewrap"><table class="table"><thead><tr><th>Empresa</th><th>Contacto</th><th>Canal / usuario</th><th>Estado</th><th>Uso</th><th>Vence</th><th>Acciones</th></tr></thead><tbody id="demoRows"></tbody></table></div>
+</section>
 
-    <section class="card">
-      <div class="actions"><button type="reset" class="secondary">Limpiar</button><button type="submit" class="primary">Registrar interesado</button></div>
-      <div class="status" id="status"></div>
-    </section>
-  </form>
-  <div class="footer">Módulo de Convocatorias · Nexia</div>
-</main>
+<section id="page-companies" class="page"><div class="sectionhead"><h2>Empresas</h2><button class="btn" onclick="loadCompanies()">Actualizar</button></div><div id="companyAdminNote" class="panelnote hidden">Esta sección solo está disponible para el superadmin.</div><div class="tablewrap" id="companyTable"><table class="table"><thead><tr><th>Empresa</th><th>Estado</th><th>Creada</th><th>ID</th></tr></thead><tbody id="companyRows"></tbody></table></div></section>
 
+
+<section id="page-integrations" class="page">
+ <div class="sectionhead"><div><h2>Integraciones</h2><div class="small">Conecta herramientas para que Nexia trabaje con información y acciones reales de tu negocio.</div></div><button class="btn" onclick="loadIntegrations()">↻ Actualizar</button></div>
+ <div class="card" style="max-width:760px">
+  <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap">
+   <div style="max-width:520px"><h3 style="margin:0 0 7px">Google Calendar</h3><p style="margin:0;color:var(--muted);line-height:1.55">Conecta tu calendario para que Nexia pueda consultar disponibilidad real y gestionar reservas sin dobles agendamientos.</p></div>
+   <span id="googleCalendarBadge" class="badge wait"><i class="dot"></i>No conectado</span>
+  </div>
+  <div id="googleCalendarDetail" class="usagebox" style="margin-top:16px">Revisa el estado de la conexión.</div>
+  <div class="toolbar"><button id="connectGoogleBtn" class="btn primary" onclick="connectGoogleCalendar()">Conectar Google Calendar</button><button id="disconnectGoogleBtn" class="btn danger hidden" onclick="disconnectGoogleCalendar()">Desconectar</button></div>
+  <div class="small" style="margin-top:12px">La conexión es individual para cada empresa. Nexia no mezcla calendarios entre clientes. Si todavía no conectas Google Calendar, la agenda funciona como solicitud de reserva y no crea eventos reales.</div>
+ </div>
+
+ <div class="card" style="max-width:760px;margin-top:18px">
+  <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap">
+   <div style="max-width:520px">
+    <h3 style="margin:0 0 7px">Ecommerce</h3>
+    <p style="margin:0;color:var(--muted);line-height:1.55">Conecta Jumpseller o Shopify para consultar productos, precios, stock y estado de pedidos desde WhatsApp.</p>
+   </div>
+   <span id="ecommerceBadge" class="badge wait"><i class="dot"></i>No conectado</span>
+  </div>
+
+  <div id="ecommerceDetail" class="usagebox" style="margin-top:16px">Revisa el estado de la conexión.</div>
+
+  <div class="formgrid" style="margin-top:16px">
+   <label>Plataforma
+    <select id="ecommerceProvider" onchange="renderEcommerceFields()">
+     <option value="jumpseller">Jumpseller</option>
+     <option value="shopify">Shopify</option>
+    </select>
+   </label>
+
+   <label id="ecommerceStoreUrlLabel">URL de la tienda
+    <input id="ecommerceStoreUrl" placeholder="https://mitienda.cl">
+   </label>
+
+   <label id="ecommerceLoginKeyLabel">Jumpseller Login Key
+    <input id="ecommerceLoginKey" autocomplete="off" placeholder="Login Key">
+   </label>
+
+   <label id="ecommerceAuthTokenLabel">Jumpseller Auth Token
+    <input id="ecommerceAuthToken" type="password" autocomplete="new-password" placeholder="Auth Token">
+   </label>
+
+   <label id="ecommerceShopifyDomainLabel" class="hidden">Dominio Shopify
+    <input id="ecommerceShopifyDomain" placeholder="mitienda.myshopify.com">
+   </label>
+
+   <label id="ecommerceAccessTokenLabel" class="hidden">Admin API access token
+    <input id="ecommerceAccessToken" type="password" autocomplete="new-password" placeholder="shpat_...">
+   </label>
+  </div>
+
+  <div class="toolbar">
+   <button id="connectEcommerceBtn" class="btn primary" onclick="connectEcommerce()">Conectar tienda</button>
+   <button id="disconnectEcommerceBtn" class="btn danger hidden" onclick="disconnectEcommerce()">Desconectar</button>
+  </div>
+
+  <div id="ecommerceTestBox" class="hidden" style="margin-top:16px">
+   <div class="small" style="margin-bottom:8px">Prueba una búsqueda real:</div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <input id="ecommerceTestQuery" style="flex:1;min-width:220px" placeholder="Ej: polera negra">
+    <button class="btn" onclick="testEcommerce()">Buscar</button>
+   </div>
+   <div id="ecommerceTestResult" class="usagebox" style="margin-top:10px"></div>
+  </div>
+
+  <div class="small" style="margin-top:12px">Si elegiste Jumpseller o Shopify durante el onboarding, no cargues precios manualmente: una vez conectada, la tienda será la fuente principal de catálogo, precios y stock. Nexia seguirá usando la configuración manual para servicios que no existan en el ecommerce.</div>
+ </div>
+</section>
+
+<section id="page-settings" class="page">
+<div class="sectionhead"><div><h2>Configuración de tu asistente</h2><div class="small">Puedes modificar los datos que utiliza tu asistente sin repetir el onboarding.</div></div><button class="btn" onclick="loadBusinessSettings()">↻ Actualizar</button></div>
+
+<div id="settingsNotice"></div>
+
+<div class="card">
+<h3 style="margin-top:0">Información del negocio</h3>
+<div class="formgrid">
+<label>Nombre del negocio<input id="cfgBusinessName" placeholder="Nombre de tu negocio"></label>
+<label>Nombre del asistente<input id="cfgAssistantName" placeholder="Ej: Luna, Sofía, Max"></label>
+<label class="wide">¿A qué se dedica?<textarea id="cfgRubro" placeholder="Describe brevemente tu actividad"></textarea></label>
+<label class="wide">Descripción adicional<textarea id="cfgDescription" placeholder="Información útil para responder consultas"></textarea></label>
+<label class="wide">Objetivo del asistente<textarea id="cfgObjective" placeholder="Ej: responder consultas, captar interesados y agendar"></textarea></label>
+<label>Tono del asistente<input id="cfgTone" placeholder="Ej: cercano, profesional y breve"></label>
+<label>Correo de contacto<input id="cfgEmail" type="email" placeholder="contacto@empresa.cl"></label>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Atención presencial</h3>
+<label style="display:flex;align-items:center;gap:10px"><input id="cfgHasAddress" type="checkbox" style="width:auto"> Atiendo clientes en una dirección física</label>
+<div id="cfgAddressFields" class="formgrid" style="margin-top:14px">
+<label>Dirección<input id="cfgAddress" placeholder="Av. Libertad 1234"></label>
+<label>Comuna<input id="cfgComuna" placeholder="Viña del Mar"></label>
+<label class="wide">Referencia opcional<input id="cfgAddressRef" placeholder="Local 4, segundo piso"></label>
+<label class="wide">Google Maps<input id="cfgMaps" placeholder="Puedes pegar el enlace o dejarlo vacío para generarlo"></label>
+</div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Horario y agenda</h3>
+<div class="formgrid">
+<label>Hora de apertura<input id="cfgOpen" type="number" min="0" max="23" placeholder="9"></label>
+<label>Hora de cierre<input id="cfgClose" type="number" min="0" max="23" placeholder="18"></label>
+<label>Duración habitual de una reserva (min)<input id="cfgDuration" type="number" min="5" max="1440" placeholder="60"></label>
+<label class="wide">Instrucciones adicionales para el asistente<textarea id="cfgPromptExtra" placeholder="Reglas o información especial que quieras que el asistente considere"></textarea></label>
+</div>
+</div>
+
+<div class="card">
+<div class="sectionhead" style="margin-bottom:12px"><div><h3 style="margin:0">Productos y servicios</h3><div class="small">El precio es opcional. Los cambios se usan inmediatamente en respuestas y agenda.</div></div><button class="btn secondary" onclick="addPortalServiceRow()">＋ Agregar</button></div>
+<div id="cfgServices"></div>
+</div>
+
+<div class="actions" style="margin-top:18px"><button class="btn" id="saveBusinessSettings" onclick="saveBusinessSettings()">Guardar configuración</button></div>
+
+<div class="card" style="margin-top:18px"><h3 style="margin-top:0">Seguridad y alcance</h3><p id="settingsScope"></p><p class="small">Cada cliente solo puede modificar la configuración correspondiente a su propia empresa.</p></div>
+</section>
+</main></div></div>
 <script>
-const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');
-const params=new URLSearchParams(location.search);
-const token=params.get('token')||'';
-const previewMode=!token;
-const form=document.getElementById('interesadoForm');
-const requiereMinimo=document.getElementById('requiereMinimo');
-const moneyWrap=document.getElementById('moneyWrap');
-const montoMinimo=document.getElementById('montoMinimo');
-const statusBox=document.getElementById('status');
-const submitBtn=form.querySelector('button[type="submit"]');
-
-function showStatus(message,isError=false){
-  statusBox.style.display='block';
-  statusBox.classList.toggle('error',isError);
-  statusBox.textContent=message;
-  statusBox.scrollIntoView({behavior:'smooth',block:'center'});
+const PARAMS=new URLSearchParams(location.search);
+const API=(PARAMS.get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');
+// V2.5: la prueba conserva su token durante OAuth/recargas.
+// La URL tiene prioridad; sessionStorage es respaldo para volver desde proveedores externos.
+const URL_DEMO_TOKEN=(PARAMS.get('demo_token')||'').trim();
+if(URL_DEMO_TOKEN)sessionStorage.setItem('nexia_demo_token',URL_DEMO_TOKEN);
+const DEMO_TOKEN=URL_DEMO_TOKEN||(sessionStorage.getItem('nexia_demo_token')||'').trim();
+const state={authToken:sessionStorage.getItem('nexia_portal_token')||'',refreshToken:sessionStorage.getItem('nexia_portal_refresh_token')||'',demoToken:DEMO_TOKEN,session:null,me:null,conversations:[],selected:null,messages:[],handoffs:[],stats:null,demos:[],convocations:{config:null,solicitudes:[],interesados:[]}};
+const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt=d=>{if(!d)return '—';try{return new Date(d).toLocaleString('es-CL',{dateStyle:'short',timeStyle:'short'})}catch{return d}};
+const timeAgo=d=>{if(!d)return 'sin actividad';const dt=new Date(d);if(Number.isNaN(dt.getTime()))return 'sin actividad';const sec=Math.max(0,Math.floor((Date.now()-dt.getTime())/1000));if(sec<60)return 'hace menos de 1 min';const min=Math.floor(sec/60);if(min<60)return `hace ${min} min`;const h=Math.floor(min/60);if(h<24)return `hace ${h} h`;const dias=Math.floor(h/24);if(dias<30)return `hace ${dias} día${dias===1?'':'s'}`;const meses=Math.floor(dias/30);return `hace ${meses} mes${meses===1?'':'es'}`};
+async function publicFetch(path,opt={}){try{const options={...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}};const r=await fetch(API+path,options);const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false){const err=new Error(d.error||`Error ${r.status}`);err.status=r.status;err.data=d;throw err}return d}catch(e){if(String(e?.message||e).includes('Failed to fetch'))throw new Error('No se pudo conectar con el backend de Nexia. Verifica que Render esté desplegado y que PORTAL_ORIGIN permita https://nexia-tech.com.');throw e}}
+let portalRefreshPromise=null;
+async function refreshPortalSession(){
+  if(state.demoToken)return false;
+  if(!state.refreshToken)return false;
+  if(portalRefreshPromise)return portalRefreshPromise;
+  portalRefreshPromise=(async()=>{
+    try{
+      const d=await publicFetch('/portal/refresh',{method:'POST',body:JSON.stringify({refresh_token:state.refreshToken})});
+      state.authToken=d.access_token||'';
+      state.refreshToken=d.refresh_token||state.refreshToken||'';
+      if(!state.authToken)return false;
+      sessionStorage.setItem('nexia_portal_token',state.authToken);
+      if(state.refreshToken)sessionStorage.setItem('nexia_portal_refresh_token',state.refreshToken);
+      return true;
+    }catch(e){
+      sessionStorage.removeItem('nexia_portal_token');
+      sessionStorage.removeItem('nexia_portal_refresh_token');
+      state.authToken='';state.refreshToken='';
+      return false;
+    }finally{portalRefreshPromise=null}
+  })();
+  return portalRefreshPromise;
 }
-
-async function req(path,opt={}){
-  const r=await fetch(API+path,{...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}});
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);
-  return d;
+async function api(path,opt={},retry=true){
+  const headers={...(opt.headers||{})};
+  if(state.demoToken)headers['X-Demo-Token']=state.demoToken;
+  else if(state.authToken)headers['Authorization']=`Bearer ${state.authToken}`;
+  else if(state.refreshToken&&retry){
+    const ok=await refreshPortalSession();
+    if(ok)return api(path,opt,false);
+    throw new Error('Sesión expirada. Ingresa nuevamente.');
+  }else throw new Error('Sesión expirada. Ingresa nuevamente.');
+  try{return await publicFetch(path,{...opt,headers})}
+  catch(e){
+    if(retry&&!state.demoToken&&e?.status===401&&state.refreshToken){
+      const ok=await refreshPortalSession();
+      if(ok)return api(path,opt,false);
+    }
+    throw e;
+  }
 }
-
-requiereMinimo.addEventListener('change',()=>{
-  moneyWrap.style.display=requiereMinimo.checked?'block':'none';
-  montoMinimo.required=requiereMinimo.checked;
-  if(!requiereMinimo.checked)montoMinimo.value='';
-});
-
-if(params.get('telefono'))document.getElementById('telefono').value='+'+params.get('telefono').replace(/\D/g,'');
-function seleccionados(nombre){return [...document.querySelectorAll(`input[name="${nombre}"]:checked`)].map(x=>x.value)}
-function listaTexto(v){return String(v||'').split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean)}
-
-function renderChoices(name,items){
-  const first=document.querySelector(`input[name="${name}"]`);
-  if(!first||!items.length)return;
-  const box=first.closest('.choices');
-  box.innerHTML=items.map(x=>`<label class="choice"><input type="checkbox" name="${name}" value="${String(x).replace(/"/g,'&quot;')}"> ${x}</label>`).join('');
-}
-
-async function loadPublicConfig(){
-  if(previewMode){
-    showStatus('Vista previa: el formulario está listo. El registro real funcionará al abrir un enlace generado por Nexia.',false);
-    return;
+const navItems=[['dashboard','▣','Inicio','Resumen de la operación'],['assistant','🤖','Probar mi asistente','Abre el asistente de tu empresa'],['conversations','💬','Conversaciones','Bandeja de atención humana'],['agenda','📅','Agenda','Reservas y solicitudes'],['convocations','♻️','Convocatorias','Matching y retiros'],['interested','👥','Personas interesadas','Contactos captados'],['statistics','📊','Estadísticas','Actividad y rendimiento'],['consumption','⚡','Consumo','Planes y mensajes'],['demos','🧪','Pruebas','Uso, vigencia y activación'],['companies','🏢','Empresas','Administración de clientes'],['integrations','🔗','Integraciones','Conecta Google Calendar y otras herramientas'],['settings','⚙','Configuración','Seguridad y alcance']];
+function buildNav(){const html=navItems.map(([id,ic,n])=>`<button data-page="${id}" class="${id==='dashboard'?'active':''}">${ic} &nbsp;${n}</button>`).join('');$('nav').innerHTML=html;$('mobileNav').innerHTML=html;document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page))}
+function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='assistant')loadMyAssistant();if(id==='conversations')loadConversations();if(id==='agenda')openAgendaPage();if(id==='convocations')loadConvocations();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies();if(id==='integrations')loadIntegrations();if(id==='settings')loadBusinessSettings()}
+async function init(){
+  buildNav();
+  if(PARAMS.get('cuenta')==='creada'){
+    $('loginError').style.color='#137333';
+    $('loginError').textContent='Tu acceso permanente quedó creado. Ingresa con tu correo y la contraseña que elegiste.';
   }
   try{
-    const d=await req('/public/convocatorias/interesados/config?token='+encodeURIComponent(token));
-    const c=d.config||{};
-    if(Array.isArray(c.tipos_producto)&&c.tipos_producto.length)renderChoices('productos',c.tipos_producto);
-    if(Array.isArray(c.comunas)&&c.comunas.length)renderChoices('comunas',c.comunas);
-  }catch(e){
-    showStatus(e.message,true);
-    submitBtn.disabled=true;
-  }
+    const cfg=await publicFetch('/portal/config-public');
+    $('versionText').textContent=cfg.app_version||'';
+    if(state.demoToken){
+      $('loginView').classList.add('hidden');
+      await enterApp();
+      return;
+    }
+    if(state.authToken||state.refreshToken){
+      try{await enterApp();return}catch(e){sessionStorage.removeItem('nexia_portal_token');sessionStorage.removeItem('nexia_portal_refresh_token');state.authToken='';state.refreshToken=''}
+    }
+  }catch(e){$('loginError').textContent='No pudimos conectar con el Portal Nexia. '+e.message}
+}
+async function login(){
+  try{
+    $('loginBtn').disabled=true;$('loginError').textContent='';
+    sessionStorage.removeItem('nexia_demo_token');
+    state.demoToken='';
+    const email=$('email').value.trim(), password=$('password').value;
+    if(!email||!password)throw new Error('Ingresa correo y contraseña');
+    const d=await publicFetch('/portal/login',{method:'POST',body:JSON.stringify({email,password})});
+    state.authToken=d.access_token||'';
+    state.refreshToken=d.refresh_token||'';
+    if(!state.authToken)throw new Error('No se recibió una sesión válida');
+    sessionStorage.setItem('nexia_portal_token',state.authToken);
+    if(state.refreshToken)sessionStorage.setItem('nexia_portal_refresh_token',state.refreshToken);
+    await enterApp();
+  }catch(e){$('loginError').textContent=e.message}
+  finally{$('loginBtn').disabled=false}
+}
+async function enterApp(){const d=await api('/portal/me');state.me=d;$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');const p=d.perfil||{};if(p.demo){document.querySelectorAll('[data-page="demos"],[data-page="companies"]').forEach(x=>x.classList.add('hidden'));}$('userName').textContent=p.nombre||p.email||'Usuario';$('userRole').textContent=d.superadmin?'Superadmin global':(p.demo?'Prueba Nexia':(p.rol||'Cliente'));$('avatar').textContent=(p.nombre||p.email||'N').slice(0,1).toUpperCase();$('scopeText').textContent=d.superadmin?'Acceso: todas las empresas':(p.demo?'Prueba activa · acceso temporal':'Acceso: solo tu empresa');$('settingsScope').innerHTML=d.superadmin?'<strong>Superadmin global:</strong> puedes administrar y visualizar todas las empresas.':(p.demo?'<strong>Acceso temporal:</strong> puedes probar el Portal completo con los datos de tu prueba durante su vigencia.':'<strong>Usuario empresa:</strong> tu acceso está aislado por empresa.');await Promise.allSettled([loadStats(),loadHandoffs(),loadConversations()]);const q=new URLSearchParams(location.search);const seccion=q.get('seccion');if(seccion&&navItems.some(x=>x[0]===seccion)){go(seccion)}handleDeepLink();checkPaymentReturn();checkCalendarReturn()}
+async function logout(){
+  sessionStorage.removeItem('nexia_portal_token');
+  sessionStorage.removeItem('nexia_portal_refresh_token');
+  sessionStorage.removeItem('nexia_demo_token');
+  state.authToken='';
+  state.refreshToken='';
+  state.demoToken='';
+  location.href=location.pathname;
+}
+async function loadStats(){try{const d=await api('/portal/estadisticas');state.stats=d;const t=d.totales||{};$('mConv').textContent=t.conversaciones||0;$('mMsg').textContent=t.mensajes_totales||0;$('mEmp').textContent=t.empresas||1;$('mEmpSub').textContent=d.alcance==='global'?'Empresas registradas':'Tu espacio de trabajo';$('sIn').textContent=t.mensajes_recibidos||0;$('sOut').textContent=t.mensajes_enviados||0;$('sTotal').textContent=t.mensajes_totales||0;$('sConv').textContent=t.conversaciones||0;renderStats(d.empresas||[])}catch(e){console.error(e)}}
+function renderStats(rows){const max=Math.max(1,...rows.map(x=>x.mensajes_totales||0));const html=rows.slice(0,12).map(x=>`<div class="barrow"><div class="truncate" title="${esc(x.empresa_nombre||x.empresa_id)}">${esc(x.empresa_nombre||'Empresa')}</div><div class="bar"><i style="width:${Math.round((x.mensajes_totales||0)/max*100)}%"></i></div><b>${x.mensajes_totales||0}</b></div>`).join('')||'<div class="small">Sin actividad todavía.</div>';$('statsBars').innerHTML=html;$('statsDetail').innerHTML=html}
+async function loadHandoffs(){try{const d=await api('/portal/handoffs');state.handoffs=d.handoffs||[];const pending=state.handoffs.filter(x=>['pendiente','en_atencion'].includes(String(x.estado||'').toLowerCase()));$('mHandoff').textContent=pending.filter(x=>x.estado==='pendiente').length;$('handoffMini').innerHTML=pending.slice(0,5).map(x=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div style="font-weight:800">${esc(x.nombre_contacto||'Cliente')}</div><div class="small">${esc(x.motivo||'Solicitud de atención')} · ${fmt(x.created_at)}</div></div>`).join('')||'<div class="small">No hay solicitudes pendientes.</div>'}catch(e){console.error(e)}}
+async function loadConversations(){try{const d=await api('/portal/conversaciones');state.conversations=d.conversaciones||[];renderConversations();if($('convUpdated'))$('convUpdated').textContent=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});if(state.selected){const found=state.conversations.find(x=>x.id===state.selected.id);if(found){state.selected=found;renderChatHeader()}}}catch(e){$('convList').innerHTML=`<div class="error" style="padding:14px">${esc(e.message)}</div>`}}
+async function refreshConversations(){const btn=$('refreshConvBtn');const selectedId=state.selected?.id||null;try{if(btn){btn.classList.add('refreshing');btn.textContent='↻ Actualizando…'}await loadConversations();if(selectedId){const found=state.conversations.find(x=>x.id===selectedId);if(found){state.selected=found;renderChatHeader();const d=await api(`/portal/conversacion/${selectedId}/mensajes`);state.messages=d.mensajes||[];renderMessages()}}if($('convUpdated'))$('convUpdated').textContent=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}catch(e){alert(e.message)}finally{if(btn){btn.classList.remove('refreshing');btn.textContent='↻ Actualizar'}}}
+function renderConversations(){const q=$('convSearch').value.trim().toLowerCase();const rows=state.conversations.filter(x=>[x.nombre_contacto,x.telefono,x.ultimo_mensaje,x.empresas?.nombre].some(v=>String(v||'').toLowerCase().includes(q)));$('convList').innerHTML=rows.map(x=>{const active=state.selected?.id===x.id?'active':'';const mode=x.modo_atencion==='ejecutivo'?'<span class="badge exec"><i class="dot"></i>Ejecutivo</span>':'<span class="badge bot"><i class="dot"></i>Bot</span>';return `<div class="conv ${active}" data-id="${x.id}"><div class="convtop"><div class="convname truncate">${esc(x.nombre_contacto||x.telefono||'Contacto')}</div><div class="elapsed" title="${fmt(x.ultima_fecha)}">${timeAgo(x.ultima_fecha)}</div></div><div class="small truncate">${esc(x.empresas?.nombre||'Empresa')} · ${esc(x.canal||'')}</div><div class="small truncate" style="margin:5px 0 4px">${esc(x.ultimo_mensaje||'')}</div><div class="small">Último mensaje: ${fmt(x.ultima_fecha)}</div><div style="margin-top:7px">${mode}</div></div>`}).join('')||'<div class="empty" style="height:180px">No hay conversaciones.</div>';document.querySelectorAll('.conv[data-id]').forEach(el=>el.onclick=()=>selectConversation(el.dataset.id))}
+async function selectConversation(id){state.selected=state.conversations.find(x=>x.id===id)||{id};renderConversations();$('chatEmpty').classList.add('hidden');$('chatActive').classList.remove('hidden');renderChatHeader();try{const d=await api(`/portal/conversacion/${id}/mensajes`);state.messages=d.mensajes||[];renderMessages()}catch(e){$('chatBody').innerHTML=`<div class="error">${esc(e.message)}</div>`}}
+function renderChatHeader(){const x=state.selected||{};$('chatName').textContent=x.nombre_contacto||x.telefono||'Conversación';$('chatMeta').textContent=`${x.empresas?.nombre||'Empresa'} · ${x.canal||''} · ${x.telefono||''}`;$('chatElapsed').textContent=x.ultima_fecha?`Última actividad ${timeAgo(x.ultima_fecha)} · ${fmt(x.ultima_fecha)}`:'';const exec=x.modo_atencion==='ejecutivo';$('chatStatus').innerHTML=exec?'<span class="badge exec"><i class="dot"></i>Atención humana</span>':'<span class="badge bot"><i class="dot"></i>Bot activo</span>';$('takeBtn').classList.toggle('hidden',exec);$('closeBtn').classList.toggle('hidden',!exec);$('sendInfo').textContent=exec?'El bot está pausado mientras atiendes esta conversación.':'Toma la conversación antes de responder como ejecutivo.'}
+function renderMessages(){$('chatBody').innerHTML=state.messages.map(m=>`<div class="msg ${m.direccion==='entrante'?'in':'out'}"><div>${esc(m.mensaje)}</div><div style="font-size:10px;opacity:.65;margin-top:5px">${fmt(m.fecha)}</div></div>`).join('');$('chatBody').scrollTop=$('chatBody').scrollHeight}
+async function takeConversation(){if(!state.selected)return;try{await api(`/portal/conversacion/${state.selected.id}/tomar`,{method:'POST',body:'{}'});state.selected.modo_atencion='ejecutivo';renderChatHeader();await Promise.allSettled([loadConversations(),loadHandoffs()])}catch(e){alert(e.message)}}
+async function closeConversation(){if(!state.selected)return;if(!confirm('¿Devolver esta conversación al asistente?'))return;try{await api(`/portal/conversacion/${state.selected.id}/cerrar`,{method:'POST',body:'{}'});state.selected.modo_atencion='bot';renderChatHeader();await Promise.allSettled([loadConversations(),loadHandoffs()])}catch(e){alert(e.message)}}
+async function sendMessage(){
+ const msg=$('messageInput').value.trim();
+ const conversationId=String(state.selected?.id||'').trim();
+ if(!msg){return}
+ if(!conversationId){alert('Selecciona una conversación antes de enviar.');return}
+ try{
+   $('sendBtn').disabled=true;
+   // Guardamos el ID antes de tomar/recargar la conversación para que nunca se
+   // pierda durante las actualizaciones de la bandeja.
+   if(state.selected?.modo_atencion!=='ejecutivo')await takeConversation();
+   await api('/portal/enviar-mensaje',{method:'POST',body:JSON.stringify({conversacion_id:conversationId,mensaje:msg})});
+   $('messageInput').value='';
+   await loadConversations();
+   await selectConversation(conversationId);
+ }catch(e){alert(e.message)}finally{$('sendBtn').disabled=false}
 }
 
-form.addEventListener('reset',()=>{
+let nexiaCalendar=null;
+let agendaReservations=[];
+let agendaRequests=[];
+
+async function openAgendaPage(){
+ await loadAgenda();
+ setTimeout(()=>initNexiaCalendar(),0);
+}
+
+async function refreshAgendaAll(){
+ await loadAgenda();
+ if(nexiaCalendar)nexiaCalendar.refetchEvents();
+}
+
+function setAgendaView(view){
+ const isCalendar=view==='calendar';
+ $('agendaCalendarView').classList.toggle('hidden',!isCalendar);
+ $('agendaListView').classList.toggle('hidden',isCalendar);
+ $('agendaTabCalendar').classList.toggle('active',isCalendar);
+ $('agendaTabList').classList.toggle('active',!isCalendar);
+ if(isCalendar){
   setTimeout(()=>{
-    moneyWrap.style.display='none';
-    statusBox.style.display='none';
+   initNexiaCalendar();
+   nexiaCalendar?.updateSize();
   },0);
-});
+ }
+}
 
-form.addEventListener('submit',async(e)=>{
-  e.preventDefault();
-  if(!form.reportValidity())return;
-  const productos=seleccionados('productos');
-  let comunas=seleccionados('comunas');
-  const extra=listaTexto(document.getElementById('otrasComunas').value);
-  comunas=[...new Set([...comunas,...extra])];
-  if(!productos.length){showStatus('Selecciona al menos un tipo de producto.',true);return;}
-  if(!comunas.length){showStatus('Selecciona al menos una comuna o escribe una comuna adicional.',true);return;}
-  if(previewMode){showStatus('Vista previa correcta. Para guardar el registro debes abrir el enlace público generado por Nexia.',false);return;}
+function updateAgendaServiceFilter(){
+ const sel=$('agendaServiceFilter');
+ if(!sel)return;
+ const current=sel.value;
+ const services=[...new Set(agendaReservations.map(x=>x.servicio).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+ sel.innerHTML='<option value="">Todos los servicios</option>'+services.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+ if(services.includes(current))sel.value=current;
+}
 
-  const payload={
-    token,
-    nombre:document.getElementById('nombre').value.trim(),
-    apellido:document.getElementById('apellido').value.trim(),
-    telefono:document.getElementById('telefono').value.trim(),
-    correo:document.getElementById('correo').value.trim(),
-    tipos_producto:productos,
-    comunas,
-    dias_disponibles:listaTexto(document.getElementById('dias').value),
-    horarios:listaTexto(document.getElementById('horario').value),
-    medio_transporte:document.getElementById('transporte').value,
-    capacidad:document.getElementById('capacidad').value.trim(),
-    acepta_retiro_sin_aporte:document.getElementById('aceptaGratis').checked,
-    aporte_minimo:requiereMinimo.checked?Number(montoMinimo.value||0):null,
-    activo:document.getElementById('activo').checked,
-    consentimiento:document.getElementById('consentimiento').checked
-  };
+async function loadAgenda(){
+ try{
+  const d=await api('/portal/agenda');
+  const res=d.reservas||[],sol=d.solicitudes||[];
+  agendaReservations=res;
+  agendaRequests=sol;
 
-  try{
-    submitBtn.disabled=true;
-    const original=submitBtn.textContent;
-    submitBtn.textContent='Registrando…';
-    const d=await req('/public/convocatorias/interesados',{method:'POST',body:JSON.stringify(payload)});
-    showStatus('✅ '+(d.mensaje||'Registro completado correctamente.'),false);
-    submitBtn.textContent='Registro completado';
-    submitBtn.disabled=true;
-  }catch(err){
-    showStatus(err.message,true);
-    submitBtn.disabled=false;
-    submitBtn.textContent='Registrar interesado';
+  $('aRes').textContent=res.filter(x=>(x.estado||'').toLowerCase()!=='cancelada').length;
+  $('aSol').textContent=sol.length;
+  updateAgendaServiceFilter();
+
+  const rows=[
+   ...res.map(x=>({
+    id:x.id,
+    tipo:'Reserva',
+    cliente:x.nombre_cliente||x.telefono,
+    servicio:x.servicio,
+    fecha:x.fecha,
+    hora:x.hora,
+    estado:x.estado,
+    origen:x.origen||((x.google_event_id)?'Google Calendar':'Nexia'),
+    google_event_id:x.google_event_id,
+   })),
+   ...sol.map(x=>({
+    tipo:'Solicitud',
+    cliente:x.nombre||x.nombre_cliente||x.identificador,
+    servicio:x.servicio||x.servicio_nombre,
+    fecha:x.fecha,
+    hora:x.hora,
+    estado:x.estado,
+    origen:'Solicitud',
+   }))
+  ];
+
+  $('agendaRows').innerHTML=rows.map(x=>{
+   const cancelada=(x.estado||'').toLowerCase()==='cancelada';
+   const actions=x.tipo==='Reserva'&&x.google_event_id&&!cancelada
+    ?`<div class="toolbar"><button class="btn" onclick="editAgendaReservation('${esc(x.id)}','${esc(x.fecha||'')}','${esc((x.hora||'').slice(0,5))}')">Reprogramar</button><button class="btn danger" onclick="cancelAgendaReservation('${esc(x.id)}')">Cancelar</button></div>`
+    :'—';
+   return `<tr><td>${esc(x.tipo)}</td><td>${esc(x.cliente||'—')}</td><td>${esc(x.servicio||'—')}</td><td>${esc(x.fecha||'—')}</td><td>${esc((x.hora||'—').slice(0,5))}</td><td>${esc(x.estado||'—')}</td><td class="small">${esc(x.origen||'—')}</td><td>${actions}</td></tr>`
+  }).join('')||'<tr><td colspan="8">Sin registros.</td></tr>';
+
+  if($('agendaSyncStatus'))$('agendaSyncStatus').textContent='Agenda actualizada y reconciliada con Google Calendar.';
+ }catch(e){
+  $('agendaRows').innerHTML=`<tr><td colspan="8" class="error">${esc(e.message)}</td></tr>`;
+ }
+}
+
+function initNexiaCalendar(){
+ if(nexiaCalendar){
+  nexiaCalendar.updateSize();
+  return;
+ }
+ if(typeof FullCalendar==='undefined'){
+  $('nexiaCalendar').innerHTML='<div class="error">No se pudo cargar el componente visual del calendario.</div>';
+  return;
+ }
+
+ nexiaCalendar=new FullCalendar.Calendar($('nexiaCalendar'),{
+  locale:'es',
+  initialView:'dayGridMonth',
+  height:'auto',
+  nowIndicator:true,
+  editable:true,
+  eventDurationEditable:false,
+  firstDay:1,
+  slotMinTime:'07:00:00',
+  slotMaxTime:'23:00:00',
+  headerToolbar:{
+   left:'prev,next today',
+   center:'title',
+   right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+  },
+  buttonText:{
+   today:'Hoy',
+   month:'Mes',
+   week:'Semana',
+   day:'Día',
+   list:'Lista'
+  },
+  events:async function(info,success,failure){
+   try{
+    const params=new URLSearchParams({
+     start:info.startStr,
+     end:info.endStr,
+    });
+    const estado=$('agendaStatusFilter')?.value||'';
+    const servicio=$('agendaServiceFilter')?.value||'';
+    if(estado)params.set('estado',estado);
+    if(servicio)params.set('servicio',servicio);
+    const d=await api('/portal/agenda/eventos?'+params.toString());
+    success(d.events||[]);
+   }catch(e){failure(e)}
+  },
+  eventClick:function(info){
+   info.jsEvent.preventDefault();
+   openCalendarModal(info.event);
+  },
+  eventDrop:async function(info){
+   const ev=info.event;
+   if(!ev.extendedProps.google_event_id){
+    info.revert();
+    alert('Esta reserva no está vinculada a Google Calendar.');
+    return;
+   }
+   const fecha=localDateYYYYMMDD(ev.start);
+   const hora=localTimeHHMM(ev.start);
+   try{
+    await api('/portal/agenda/reserva/'+encodeURIComponent(ev.id),{
+     method:'PATCH',
+     body:JSON.stringify({fecha,hora})
+    });
+    await loadAgenda();
+    ev.setExtendedProp('fecha',fecha);
+    ev.setExtendedProp('hora',hora);
+   }catch(e){
+    info.revert();
+    alert(e.message);
+   }
+  },
+  eventDidMount:function(info){
+   const p=info.event.extendedProps||{};
+   const tips=[p.cliente,p.servicio,p.estado].filter(Boolean).join(' · ');
+   info.el.title=tips;
   }
-});
+ });
+ nexiaCalendar.render();
+}
 
-loadPublicConfig();
+function reloadCalendar(){
+ nexiaCalendar?.refetchEvents();
+}
+
+function localDateYYYYMMDD(date){
+ const y=date.getFullYear();
+ const m=String(date.getMonth()+1).padStart(2,'0');
+ const d=String(date.getDate()).padStart(2,'0');
+ return `${y}-${m}-${d}`;
+}
+
+function localTimeHHMM(date){
+ return `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+}
+
+function openCalendarModal(event){
+ const p=event.extendedProps||{};
+ $('calendarModalTitle').textContent=p.servicio||event.title||'Reserva';
+ $('calendarModalBody').innerHTML=[
+  ['Cliente',p.cliente||'—'],
+  ['Teléfono',p.telefono||'—'],
+  ['Correo',p.correo||'—'],
+  ['Servicio',p.servicio||'—'],
+  ['Fecha',p.fecha||localDateYYYYMMDD(event.start)],
+  ['Hora',(p.hora||localTimeHHMM(event.start)).slice(0,5)],
+  ['Estado',p.estado||'—'],
+  ['Origen',p.origen||'—']
+ ].map(([k,v])=>`<b>${esc(k)}</b><span>${esc(v)}</span>`).join('');
+
+ const canEdit=!!p.google_event_id && (p.estado||'').toLowerCase()!=='cancelada';
+ $('calendarRescheduleBtn').classList.toggle('hidden',!canEdit);
+ $('calendarCancelBtn').classList.toggle('hidden',!canEdit);
+ $('calendarRescheduleBtn').onclick=async()=>{
+  closeCalendarModal();
+  await editAgendaReservation(event.id,p.fecha||localDateYYYYMMDD(event.start),(p.hora||localTimeHHMM(event.start)).slice(0,5));
+  nexiaCalendar?.refetchEvents();
+ };
+ $('calendarCancelBtn').onclick=async()=>{
+  closeCalendarModal();
+  await cancelAgendaReservation(event.id);
+  nexiaCalendar?.refetchEvents();
+ };
+
+ const link=$('calendarGoogleLink');
+ if(p.google_html_link){
+  link.href=p.google_html_link;
+  link.classList.remove('hidden');
+ }else{
+  link.classList.add('hidden');
+  link.removeAttribute('href');
+ }
+
+ $('calendarModalBackdrop').classList.remove('hidden');
+}
+
+function closeCalendarModal(){
+ $('calendarModalBackdrop').classList.add('hidden');
+}
+
+async function syncAgenda(){
+ const status=$('agendaSyncStatus');
+ try{
+  status.textContent='Sincronizando con Google Calendar…';
+  const d=await api('/portal/agenda/sincronizar',{method:'POST',body:'{}'});
+  if(d.conectado===false){
+   status.textContent='Google Calendar no está conectado para esta empresa.';
+  }else{
+   status.textContent=`Sincronización completa: ${d.actualizados||0} eventos actualizados${d.errores?` · ${d.errores} con error`:''}.`;
+  }
+  await loadAgenda();
+  nexiaCalendar?.refetchEvents();
+ }catch(e){
+  status.textContent='Error de sincronización: '+e.message;
+ }
+}
+
+async function editAgendaReservation(id,currentDate,currentTime){
+ const fecha=prompt('Nueva fecha (AAAA-MM-DD):',currentDate||'');
+ if(!fecha)return;
+ const hora=prompt('Nueva hora (HH:MM):',currentTime||'');
+ if(!hora)return;
+ try{
+  await api('/portal/agenda/reserva/'+encodeURIComponent(id),{
+   method:'PATCH',
+   body:JSON.stringify({fecha,hora})
+  });
+  await loadAgenda();
+  nexiaCalendar?.refetchEvents();
+ }catch(e){alert(e.message)}
+}
+
+async function cancelAgendaReservation(id){
+ if(!confirm('¿Cancelar esta cita? También se cancelará en Google Calendar.'))return;
+ try{
+  await api('/portal/agenda/reserva/'+encodeURIComponent(id),{method:'DELETE'});
+  await loadAgenda();
+  nexiaCalendar?.refetchEvents();
+ }catch(e){alert(e.message)}
+}
+
+async function loadConsumption(){
+ try{
+  const [d,pays]=await Promise.all([api('/portal/consumo'),api('/portal/pagos')]);
+  const planes=d.planes||[];
+  $('consRows').innerHTML=planes.map(x=>{const paid=['nexia_500','nexia_1000'].includes(x.tipo_plan);const ini=paid?x.periodo_inicio:x.demo_inicio;const fin=paid?x.periodo_fin:x.demo_fin;return `<tr><td class="small">${esc(x.empresa_id)}</td><td>${esc((x.tipo_plan||'legacy')==='demo'?'Prueba gratuita':(x.tipo_plan||'legacy').replace('nexia_','Nexia '))}</td><td>${esc(x.estado_efectivo||x.estado||'activo')}</td><td>${x.mensajes_usados??x.respuestas_usadas??'—'}</td><td>${x.limite_mensajes??x.limite_respuestas??'—'}</td><td>${fmt(ini)}</td><td>${fmt(fin)}</td></tr>`}).join('')||'<tr><td colspan="7">Sin planes registrados.</td></tr>';
+  const mine=state.me?.superadmin?null:planes[0];
+  if(mine){const used=Number(mine.mensajes_usados||0),limit=Number(mine.limite_mensajes||0),remaining=Math.max(0,limit-used),pct=limit?Math.min(100,Math.round(used/limit*100)):0;const paid=['nexia_500','nexia_1000'].includes(mine.tipo_plan);const fin=paid?mine.periodo_fin:mine.demo_fin;$('currentUsage').innerHTML=`<div style="display:flex;justify-content:space-between;gap:12px"><div><b>${esc((mine.tipo_plan||'Plan Nexia').replace('nexia_','Nexia '))}</b><div class="small">${remaining} mensajes disponibles${fin?` · vence ${fmt(fin)}`:''}</div></div><div style="text-align:right"><b>${used} / ${limit||'—'}</b><div class="small">mensajes usados</div></div></div><div class="progress"><i style="width:${pct}%"></i></div>`}else{$('currentUsage').innerHTML=state.me?.superadmin?'Selecciona una empresa desde el detalle para revisar su consumo.':'Sin plan registrado.'}
+  const pagos=pays.pagos||[];$('paymentRows').innerHTML=pagos.map(x=>`<tr><td>${fmt(x.created_at)}</td><td><b>${esc(x.plan_nombre||x.plan_codigo)}</b></td><td>${x.mensajes||'—'}</td><td>$${Number(x.monto||0).toLocaleString('es-CL')}</td><td>${esc(x.status||'—')}</td><td class="small">${esc(x.payment_id||'—')}</td></tr>`).join('')||'<tr><td colspan="6">Aún no hay compras.</td></tr>';
+ }catch(e){$('consRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}
+}
+async function buyPlan(code,btn){try{if(btn){btn.disabled=true;btn.textContent='Abriendo Mercado Pago…'}const d=await api('/portal/mercadopago/checkout',{method:'POST',body:JSON.stringify({plan:code})});if(!d.checkout_url)throw new Error('Mercado Pago no devolvió la URL de pago');location.href=d.checkout_url}catch(e){alert(e.message);if(btn){btn.disabled=false;btn.textContent=code==='nexia_500'?'Comprar 500 mensajes':'Comprar 1.000 mensajes'}}}
+async function checkPaymentReturn(){const p=new URLSearchParams(location.search),status=p.get('pago');if(!status)return;if(status==='success'){$('paymentStatus').innerHTML='<div class="pay-status ok"><b>Pago recibido.</b> Estamos confirmando la acreditación con Mercado Pago.</div>';go('consumption');for(let i=0;i<6;i++){try{const d=await api('/portal/pago/estado');if(d.pago?.status==='approved'&&d.pago?.applied_at){$('paymentStatus').innerHTML=`<div class="pay-status ok"><b>Pago aprobado ✓</b> ${esc(d.pago.plan_nombre||'Tu plan')} ya fue acreditado.</div>`;if(state.demoToken&&!d.pago.setup_completed)$('paidSetup').classList.remove('hidden');await loadConsumption();break}}catch(e){}await new Promise(r=>setTimeout(r,1800))}}else if(status==='pending'){$('paymentStatus').innerHTML='<div class="pay-status warn">Tu pago está pendiente. Actualizaremos el plan cuando Mercado Pago lo apruebe.</div>';go('consumption')}else if(status==='failure'){$('paymentStatus').innerHTML='<div class="pay-status warn">El pago no se completó. Puedes intentarlo nuevamente.</div>';go('consumption')}}
+async function createPaidAccess(){
+ const pw=$('newPaidPassword').value;
+ if((pw||'').length<8){$('setupInfo').textContent='La contraseña debe tener al menos 8 caracteres.';return}
+ try{
+  const d=await api('/portal/crear-acceso-pagado',{method:'POST',body:JSON.stringify({password:pw})});
+  $('setupInfo').textContent=d.mensaje||'Acceso permanente creado.';
+  $('paidSetup').classList.add('hidden');
+  // Desde aquí deja de usar el token temporal. El próximo acceso será correo + contraseña.
+  sessionStorage.removeItem('nexia_demo_token');
+  state.demoToken='';
+  setTimeout(()=>{
+    const url=new URL(location.pathname,location.origin);
+    url.searchParams.set('cuenta','creada');
+    location.href=url.toString();
+  },1800);
+ }catch(e){$('setupInfo').textContent=e.message}
+}
+
+
+let businessSettingsData=null;
+
+function cfgAddressToggle(){
+ const on=$('cfgHasAddress')?.checked;
+ if($('cfgAddressFields'))$('cfgAddressFields').style.opacity=on?'1':'.45';
+ ['cfgAddress','cfgComuna','cfgAddressRef','cfgMaps'].forEach(id=>{if($(id))$(id).disabled=!on});
+}
+
+function serviceRowHTML(s={}){
+ const id=s.id||'';
+ return `<div class="cfg-service" data-id="${esc(id)}">
+   <input class="svc-name" placeholder="Producto o servicio" value="${esc(s.nombre||'')}">
+   <input class="svc-price" placeholder="Precio opcional" value="${esc(s.precio_texto&&s.precio_texto!=='Valor por confirmar'?s.precio_texto:'')}">
+   <div class="svc-actions">
+     <button class="btn secondary svc-save" type="button">Guardar</button>
+     <button class="btn secondary svc-delete" type="button">Eliminar</button>
+   </div>
+ </div>`;
+}
+
+function wireServiceRows(){
+ document.querySelectorAll('#cfgServices .cfg-service').forEach(row=>{
+   row.querySelector('.svc-save').onclick=()=>savePortalServiceRow(row);
+   row.querySelector('.svc-delete').onclick=()=>deletePortalServiceRow(row);
+ });
+}
+
+function addPortalServiceRow(){
+ $('cfgServices').insertAdjacentHTML('beforeend',serviceRowHTML({}));
+ wireServiceRows();
+ const rows=$('cfgServices').querySelectorAll('.cfg-service');
+ rows[rows.length-1]?.querySelector('.svc-name')?.focus();
+}
+
+async function savePortalServiceRow(row){
+ const id=row.dataset.id||'';
+ const nombre=row.querySelector('.svc-name').value.trim();
+ const precio_texto=row.querySelector('.svc-price').value.trim();
+ if(!nombre){alert('Escribe el nombre del producto o servicio.');return}
+ const btn=row.querySelector('.svc-save');
+ try{
+   btn.disabled=true;btn.textContent='Guardando…';
+   const d=await api(id?`/portal/configuracion-negocio/servicio/${id}`:'/portal/configuracion-negocio/servicios',{
+     method:id?'PATCH':'POST',
+     body:JSON.stringify({nombre,precio_texto})
+   });
+   if(d.servicio?.id)row.dataset.id=d.servicio.id;
+   btn.textContent='Guardado ✓';
+   setTimeout(()=>btn.textContent='Guardar',1200);
+ }catch(e){alert(e.message);btn.textContent='Guardar'}finally{btn.disabled=false}
+}
+
+async function deletePortalServiceRow(row){
+ const id=row.dataset.id||'';
+ if(!id){row.remove();return}
+ if(!confirm('¿Eliminar este producto o servicio?'))return;
+ try{
+   await api(`/portal/configuracion-negocio/servicio/${id}`,{method:'DELETE'});
+   row.remove();
+ }catch(e){alert(e.message)}
+}
+
+async function loadBusinessSettings(){
+ const notice=$('settingsNotice');
+ if(!notice)return;
+ notice.innerHTML='<div class="small">Cargando configuración…</div>';
+ try{
+   const d=await api('/portal/configuracion-negocio');
+   businessSettingsData=d;
+   const datos=d.datos||{},conf=d.configuracion||{},empresa=d.empresa||{};
+   $('cfgBusinessName').value=datos.nombre_negocio||empresa.nombre||'';
+   $('cfgAssistantName').value=datos.nombre_asistente||conf.asistente_nombre||'';
+   $('cfgRubro').value=datos.rubro||conf.tipo_negocio||'';
+   $('cfgDescription').value=conf.descripcion_empresa||datos.descripcion_empresa||'';
+   $('cfgObjective').value=Array.isArray(datos.objetivo)?datos.objetivo.join(', '):(datos.objetivo||'');
+   $('cfgTone').value=datos.tono||'';
+   $('cfgEmail').value=conf.correo_ejecutivo||datos.email_contacto||'';
+   $('cfgHasAddress').checked=!!datos.atiende_direccion_fisica;
+   $('cfgAddress').value=(datos.direccion||'').replace(datos.comuna?`, ${datos.comuna}`:'','');
+   $('cfgComuna').value=datos.comuna||'';
+   $('cfgAddressRef').value=datos.referencia_direccion||'';
+   $('cfgMaps').value=datos.google_maps_url||'';
+   $('cfgOpen').value=conf.hora_apertura??'';
+   $('cfgClose').value=conf.hora_cierre??'';
+   $('cfgDuration').value=conf.duracion_reserva??'';
+   $('cfgPromptExtra').value=conf.prompt_extra||'';
+   $('cfgServices').innerHTML=(d.servicios||[]).map(serviceRowHTML).join('')||'<div class="small">Aún no tienes productos o servicios. Usa “Agregar”.</div>';
+   wireServiceRows();cfgAddressToggle();
+   notice.innerHTML='';
+ }catch(e){notice.innerHTML=`<div class="error">${esc(e.message)}</div>`}
+}
+
+async function saveBusinessSettings(){
+ const btn=$('saveBusinessSettings'),notice=$('settingsNotice');
+ const payload={
+   nombre_negocio:$('cfgBusinessName').value.trim(),
+   nombre_asistente:$('cfgAssistantName').value.trim(),
+   rubro:$('cfgRubro').value.trim(),
+   descripcion_empresa:$('cfgDescription').value.trim(),
+   objetivo:$('cfgObjective').value.trim(),
+   tono:$('cfgTone').value.trim(),
+   email_contacto:$('cfgEmail').value.trim(),
+   atiende_direccion_fisica:$('cfgHasAddress').checked,
+   direccion:$('cfgAddress').value.trim(),
+   comuna:$('cfgComuna').value.trim(),
+   referencia_direccion:$('cfgAddressRef').value.trim(),
+   google_maps_url:$('cfgMaps').value.trim(),
+   hora_apertura:$('cfgOpen').value===''?null:Number($('cfgOpen').value),
+   hora_cierre:$('cfgClose').value===''?null:Number($('cfgClose').value),
+   duracion_reserva:$('cfgDuration').value===''?null:Number($('cfgDuration').value),
+   prompt_extra:$('cfgPromptExtra').value.trim()
+ };
+ try{
+   btn.disabled=true;btn.textContent='Guardando…';
+   const d=await api('/portal/configuracion-negocio',{method:'PATCH',body:JSON.stringify(payload)});
+   notice.innerHTML=`<div class="pay-status ok"><b>Configuración guardada ✓</b> Los cambios ya están disponibles para tu asistente.</div>`;
+   businessSettingsData=d;
+   setTimeout(()=>notice.innerHTML='',3500);
+ }catch(e){notice.innerHTML=`<div class="error">${esc(e.message)}</div>`}
+ finally{btn.disabled=false;btn.textContent='Guardar configuración'}
+}
+
+let myAssistantData=null;
+async function loadMyAssistant(){
+ const intro=$('assistantIntro'),planBox=$('assistantPlan'),info=$('assistantInfo'),btn=$('openAssistantBtn');
+ if(!intro||!planBox||!btn)return;
+ intro.textContent='Comprobando el estado de tu asistente…';
+ planBox.textContent='';
+ info.textContent='';
+ btn.disabled=true;
+ myAssistantData=null;
+ try{
+  const d=await api('/portal/mi-asistente');
+  myAssistantData=d;
+  const tipo=d.tipo_plan==='demo'?'Prueba Nexia':(d.tipo_plan||'Plan activo');
+  const rest=d.mensajes_restantes;
+  intro.innerHTML=`Tu empresa <strong>${esc(d.empresa||'')}</strong> ya tiene un asistente asociado. Al abrirlo continuarás con ese mismo espacio; no se crea otra empresa ni otra prueba.`;
+  planBox.innerHTML=`<strong>${esc(tipo)}</strong>${rest===null||rest===undefined?'':` · ${Number(rest).toLocaleString('es-CL')} mensajes restantes`}`;
+  info.textContent='Se abrirá WhatsApp con un código de acceso de tu empresa. Solo debes enviar el mensaje preescrito.';
+  btn.disabled=false;
+ }catch(e){
+  intro.textContent=e.message||'No fue posible abrir tu asistente.';
+  planBox.textContent='Si tu prueba terminó, puedes reactivarla o contratar/recargar un plan y continuar con el mismo asistente.';
+  info.textContent='';
+  btn.disabled=true;
+ }
+}
+async function openMyAssistant(){
+ const btn=$('openAssistantBtn'),info=$('assistantInfo');
+ try{
+  if(!myAssistantData?.whatsapp_url)await loadMyAssistant();
+  if(!myAssistantData?.whatsapp_url)throw new Error('El asistente todavía no está disponible.');
+  const w=window.open(myAssistantData.whatsapp_url,'_blank','noopener');
+  if(!w){
+   info.innerHTML=`Tu navegador bloqueó la ventana. <a href="${esc(myAssistantData.whatsapp_url)}" target="_blank" rel="noopener">Abrir WhatsApp</a>`;
+  }else{
+   info.textContent='WhatsApp abierto. Envía el mensaje preescrito para entrar directamente a tu asistente.';
+  }
+ }catch(e){info.textContent=e.message||'No fue posible abrir WhatsApp.'}
+}
+
+async function loadDemos(){
+ try{
+  const d=await api('/portal/demos'); state.demos=d.demos||[];
+  const rows=state.demos;
+  const active=rows.filter(x=>String(x.estado||'').toLowerCase()==='activo');
+  const ended=rows.filter(x=>['vencida','agotada','finalizado','inactivo'].includes(String(x.estado||'').toLowerCase()));
+  $('dActive').textContent=active.length;$('dTotal').textContent=rows.length;$('dEnded').textContent=ended.length;$('dMessages').textContent=rows.reduce((a,x)=>a+(Number(x.mensajes_usados)||0),0);
+  $('demoRows').innerHTML=rows.map(x=>{
+   const st=String(x.estado||'').toLowerCase(); const cls=st==='activo'?'exec':(['vencida','agotada','finalizado'].includes(st)?'end':'wait');
+   const uso=`${x.mensajes_usados||0}/${x.limite_mensajes||50}`;
+   const channel=[x.canal,x.identificador_cliente].filter(Boolean).join(' · ')||'—';
+   const actions=state.me?.superadmin?`<div class="toolbar"><button class="btn" onclick="openDemoConversation('${x.empresa_id}')">Conversación</button><button class="btn" onclick="reactivateDemo('${x.empresa_id}')">Reactivar</button><button class="btn danger" onclick="deactivateDemo('${x.empresa_id}')">Desactivar</button></div>`:'<span class="small">Solo lectura</span>';
+   return `<tr><td><b>${esc(x.empresa_nombre||'Empresa en prueba')}</b><div class="small">${esc(x.rubro||x.asistente||'')}</div></td><td>${esc(x.contacto||'—')}<div class="small">${esc(x.email||'')}</div></td><td>${esc(channel)}</td><td><span class="badge ${cls}"><i class="dot"></i>${esc(st||'—')}</span></td><td><b>${uso}</b><div class="small">${x.mensajes_restantes??'—'} restantes</div></td><td>${fmt(x.demo_fin)}</td><td>${actions}</td></tr>`
+  }).join('')||'<tr><td colspan="7">No hay pruebas registradas.</td></tr>';
+ }catch(e){$('demoRows').innerHTML=`<tr><td colspan="7" class="error">${esc(e.message)}</td></tr>`}
+}
+function openDemoConversation(empresaId){
+ const c=state.conversations.find(x=>String(x.empresa_id)===String(empresaId));
+ if(!c){alert('Esta prueba todavía no tiene una conversación operativa registrada.');return}
+ go('conversations');selectConversation(c.id);
+}
+async function reactivateDemo(empresaId){
+ if(!confirm('¿Reactivar esta prueba por 24 horas y reiniciar su cupo a 50 mensajes?'))return;
+ try{await api(`/portal/admin/demo/${empresaId}/reactivar`,{method:'POST',body:'{}'});await Promise.allSettled([loadDemos(),loadConsumption()])}catch(e){alert(e.message)}
+}
+async function deactivateDemo(empresaId){
+ if(!confirm('¿Desactivar esta prueba? El acceso quedará cerrado.'))return;
+ try{await api(`/portal/admin/demo/${empresaId}/desactivar`,{method:'POST',body:'{}'});await Promise.allSettled([loadDemos(),loadConsumption()])}catch(e){alert(e.message)}
+}
+
+async function loadIntegrations(){
+ try{
+  let path='/portal/integraciones/google-calendar';
+  const d=await api(path);
+  const badge=$('googleCalendarBadge'),detail=$('googleCalendarDetail'),connect=$('connectGoogleBtn'),disconnect=$('disconnectGoogleBtn');
+  if(d.conectado){
+   badge.className='badge exec';badge.innerHTML='<i class="dot"></i>Conectado';
+   detail.innerHTML=`<b>Google Calendar conectado ✓</b><div class="small" style="margin-top:6px">${esc(d.google_email||'Cuenta Google autorizada')} · ${esc(d.calendar_nombre||'Calendario principal')}</div>`;
+   connect.textContent='Cambiar cuenta o calendario';disconnect.classList.remove('hidden');
+  }else{
+   badge.className='badge wait';badge.innerHTML='<i class="dot"></i>No conectado';
+   detail.innerHTML='<b>Agenda sin sincronización</b><div class="small" style="margin-top:6px">Puedes seguir usando Nexia. Las solicitudes de reserva no crearán eventos reales hasta que conectes Google Calendar.</div>';
+   connect.textContent='Conectar Google Calendar';disconnect.classList.add('hidden');
+  }
+ }catch(e){$('googleCalendarDetail').innerHTML=`<span class="error">${esc(e.message)}</span>`}
+ try{await loadEcommerceIntegration()}catch(e){$('ecommerceDetail').innerHTML=`<span class="error">${esc(e.message)}</span>`}
+}
+async function connectGoogleCalendar(){
+ try{
+  // Guardar el token temporal antes de salir a Google.
+  if(state.demoToken)sessionStorage.setItem('nexia_demo_token',state.demoToken);
+  sessionStorage.setItem('nexia_calendar_return','1');
+  const d=await api('/portal/integraciones/google-calendar/iniciar',{method:'POST',body:'{}'});
+  if(!d.url)throw new Error('No se recibió el enlace de autorización de Google');
+  location.href=d.url;
+ }catch(e){alert(e.message)}
+}
+async function disconnectGoogleCalendar(){
+ if(!confirm('¿Desconectar Google Calendar de esta empresa?'))return;
+ try{await api('/portal/integraciones/google-calendar/desconectar',{method:'POST',body:'{}'});await loadIntegrations()}catch(e){alert(e.message)}
+}
+function checkCalendarReturn(){
+ const p=new URLSearchParams(location.search),s=p.get('calendar');
+ if(!s)return;
+ go('integrations');
+ setTimeout(()=>loadIntegrations(),300);
+ if(s==='connected')setTimeout(()=>alert('Google Calendar quedó conectado correctamente.'),450);
+ else if(s==='error')setTimeout(()=>alert('No pudimos completar la conexión con Google Calendar. Intenta nuevamente.'),450);
+}
+
+
+function renderEcommerceFields(){
+ const provider=$('ecommerceProvider').value;
+ const j=provider==='jumpseller';
+ $('ecommerceStoreUrlLabel').classList.toggle('hidden',!j);
+ $('ecommerceLoginKeyLabel').classList.toggle('hidden',!j);
+ $('ecommerceAuthTokenLabel').classList.toggle('hidden',!j);
+ $('ecommerceShopifyDomainLabel').classList.toggle('hidden',j);
+ $('ecommerceAccessTokenLabel').classList.toggle('hidden',j);
+}
+
+async function loadEcommerceIntegration(){
+ const d=await api('/portal/integraciones/ecommerce');
+ const badge=$('ecommerceBadge'),detail=$('ecommerceDetail');
+ if(d.conectado){
+  badge.className='badge exec';badge.innerHTML='<i class="dot"></i>Conectado';
+  detail.innerHTML=`<b>${d.provider==='shopify'?'Shopify':'Jumpseller'} conectado ✓</b><div class="small" style="margin-top:6px">${esc(d.store_domain||d.store_url||'Tienda conectada')} · modo lectura</div>`;
+  $('disconnectEcommerceBtn').classList.remove('hidden');
+  $('ecommerceTestBox').classList.remove('hidden');
+  $('ecommerceProvider').value=d.provider||'jumpseller';
+ }else{
+  badge.className='badge wait';badge.innerHTML='<i class="dot"></i>No conectado';
+  detail.innerHTML='<b>Sin ecommerce conectado</b><div class="small" style="margin-top:6px">Conecta Jumpseller o Shopify para usar productos, stock y pedidos reales.</div>';
+  $('disconnectEcommerceBtn').classList.add('hidden');
+  $('ecommerceTestBox').classList.add('hidden');
+ }
+ renderEcommerceFields();
+}
+
+async function connectEcommerce(){
+ const provider=$('ecommerceProvider').value;
+ const payload={provider};
+ if(provider==='jumpseller'){
+  payload.store_url=$('ecommerceStoreUrl').value.trim();
+  payload.login_key=$('ecommerceLoginKey').value.trim();
+  payload.auth_token=$('ecommerceAuthToken').value.trim();
+ }else{
+  payload.store_domain=$('ecommerceShopifyDomain').value.trim();
+  payload.access_token=$('ecommerceAccessToken').value.trim();
+ }
+ const btn=$('connectEcommerceBtn');
+ try{
+  btn.disabled=true;btn.textContent='Conectando…';
+  await api('/portal/integraciones/ecommerce',{method:'POST',body:JSON.stringify(payload)});
+  $('ecommerceLoginKey').value='';$('ecommerceAuthToken').value='';$('ecommerceAccessToken').value='';
+  await loadEcommerceIntegration();
+ }catch(e){alert(e.message)}
+ finally{btn.disabled=false;btn.textContent='Conectar tienda'}
+}
+
+async function disconnectEcommerce(){
+ if(!confirm('¿Desconectar la tienda online?'))return;
+ try{await api('/portal/integraciones/ecommerce',{method:'DELETE'});await loadEcommerceIntegration()}catch(e){alert(e.message)}
+}
+
+async function testEcommerce(){
+ const q=$('ecommerceTestQuery').value.trim();
+ if(!q)return;
+ const box=$('ecommerceTestResult');box.textContent='Consultando…';
+ try{
+  const d=await api('/portal/integraciones/ecommerce/probar',{method:'POST',body:JSON.stringify({query:q})});
+  const rows=d.productos||[];
+  box.innerHTML=rows.length?rows.map(x=>`<div style="padding:6px 0"><b>${esc(x.name||'Producto')}</b>${x.price?` · ${esc(String(x.price))}`:''}${x.stock!==null&&x.stock!==undefined?` · stock ${esc(String(x.stock))}`:''}</div>`).join(''):'No se encontraron productos.';
+ }catch(e){box.innerHTML=`<span class="error">${esc(e.message)}</span>`}
+}
+
+async function loadCompanies(){if(!state.me?.superadmin){$('companyAdminNote').classList.remove('hidden');$('companyTable').classList.add('hidden');return}try{const d=await api('/portal/admin/empresas');$('companyRows').innerHTML=(d.empresas||[]).map(x=>`<tr><td><b>${esc(x.nombre)}</b></td><td>${x.activo?'Activa':'Inactiva'}</td><td>${fmt(x.created_at)}</td><td class="small">${esc(x.id)}</td></tr>`).join('')}catch(e){$('companyRows').innerHTML=`<tr><td colspan="4" class="error">${esc(e.message)}</td></tr>`}}
+function handleDeepLink(){const p=new URLSearchParams(location.search),id=p.get('conversacion');if(id){go('conversations');setTimeout(async()=>{await loadConversations();const found=state.conversations.find(x=>x.id===id);if(found)selectConversation(id)},250)}}
+$('loginBtn').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('logoutBtn').onclick=logout;
+$('cvGenerateInterestedLinkBtn')?.addEventListener('click',generateInterestedPublicLink);
+$('cvCopyInterestedLinkBtn')?.addEventListener('click',copyInterestedPublicLink);
+setInterval(()=>{if(!$('appView').classList.contains('hidden')){renderConversations();if(state.selected)renderChatHeader()}},30000);$('convSearch').addEventListener('input',renderConversations);$('takeBtn').onclick=takeConversation;$('closeBtn').onclick=closeConversation;$('sendBtn').onclick=sendMessage;$('cfgHasAddress')?.addEventListener('change',cfgAddressToggle);
+$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});init();
+
+async function generateInterestedPublicLink(){
+  const btn=$('cvGenerateInterestedLinkBtn');
+  const msg=$('cvInterestedLinkMsg');
+  try{
+    btn.disabled=true;
+    btn.textContent='Generando…';
+    if(msg)msg.textContent='';
+    const d=await api('/portal/convocatorias/interesados/link');
+    const url=d.url||'';
+    if(!url)throw new Error('El backend no devolvió un enlace');
+    $('cvInterestedLinkInput').value=url;
+    $('cvOpenInterestedLinkBtn').href=url;
+    $('cvInterestedLinkWrap').classList.remove('hidden');
+    if(msg)msg.textContent=`Enlace válido por ${d.expires_hours||720} horas.`;
+  }catch(e){
+    if(msg)msg.textContent=e.message;
+    else alert(e.message);
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Generar link';
+  }
+}
+
+async function copyInterestedPublicLink(){
+  const input=$('cvInterestedLinkInput');
+  const msg=$('cvInterestedLinkMsg');
+  const value=(input?.value||'').trim();
+  if(!value)return;
+  try{
+    await navigator.clipboard.writeText(value);
+    if(msg)msg.textContent='Link copiado.';
+  }catch(e){
+    input.focus();
+    input.select();
+    document.execCommand('copy');
+    if(msg)msg.textContent='Link copiado.';
+  }
+}
+
+// NEXIA V3.5.0 - CONVOCATORIAS / MATCHING
+const cvList=v=>String(v||'').split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
+async function loadConvocations(){try{const [c,s,i]=await Promise.all([api('/portal/convocatorias/config'),api('/portal/convocatorias/solicitudes'),api('/portal/convocatorias/interesados')]);state.convocations={config:c.config||{},solicitudes:s.solicitudes||[],interesados:i.interesados||[]};renderConvConfig();renderConvRequests();renderConvInterested()}catch(e){$('cvConfigMsg').innerHTML=`<span class="error">${esc(e.message)}</span>`}}
+function renderConvConfig(){const c=state.convocations.config||{},f=c.campos||{};$('cvActive').checked=!!c.activo;$('cvName').value=c.nombre_publico||'Convocatorias';$('cvDescription').value=c.descripcion||'';$('cvTriggers').value=(c.palabras_activacion||['participar en convocatoria']).join('\n');$('cvProducts').value=(c.tipos_producto||[]).join(', ');$('cvCommunes').value=(c.comunas||[]).join(', ');$('cvFieldPeso').checked=f.peso!==false;$('cvFieldInmueble').checked=f.tipo_inmueble!==false;$('cvFieldPiso').checked=f.piso!==false;$('cvFieldAscensor').checked=f.ascensor!==false;$('cvFieldVehiculo').checked=f.requiere_vehiculo!==false;$('cvFieldObs').checked=f.observaciones!==false;$('cvFieldMonto').checked=f.monto!==false;$('cvMpEnabled').checked=!!c.pago_retiro_habilitado;$('cvCommission').value=Number(c.comision_porcentaje??10);$('cvCommissionName').value=c.comision_nombre||'Comisión de gestión'}
+async function saveConvocationsConfig(){const pct=Math.max(0,Math.min(100,Number($('cvCommission').value||0)));const body={activo:$('cvActive').checked,nombre_publico:$('cvName').value.trim(),descripcion:$('cvDescription').value.trim(),palabras_activacion:cvList($('cvTriggers').value),tipos_producto:cvList($('cvProducts').value),comunas:cvList($('cvCommunes').value),campos:{peso:$('cvFieldPeso').checked,tipo_inmueble:$('cvFieldInmueble').checked,piso:$('cvFieldPiso').checked,ascensor:$('cvFieldAscensor').checked,requiere_vehiculo:$('cvFieldVehiculo').checked,observaciones:$('cvFieldObs').checked,monto:$('cvFieldMonto').checked},pago_retiro_habilitado:$('cvMpEnabled').checked,proveedor_pago:'mercadopago',comision_porcentaje:pct,comision_nombre:$('cvCommissionName').value.trim()||'Comisión de gestión'};try{const d=await api('/portal/convocatorias/config',{method:'POST',body:JSON.stringify(body)});state.convocations.config=d.config;$('cvConfigMsg').innerHTML='<span style="color:#148954">✓ Configuración guardada para esta empresa.</span>'}catch(e){$('cvConfigMsg').innerHTML=`<span class="error">${esc(e.message)}</span>`}}
+async function createConvInterested(){const body={nombre:$('ciName').value.trim(),apellido:$('ciLast').value.trim(),telefono:$('ciPhone').value.trim(),correo:$('ciEmail').value.trim(),tipos_producto:cvList($('ciProducts').value),comunas:cvList($('ciCommunes').value),dias_disponibles:cvList($('ciDays').value),horarios:cvList($('ciHours').value),medio_transporte:$('ciTransport').value.trim(),capacidad:$('ciCapacity').value.trim(),aporte_minimo:$('ciMinAmount').value||null,acepta_retiro_sin_aporte:$('ciFree').checked};try{await api('/portal/convocatorias/interesados',{method:'POST',body:JSON.stringify(body)});$('ciMsg').innerHTML='<span style="color:#148954">✓ Interesado registrado.</span>';await loadConvocations()}catch(e){$('ciMsg').innerHTML=`<span class="error">${esc(e.message)}</span>`}}
+function cvMoney(v){return v==null||v===''?'—':'$'+Number(v).toLocaleString('es-CL')}function cvBadge(s){return `<span class="badge ${s==='completada'?'bot':(['reclamada','en_gestion'].includes(s)?'exec':'wait')}"><i class="dot"></i>${esc(String(s||'').replace('_',' '))}</span>`}
+function renderConvRequests(){const rows=state.convocations.solicitudes||[];$('cvAvailable').textContent=rows.filter(x=>x.estado==='disponible').length;$('cvManaging').textContent=rows.filter(x=>['reclamada','en_gestion'].includes(x.estado)).length;$('cvDone').textContent=rows.filter(x=>x.estado==='completada').length;$('cvRequestRows').innerHTML=rows.map(x=>{const i=x.nexi_convocatorias_interesados||{},as=i.nombre?`${i.nombre} ${i.apellido||''}`:'—';return `<tr><td>${fmt(x.created_at)}</td><td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b><div class="small">+${esc(x.telefono||'')}</div></td><td>${esc(x.comuna||'—')}</td><td>${esc((x.tipos_producto||[]).join(', '))}</td><td>${esc(x.cantidad_bultos||1)}</td><td>${cvMoney(x.monto_ofrecido)}${x.monto_negociable?' · negociable':''}${x.monto_ofrecido!=null?`<div class="small">Comisión ${Number(x.comision_porcentaje||0).toLocaleString('es-CL')}%: ${cvMoney(x.comision_monto)} · Neto: ${cvMoney(x.monto_neto_interesado)}</div>`:''}</td><td>${cvBadge(x.estado)}</td><td>${esc(as)}</td><td><div class="actions" style="margin:0">${x.conversacion_id?`<button class="btn smallbtn" onclick="openConvConversation('${x.conversacion_id}')">Conversación</button>`:''}${['reclamada','en_gestion'].includes(x.estado)?`<button class="btn good smallbtn" onclick="setConvResult('${x.id}','completada')">Completado</button><button class="btn danger smallbtn" onclick="setConvResult('${x.id}','no_concretada')">No concretado</button>`:''}</div></td></tr>`}).join('')||'<tr><td colspan="9" class="small">Todavía no hay solicitudes.</td></tr>'}
+function renderConvInterested(){const rows=state.convocations.interesados||[];$('cvInterestedCount').textContent=rows.filter(x=>x.activo).length;$('cvInterestedRows').innerHTML=rows.map(x=>`<tr><td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b></td><td>${esc(x.correo||'')}<div class="small">+${esc(x.telefono||'')}</div></td><td>${esc((x.tipos_producto||[]).join(', '))}</td><td>${esc((x.comunas||[]).join(', '))}</td><td>${x.acepta_retiro_sin_aporte?'Acepta sin aporte':('Mín. '+cvMoney(x.aporte_minimo))}</td><td>${x.activo?'<span class="badge bot"><i class="dot"></i>Activo</span>':'<span class="badge wait"><i class="dot"></i>Inactivo</span>'}</td><td><button class="btn danger smallbtn" onclick="disableConvInterested('${x.id}')">Desactivar</button></td></tr>`).join('')||'<tr><td colspan="7" class="small">No hay interesados registrados.</td></tr>'}
+async function disableConvInterested(id){if(!confirm('¿Desactivar este interesado?'))return;try{await api('/portal/convocatorias/interesados/'+id,{method:'DELETE'});await loadConvocations()}catch(e){alert(e.message)}}
+async function setConvResult(id,estado){const detalle=prompt(estado==='completada'?'Observación final opcional:':'¿Por qué no se concretó?')||'';try{await api('/portal/convocatorias/solicitudes/'+id,{method:'PATCH',body:JSON.stringify({estado,resultado_detalle:detalle})});await loadConvocations()}catch(e){alert(e.message)}}
+async function openConvConversation(id){go('conversations');await loadConversations();setTimeout(()=>selectConversation(id),100)}
+
 </script>
-</body>
-</html>
+
+<div id="calendarModalBackdrop" class="calendar-modal-backdrop hidden" onclick="if(event.target===this)closeCalendarModal()">
+ <div class="calendar-modal">
+  <h3 id="calendarModalTitle">Reserva</h3>
+  <div id="calendarModalBody" class="calendar-detail"></div>
+  <div class="calendar-modal-actions">
+   <a id="calendarGoogleLink" class="btn hidden" target="_blank" rel="noopener">Abrir en Google Calendar</a>
+   <button class="btn" onclick="closeCalendarModal()">Cerrar</button>
+   <button id="calendarRescheduleBtn" class="btn primary">Reprogramar</button>
+   <button id="calendarCancelBtn" class="btn danger">Cancelar</button>
+  </div>
+ </div>
+</div>
+
+</body></html>
