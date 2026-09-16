@@ -477,8 +477,19 @@
       'Lo Barnechea',
       'Otra'
     ];
-    const comunasConfig = Array.isArray(config.comunas) ? config.comunas.filter(Boolean) : [];
-    const comunas = comunasConfig.length ? comunasConfig : comunasBase;
+    const comunasConfig = Array.isArray(config.comunas)
+      ? config.comunas.map(x => String(x || '').trim()).filter(Boolean)
+      : [];
+
+    // Siempre mezclar las comunas configuradas con la lista base.
+    // Así, aunque Supabase devuelva solo "Otra" o una lista incompleta,
+    // el selector seguirá mostrando comunas reales.
+    const comunas = [...new Set([
+      ...comunasConfig.filter(x => x.toLowerCase() !== 'otra'),
+      ...comunasBase.filter(x => x.toLowerCase() !== 'otra'),
+      'Otra'
+    ])];
+
     $('comuna').innerHTML =
       '<option value="">Selecciona una comuna</option>' +
       comunas.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
