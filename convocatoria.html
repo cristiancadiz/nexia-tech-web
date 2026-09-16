@@ -574,12 +574,14 @@
       </div>
     `;
 
-    if (m.estado !== 'notificado') {
+    if (m.estado !== 'pendiente') {
       $('claimBtn').classList.add('hidden');
       $('matchMsg').innerHTML =
-        m.estado === 'tomado'
+        m.estado === 'tomada'
           ? '<div class="msg ok">Esta solicitud fue adjudicada a ti.</div>'
-          : '<div class="msg err">Esta solicitud ya no está disponible.</div>';
+          : (m.estado === 'cerrada'
+              ? '<div class="msg err">Esta solicitud ya fue tomada por otra persona.</div>'
+              : '<div class="msg err">Esta solicitud ya no está disponible.</div>');
     }
 
     $('loading').classList.add('hidden');
