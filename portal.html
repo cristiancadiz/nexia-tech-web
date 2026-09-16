@@ -632,12 +632,52 @@ const API=(PARAMS.get('api')||'https://chatbot-laortiga-hddw.onrender.com').repl
 const URL_DEMO_TOKEN=(PARAMS.get('demo_token')||'').trim();
 if(URL_DEMO_TOKEN)sessionStorage.setItem('nexia_demo_token',URL_DEMO_TOKEN);
 const DEMO_TOKEN=URL_DEMO_TOKEN||(sessionStorage.getItem('nexia_demo_token')||'').trim();
-const state={authToken:sessionStorage.getItem('nexia_portal_token')||'',demoToken:DEMO_TOKEN,session:null,me:null,conversations:[],selected:null,messages:[],handoffs:[],stats:null,demos:[],convocations:{config:null,solicitudes:[],interesados:[]}};
+const state={authToken:sessionStorage.getItem('nexia_portal_token')||'',refreshToken:sessionStorage.getItem('nexia_portal_refresh_token')||'',demoToken:DEMO_TOKEN,session:null,me:null,conversations:[],selected:null,messages:[],handoffs:[],stats:null,demos:[],convocations:{config:null,solicitudes:[],interesados:[]}};
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=d=>{if(!d)return '—';try{return new Date(d).toLocaleString('es-CL',{dateStyle:'short',timeStyle:'short'})}catch{return d}};
 const timeAgo=d=>{if(!d)return 'sin actividad';const dt=new Date(d);if(Number.isNaN(dt.getTime()))return 'sin actividad';const sec=Math.max(0,Math.floor((Date.now()-dt.getTime())/1000));if(sec<60)return 'hace menos de 1 min';const min=Math.floor(sec/60);if(min<60)return `hace ${min} min`;const h=Math.floor(min/60);if(h<24)return `hace ${h} h`;const dias=Math.floor(h/24);if(dias<30)return `hace ${dias} día${dias===1?'':'s'}`;const meses=Math.floor(dias/30);return `hace ${meses} mes${meses===1?'':'es'}`};
-async function publicFetch(path,opt={}){try{const options={...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}};const r=await fetch(API+path,options);const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}catch(e){if(String(e?.message||e).includes('Failed to fetch'))throw new Error('No se pudo conectar con el backend de Nexia. Verifica que Render esté desplegado y que PORTAL_ORIGIN permita https://nexia-tech.com.');throw e}}
-async function api(path,opt={}){const headers={...(opt.headers||{})};if(state.demoToken)headers['X-Demo-Token']=state.demoToken;else if(state.authToken)headers['Authorization']=`Bearer ${state.authToken}`;else throw new Error('Sesión expirada');return publicFetch(path,{...opt,headers})}
+async function publicFetch(path,opt={}){try{const options={...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}};const r=await fetch(API+path,options);const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false){const err=new Error(d.error||`Error ${r.status}`);err.status=r.status;err.data=d;throw err}return d}catch(e){if(String(e?.message||e).includes('Failed to fetch'))throw new Error('No se pudo conectar con el backend de Nexia. Verifica que Render esté desplegado y que PORTAL_ORIGIN permita https://nexia-tech.com.');throw e}}
+let portalRefreshPromise=null;
+async function refreshPortalSession(){
+  if(state.demoToken)return false;
+  if(!state.refreshToken)return false;
+  if(portalRefreshPromise)return portalRefreshPromise;
+  portalRefreshPromise=(async()=>{
+    try{
+      const d=await publicFetch('/portal/refresh',{method:'POST',body:JSON.stringify({refresh_token:state.refreshToken})});
+      state.authToken=d.access_token||'';
+      state.refreshToken=d.refresh_token||state.refreshToken||'';
+      if(!state.authToken)return false;
+      sessionStorage.setItem('nexia_portal_token',state.authToken);
+      if(state.refreshToken)sessionStorage.setItem('nexia_portal_refresh_token',state.refreshToken);
+      return true;
+    }catch(e){
+      sessionStorage.removeItem('nexia_portal_token');
+      sessionStorage.removeItem('nexia_portal_refresh_token');
+      state.authToken='';state.refreshToken='';
+      return false;
+    }finally{portalRefreshPromise=null}
+  })();
+  return portalRefreshPromise;
+}
+async function api(path,opt={},retry=true){
+  const headers={...(opt.headers||{})};
+  if(state.demoToken)headers['X-Demo-Token']=state.demoToken;
+  else if(state.authToken)headers['Authorization']=`Bearer ${state.authToken}`;
+  else if(state.refreshToken&&retry){
+    const ok=await refreshPortalSession();
+    if(ok)return api(path,opt,false);
+    throw new Error('Sesión expirada. Ingresa nuevamente.');
+  }else throw new Error('Sesión expirada. Ingresa nuevamente.');
+  try{return await publicFetch(path,{...opt,headers})}
+  catch(e){
+    if(retry&&!state.demoToken&&e?.status===401&&state.refreshToken){
+      const ok=await refreshPortalSession();
+      if(ok)return api(path,opt,false);
+    }
+    throw e;
+  }
+}
 const navItems=[['dashboard','▣','Inicio','Resumen de la operación'],['assistant','🤖','Probar mi asistente','Abre el asistente de tu empresa'],['conversations','💬','Conversaciones','Bandeja de atención humana'],['agenda','📅','Agenda','Reservas y solicitudes'],['convocations','♻️','Convocatorias','Matching y retiros'],['interested','👥','Personas interesadas','Contactos captados'],['statistics','📊','Estadísticas','Actividad y rendimiento'],['consumption','⚡','Consumo','Planes y mensajes'],['demos','🧪','Pruebas','Uso, vigencia y activación'],['companies','🏢','Empresas','Administración de clientes'],['integrations','🔗','Integraciones','Conecta Google Calendar y otras herramientas'],['settings','⚙','Configuración','Seguridad y alcance']];
 function buildNav(){const html=navItems.map(([id,ic,n])=>`<button data-page="${id}" class="${id==='dashboard'?'active':''}">${ic} &nbsp;${n}</button>`).join('');$('nav').innerHTML=html;$('mobileNav').innerHTML=html;document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page))}
 function go(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));$(`page-${id}`).classList.add('active');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));const item=navItems.find(x=>x[0]===id);$('pageTitle').textContent=item?.[2]||'Nexia';$('pageSubtitle').textContent=item?.[3]||'';if(id==='assistant')loadMyAssistant();if(id==='conversations')loadConversations();if(id==='agenda')openAgendaPage();if(id==='convocations')loadConvocations();if(id==='statistics')loadStats();if(id==='consumption')loadConsumption();if(id==='demos')loadDemos();if(id==='companies')loadCompanies();if(id==='integrations')loadIntegrations();if(id==='settings')loadBusinessSettings()}
@@ -655,8 +695,8 @@ async function init(){
       await enterApp();
       return;
     }
-    if(state.authToken){
-      try{await enterApp();return}catch(e){sessionStorage.removeItem('nexia_portal_token');state.authToken=''}
+    if(state.authToken||state.refreshToken){
+      try{await enterApp();return}catch(e){sessionStorage.removeItem('nexia_portal_token');sessionStorage.removeItem('nexia_portal_refresh_token');state.authToken='';state.refreshToken=''}
     }
   }catch(e){$('loginError').textContent='No pudimos conectar con el Portal Nexia. '+e.message}
 }
@@ -669,8 +709,10 @@ async function login(){
     if(!email||!password)throw new Error('Ingresa correo y contraseña');
     const d=await publicFetch('/portal/login',{method:'POST',body:JSON.stringify({email,password})});
     state.authToken=d.access_token||'';
+    state.refreshToken=d.refresh_token||'';
     if(!state.authToken)throw new Error('No se recibió una sesión válida');
     sessionStorage.setItem('nexia_portal_token',state.authToken);
+    if(state.refreshToken)sessionStorage.setItem('nexia_portal_refresh_token',state.refreshToken);
     await enterApp();
   }catch(e){$('loginError').textContent=e.message}
   finally{$('loginBtn').disabled=false}
@@ -678,8 +720,10 @@ async function login(){
 async function enterApp(){const d=await api('/portal/me');state.me=d;$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');const p=d.perfil||{};if(p.demo){document.querySelectorAll('[data-page="demos"],[data-page="companies"]').forEach(x=>x.classList.add('hidden'));}$('userName').textContent=p.nombre||p.email||'Usuario';$('userRole').textContent=d.superadmin?'Superadmin global':(p.demo?'Prueba Nexia':(p.rol||'Cliente'));$('avatar').textContent=(p.nombre||p.email||'N').slice(0,1).toUpperCase();$('scopeText').textContent=d.superadmin?'Acceso: todas las empresas':(p.demo?'Prueba activa · acceso temporal':'Acceso: solo tu empresa');$('settingsScope').innerHTML=d.superadmin?'<strong>Superadmin global:</strong> puedes administrar y visualizar todas las empresas.':(p.demo?'<strong>Acceso temporal:</strong> puedes probar el Portal completo con los datos de tu prueba durante su vigencia.':'<strong>Usuario empresa:</strong> tu acceso está aislado por empresa.');await Promise.allSettled([loadStats(),loadHandoffs(),loadConversations()]);const q=new URLSearchParams(location.search);const seccion=q.get('seccion');if(seccion&&navItems.some(x=>x[0]===seccion)){go(seccion)}handleDeepLink();checkPaymentReturn();checkCalendarReturn()}
 async function logout(){
   sessionStorage.removeItem('nexia_portal_token');
+  sessionStorage.removeItem('nexia_portal_refresh_token');
   sessionStorage.removeItem('nexia_demo_token');
   state.authToken='';
+  state.refreshToken='';
   state.demoToken='';
   location.href=location.pathname;
 }
