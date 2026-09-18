@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -205,16 +206,68 @@
       .types-box{grid-template-columns:1fr}
       h1{font-size:28px}
     }
+
+    /* Geolocalización opcional de la dirección de retiro */
+    .geo-box{
+      border:1px solid #aee9c7;
+      border-radius:13px;
+      padding:16px;
+      background:#f3fbf6;
+    }
+    .geo-box p{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+      margin:0 0 12px;
+    }
+    .geo-box .geo-consent{
+      display:flex;
+      align-items:flex-start;
+      gap:9px;
+      font-size:13px;
+      font-weight:600;
+      line-height:1.5;
+    }
+    .geo-consent input{
+      width:16px;
+      height:16px;
+      min-height:0;
+      flex:none;
+      margin-top:2px;
+    }
+    #geoButton{
+      margin-top:12px;
+      border:0;
+      border-radius:11px;
+      padding:12px 15px;
+      background:var(--green);
+      color:white;
+      font:inherit;
+      font-weight:700;
+      cursor:pointer;
+    }
+    #geoButton:disabled{opacity:.6;cursor:wait}
+    #geoStatus{
+      font-size:13px;
+      margin-top:10px;
+      line-height:1.5;
+      color:#17643d;
+    }
+    #geoStatus.geo-error{color:var(--danger)}
   </style>
 </head>
 <body>
   <main class="wrap">
-    <section id="loading" class="card loading">Cargando formulario…</section>
+    <section id="loading" class="card loading">
+      Cargando formulario…
+    </section>
 
     <section id="formCard" class="card hidden">
       <span class="badge">Convocatoria</span>
       <h1 id="title">Solicitar retiro</h1>
-      <p id="description" class="lead">Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.</p>
+      <p id="description" class="lead">
+        Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.
+      </p>
 
       <form id="requestForm" novalidate>
         <div class="grid">
@@ -230,7 +283,9 @@
 
           <div class="full">
             <label>WhatsApp</label>
-            <div id="phoneNote" class="phone-note">Se utilizará el número desde el cual estás conversando.</div>
+            <div id="phoneNote" class="phone-note">
+              Se utilizará el número desde el cual estás conversando.
+            </div>
           </div>
 
           <div class="full">
@@ -314,6 +369,35 @@
             <textarea id="obs" placeholder="Detalles adicionales del retiro"></textarea>
           </div>
 
+          <!-- GEOLOCALIZACIÓN -->
+          <div class="full geo-box" id="geoPanel">
+            <label for="geoConsent">
+              📍 Ubicación del lugar de retiro (opcional)
+            </label>
+
+            <p>
+              Si autorizas compartir la ubicación del lugar de retiro,
+              Nexia buscará recolectores dentro de su radio de cobertura.
+              Si no la compartes, usará comuna y materiales.
+              El GPS obtiene la ubicación actual del dispositivo:
+              úsalo solo si estás en el lugar del retiro.
+            </p>
+
+            <label class="geo-consent" for="geoConsent">
+              <input id="geoConsent" type="checkbox">
+              Autorizo el uso de estas coordenadas para buscar recolectores
+              compatibles con mi solicitud.
+            </label>
+
+            <button id="geoButton" type="button">
+              Compartir ubicación del retiro
+            </button>
+
+            <div id="geoStatus" role="status" aria-live="polite">
+              Ubicación no compartida. Puedes continuar por comuna.
+            </div>
+          </div>
+
           <div id="montoWrap" class="full section-box">
             <label class="inline-check">
               <input id="ofreceMonto" type="checkbox">
@@ -325,6 +409,7 @@
                 <label for="monto">Monto ofrecido (CLP)</label>
                 <input id="monto" type="number" min="0" step="1000" placeholder="10000">
               </div>
+
               <div>
                 <label for="pago">Forma de pago</label>
                 <select id="pago">
@@ -335,19 +420,23 @@
                   <option>Otro</option>
                 </select>
               </div>
+
               <div class="full">
                 <label class="inline-check">
                   <input id="negociable" type="checkbox">
                   El monto es negociable
                 </label>
               </div>
+
               <div id="commissionPreview" class="full phone-note hidden"></div>
             </div>
           </div>
         </div>
 
         <div class="actions">
-          <button id="sendBtn" type="submit">Publicar solicitud de retiro</button>
+          <button id="sendBtn" type="submit">
+            Publicar solicitud de retiro
+          </button>
         </div>
 
         <div id="formMsg"></div>
@@ -357,18 +446,38 @@
     <section id="matchCard" class="card hidden">
       <span class="badge">Convocatoria</span>
       <div id="matchContent"></div>
-      <button id="claimBtn" type="button">Tomar solicitud</button>
+
+      <button id="claimBtn" type="button">
+        Tomar solicitud
+      </button>
+
       <br>
-      <a id="portalBtn" class="secondary-link hidden" target="_blank">Abrir Portal Nexia</a>
+
+      <a id="portalBtn" class="secondary-link hidden" target="_blank">
+        Abrir Portal Nexia
+      </a>
+
       <div id="matchMsg"></div>
 
       <div id="chatPanel" class="chatbox hidden">
         <div class="chathead">💬 Coordinar retiro con el cliente</div>
+
         <div id="chatMessages" class="chatmessages"></div>
+
         <form id="chatForm" class="chatform">
-          <input id="chatInput" type="text" maxlength="2000" placeholder="Escribe un mensaje al cliente…" autocomplete="off">
-          <button id="chatSendBtn" type="submit">Enviar</button>
+          <input
+            id="chatInput"
+            type="text"
+            maxlength="2000"
+            placeholder="Escribe un mensaje al cliente…"
+            autocomplete="off"
+          >
+
+          <button id="chatSendBtn" type="submit">
+            Enviar
+          </button>
         </form>
+
         <div id="chatMsg" style="padding:0 12px 12px"></div>
       </div>
     </section>
@@ -376,11 +485,16 @@
 
 <script>
 (() => {
-  const API = (new URLSearchParams(location.search).get('api') || 'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/, '');
+  const API = (
+    new URLSearchParams(location.search).get('api') ||
+    'https://chatbot-laortiga-hddw.onrender.com'
+  ).replace(/\/$/, '');
+
   const Q = new URLSearchParams(location.search);
   const token = Q.get('token') || '';
   const match = Q.get('match') || '';
   const previewMode = !token && !match;
+
   const $ = (id) => document.getElementById(id);
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (m) => ({
@@ -401,9 +515,11 @@
     });
 
     const data = await response.json().catch(() => ({}));
+
     if (!response.ok || data.ok === false) {
       throw new Error(data.error || `Error ${response.status}`);
     }
+
     return data;
   }
 
@@ -420,6 +536,7 @@
 
   function setVisibleByConfig(config) {
     const fields = config.campos || {};
+
     const pairs = [
       ['pesoWrap', 'peso'],
       ['inmuebleWrap', 'tipo_inmueble'],
@@ -429,6 +546,7 @@
       ['obsWrap', 'observaciones'],
       ['montoWrap', 'monto']
     ];
+
     pairs.forEach(([id, key]) => {
       $(id).classList.toggle('hidden', fields[key] === false);
     });
@@ -437,6 +555,7 @@
   function updateCommissionPreview() {
     const config = window.__convConfig || {};
     const box = $('commissionPreview');
+
     const enabled = $('ofreceMonto').checked;
     const amount = Number($('monto').value || 0);
 
@@ -446,23 +565,48 @@
       return;
     }
 
-    const pct = Math.max(0, Math.min(100, Number(config.comision_porcentaje ?? 10)));
+    const pct = Math.max(
+      0,
+      Math.min(100, Number(config.comision_porcentaje ?? 10))
+    );
+
     const fee = Math.round(amount * pct / 100);
     const net = Math.max(0, amount - fee);
 
     box.classList.remove('hidden');
+
     box.innerHTML =
       `<b>${esc(config.comision_nombre || 'Comisión de gestión')}:</b> ${pct.toLocaleString('es-CL')}% · $${fee.toLocaleString('es-CL')}<br>` +
       `<b>Monto neto estimado para quien realiza el retiro:</b> $${net.toLocaleString('es-CL')}`;
   }
 
+  // ============================================
+  // MODO VISTA PREVIA
+  // ============================================
 
   async function loadPreviewForm() {
     const config = {
       nombre_publico: 'Solicitar retiro',
       descripcion: 'Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.',
-      comunas: ['San Bernardo','El Bosque','La Cisterna','Pedro Aguirre Cerda','Lo Espejo','Otra'],
-      tipos_producto: ['Textil','Electrónicos','Cartón / papel','Plástico','Vidrio','Metales','Muebles','Orgánicos','Otros'],
+      comunas: [
+        'San Bernardo',
+        'El Bosque',
+        'La Cisterna',
+        'Pedro Aguirre Cerda',
+        'Lo Espejo',
+        'Otra'
+      ],
+      tipos_producto: [
+        'Textil',
+        'Electrónicos',
+        'Cartón / papel',
+        'Plástico',
+        'Vidrio',
+        'Metales',
+        'Muebles',
+        'Orgánicos',
+        'Otros'
+      ],
       campos: {
         peso: true,
         tipo_inmueble: true,
@@ -478,36 +622,53 @@
     };
 
     window.__convConfig = config;
+
     $('title').textContent = config.nombre_publico;
     $('description').textContent = config.descripcion;
+
     $('phoneNote').innerHTML =
       '<b>Vista previa</b><br>En producción se usará automáticamente el número de WhatsApp desde el enlace generado por Nexia.';
 
     $('comuna').innerHTML =
       '<option value="">Selecciona una comuna</option>' +
-      config.comunas.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      config.comunas.map((x) =>
+        `<option value="${esc(x)}">${esc(x)}</option>`
+      ).join('');
 
     $('tipos').innerHTML = config.tipos_producto.map((x) =>
       `<label class="type-check"><input type="checkbox" value="${esc(x)}"><span>${esc(x)}</span></label>`
     ).join('');
 
     setVisibleByConfig(config);
+
     $('loading').classList.add('hidden');
     $('formCard').classList.remove('hidden');
 
     const note = document.createElement('div');
     note.className = 'msg ok';
     note.style.marginBottom = '16px';
-    note.innerHTML = '<b>Modo vista previa.</b> El botón no guardará una solicitud hasta que abras el enlace real enviado por WhatsApp.';
+
+    note.innerHTML =
+      '<b>Modo vista previa.</b> El botón no guardará una solicitud hasta que abras el enlace real enviado por WhatsApp.';
+
     $('formCard').insertBefore(note, $('requestForm'));
   }
 
+  // ============================================
+  // CARGAR FORMULARIO REAL
+  // ============================================
+
   async function loadForm() {
-    const data = await req('/public/convocatorias/config?token=' + encodeURIComponent(token));
+    const data = await req(
+      '/public/convocatorias/config?token=' + encodeURIComponent(token)
+    );
+
     const config = data.config || {};
     window.__convConfig = config;
 
-    $('title').textContent = config.nombre_publico || 'Solicitar retiro';
+    $('title').textContent =
+      config.nombre_publico || 'Solicitar retiro';
+
     $('description').textContent =
       config.descripcion ||
       'Completa tus datos para publicar una solicitud y encontrar personas interesadas en realizar el retiro.';
@@ -524,18 +685,35 @@
     if (comunas.length) {
       $('comuna').innerHTML =
         '<option value="">Selecciona una comuna</option>' +
-        comunas.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+        comunas.map((x) =>
+          `<option value="${esc(x)}">${esc(x)}</option>`
+        ).join('');
+
       $('comuna').disabled = false;
     } else {
       $('comuna').innerHTML =
         '<option value="">No hay comunas con recolectores disponibles</option>';
+
       $('comuna').disabled = true;
     }
 
-    const defaultTypes = ['Textil','Electrónicos','Cartón / papel','Plástico','Vidrio','Metales','Muebles','Orgánicos','Otros'];
-    const types = Array.isArray(config.tipos_producto) && config.tipos_producto.length
-      ? config.tipos_producto
-      : defaultTypes;
+    const defaultTypes = [
+      'Textil',
+      'Electrónicos',
+      'Cartón / papel',
+      'Plástico',
+      'Vidrio',
+      'Metales',
+      'Muebles',
+      'Orgánicos',
+      'Otros'
+    ];
+
+    const types =
+      Array.isArray(config.tipos_producto) &&
+      config.tipos_producto.length
+        ? config.tipos_producto
+        : defaultTypes;
 
     $('tipos').innerHTML = types.map((x) =>
       `<label class="type-check"><input type="checkbox" value="${esc(x)}"><span>${esc(x)}</span></label>`
@@ -552,19 +730,154 @@
     $('formCard').classList.remove('hidden');
   }
 
+  // ============================================
+  // MONTO Y COMISIÓN
+  // ============================================
+
   $('ofreceMonto').addEventListener('change', () => {
-    $('montoFields').classList.toggle('hidden', !$('ofreceMonto').checked);
+    $('montoFields').classList.toggle(
+      'hidden',
+      !$('ofreceMonto').checked
+    );
+
     updateCommissionPreview();
   });
 
   $('monto').addEventListener('input', updateCommissionPreview);
 
+  // ============================================
+  // GEOLOCALIZACIÓN
+  // ============================================
+
+  let ubicacionRetiro = null;
+  let geoRequestId = 0;
+
+  function geoEstado(message, error = false) {
+    $('geoStatus').textContent = message;
+    $('geoStatus').classList.toggle('geo-error', error);
+  }
+
+  // Revocación del consentimiento.
+  $('geoConsent').addEventListener('change', () => {
+    if (!$('geoConsent').checked) {
+      geoRequestId += 1;
+      ubicacionRetiro = null;
+
+      $('geoButton').disabled = false;
+
+      geoEstado(
+        'Ubicación descartada. Se buscará por comuna y materiales.'
+      );
+    }
+  });
+
+  $('geoButton').addEventListener('click', () => {
+
+    if (!$('geoConsent').checked) {
+      geoEstado(
+        'Debes marcar primero la autorización para compartir ubicación.',
+        true
+      );
+      return;
+    }
+
+    if (!navigator.geolocation || !window.isSecureContext) {
+      geoEstado(
+        'La ubicación requiere un navegador compatible y HTTPS. Puedes continuar por comuna.',
+        true
+      );
+      return;
+    }
+
+    const requestId = ++geoRequestId;
+
+    ubicacionRetiro = null;
+    $('geoButton').disabled = true;
+
+    geoEstado('Solicitando ubicación al dispositivo…');
+
+    navigator.geolocation.getCurrentPosition(
+
+      ({ coords }) => {
+
+        if (
+          requestId !== geoRequestId ||
+          !$('geoConsent').checked
+        ) {
+          return;
+        }
+
+        $('geoButton').disabled = false;
+
+        const { latitude, longitude, accuracy } = coords;
+
+        if (
+          ![latitude, longitude, accuracy].every(Number.isFinite) ||
+          latitude < -90 ||
+          latitude > 90 ||
+          longitude < -180 ||
+          longitude > 180 ||
+          accuracy > 1000
+        ) {
+          geoEstado(
+            'La ubicación tiene precisión insuficiente. Intenta de nuevo o continúa por comuna.',
+            true
+          );
+          return;
+        }
+
+        ubicacionRetiro = {
+          latitud: latitude,
+          longitud: longitude
+        };
+
+        geoEstado(
+          `Ubicación recibida (precisión aproximada ${Math.round(accuracy)} m). Comprueba que estás en el lugar del retiro.`
+        );
+      },
+
+      (error) => {
+
+        if (requestId !== geoRequestId) {
+          return;
+        }
+
+        $('geoButton').disabled = false;
+        ubicacionRetiro = null;
+
+        const detail =
+          error.code === 1
+            ? 'Permiso denegado.'
+            : error.code === 2
+              ? 'Ubicación no disponible.'
+              : 'Se agotó el tiempo de espera.';
+
+        geoEstado(
+          `${detail} Puedes continuar por comuna.`,
+          true
+        );
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 0
+      }
+    );
+  });
+
+  // ============================================
+  // ENVIAR SOLICITUD
+  // ============================================
+
   $('requestForm').addEventListener('submit', async (event) => {
     event.preventDefault();
+
     $('formMsg').innerHTML = '';
 
     if (previewMode) {
-      $('formMsg').innerHTML = '<div class="msg ok"><b>Vista previa:</b> el formulario está correcto. Para guardar una solicitud real, ábrelo desde el enlace que Nexia envía por WhatsApp.</div>';
+      $('formMsg').innerHTML =
+        '<div class="msg ok"><b>Vista previa:</b> el formulario está correcto. Para guardar una solicitud real, ábrelo desde el enlace que Nexia envía por WhatsApp.</div>';
       return;
     }
 
@@ -584,17 +897,50 @@
       ascensor: boolValue('ascensor'),
       requiere_vehiculo: boolValue('vehiculo'),
       observaciones: $('obs').value.trim(),
-      monto_ofrecido: $('ofreceMonto').checked ? $('monto').value : null,
-      forma_pago: $('ofreceMonto').checked ? $('pago').value : '',
-      monto_negociable: $('ofreceMonto').checked && $('negociable').checked
+
+      monto_ofrecido: $('ofreceMonto').checked
+        ? $('monto').value
+        : null,
+
+      forma_pago: $('ofreceMonto').checked
+        ? $('pago').value
+        : '',
+
+      monto_negociable:
+        $('ofreceMonto').checked &&
+        $('negociable').checked
     };
 
+    // Añadir coordenadas solo cuando existe autorización.
+    if ($('geoConsent').checked && ubicacionRetiro) {
+      Object.assign(
+        payload,
+        ubicacionRetiro,
+        { consentimiento_ubicacion: true }
+      );
+    }
+
     const missing = [];
-    if (!payload.nombre) missing.push('nombre');
-    if (!payload.direccion_retiro) missing.push('dirección de retiro');
-    if (!payload.comuna) missing.push('comuna');
-    if (!payload.horario_retiro) missing.push('horario');
-    if (!payload.tipos_producto.length) missing.push('tipo de producto/material');
+
+    if (!payload.nombre) {
+      missing.push('nombre');
+    }
+
+    if (!payload.direccion_retiro) {
+      missing.push('dirección de retiro');
+    }
+
+    if (!payload.comuna) {
+      missing.push('comuna');
+    }
+
+    if (!payload.horario_retiro) {
+      missing.push('horario');
+    }
+
+    if (!payload.tipos_producto.length) {
+      missing.push('tipo de producto/material');
+    }
 
     if (missing.length) {
       $('formMsg').innerHTML =
@@ -606,45 +952,80 @@
       $('sendBtn').disabled = true;
       $('sendBtn').textContent = 'Publicando…';
 
-      const result = await req('/public/convocatorias/solicitudes', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
+      const result = await req(
+        '/public/convocatorias/solicitudes',
+        {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        }
+      );
 
       $('formMsg').innerHTML =
         `<div class="msg ok">✅ ${esc(result.mensaje || 'Solicitud publicada correctamente.')}</div>`;
+
       $('sendBtn').classList.add('hidden');
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+      });
+
     } catch (error) {
-      $('formMsg').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+
+      $('formMsg').innerHTML =
+        `<div class="msg err">${esc(error.message)}</div>`;
+
     } finally {
+
       $('sendBtn').disabled = false;
       $('sendBtn').textContent = 'Publicar solicitud de retiro';
+
     }
   });
 
+  // ============================================
+  // CHAT DE COORDINACIÓN
+  // ============================================
 
   let chatTimer = null;
 
   function renderChat(messages) {
     const box = $('chatMessages');
+
     if (!box) return;
 
     const rows = Array.isArray(messages) ? messages : [];
+
     if (!rows.length) {
-      box.innerHTML = '<div class="small">Todavía no hay mensajes. Puedes iniciar la coordinación.</div>';
+      box.innerHTML =
+        '<div class="small">Todavía no hay mensajes. Puedes iniciar la coordinación.</div>';
       return;
     }
 
     box.innerHTML = rows.map((m) => {
-      const dir = m.direccion === 'entrante' ? 'in' : 'out';
+
+      const dir =
+        m.direccion === 'entrante'
+          ? 'in'
+          : 'out';
+
       let hh = '';
+
       try {
         hh = new Date(m.fecha).toLocaleString('es-CL', {
-          day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'
+          day: '2-digit',
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
         });
       } catch (_) {}
-      return `<div class="bubble ${dir}">${esc(m.mensaje || '')}<span class="time">${esc(hh)}</span></div>`;
+
+      return `
+        <div class="bubble ${dir}">
+          ${esc(m.mensaje || '')}
+          <span class="time">${esc(hh)}</span>
+        </div>
+      `;
     }).join('');
 
     box.scrollTop = box.scrollHeight;
@@ -652,78 +1033,142 @@
 
   function showChat(chat) {
     if (!chat || !chat.habilitado) return;
+
     $('chatPanel').classList.remove('hidden');
+
     renderChat(chat.mensajes || []);
   }
 
   async function refreshChat() {
     if (!match) return;
+
     try {
-      const data = await req('/public/convocatorias/match/' + encodeURIComponent(match));
+      const data = await req(
+        '/public/convocatorias/match/' +
+        encodeURIComponent(match)
+      );
+
       if (data.match?.estado === 'tomada') {
         showChat(data.chat || {});
       } else if (data.match?.estado === 'cerrada') {
         if (chatTimer) clearInterval(chatTimer);
       }
+
     } catch (_) {}
   }
 
   function startChatPolling() {
     if (chatTimer) clearInterval(chatTimer);
+
     chatTimer = setInterval(refreshChat, 4000);
   }
 
   $('chatForm').addEventListener('submit', async (event) => {
     event.preventDefault();
+
     const text = $('chatInput').value.trim();
+
     if (!text) return;
 
     try {
       $('chatSendBtn').disabled = true;
       $('chatMsg').innerHTML = '';
 
-      await req('/public/convocatorias/match/' + encodeURIComponent(match) + '/mensaje', {
-        method:'POST',
-        body:JSON.stringify({ mensaje:text })
-      });
+      await req(
+        '/public/convocatorias/match/' +
+        encodeURIComponent(match) +
+        '/mensaje',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            mensaje: text
+          })
+        }
+      );
 
       $('chatInput').value = '';
+
       await refreshChat();
+
     } catch (error) {
-      $('chatMsg').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+
+      $('chatMsg').innerHTML =
+        `<div class="msg err">${esc(error.message)}</div>`;
+
     } finally {
+
       $('chatSendBtn').disabled = false;
+
     }
   });
 
+  // ============================================
+  // CARGAR SOLICITUD PARA RECOLECTOR
+  // ============================================
+
   async function loadMatch() {
-    const data = await req('/public/convocatorias/match/' + encodeURIComponent(match));
+    const data = await req(
+      '/public/convocatorias/match/' +
+      encodeURIComponent(match)
+    );
+
     const s = data.solicitud || {};
     const m = data.match || {};
+
     const money = s.monto_ofrecido == null
       ? 'Sin aporte'
-      : '$' + Number(s.monto_ofrecido).toLocaleString('es-CL') + ' CLP';
+      : '$' +
+        Number(s.monto_ofrecido).toLocaleString('es-CL') +
+        ' CLP';
 
     $('matchContent').innerHTML = `
       <h1>Solicitud disponible</h1>
-      <p class="lead">Coincide con tu cobertura registrada.</p>
+
+      <p class="lead">
+        Coincide con tu cobertura registrada.
+      </p>
+
       <div class="matchbox">
-        <div><b>Comuna:</b> ${esc(s.comuna || '—')}</div>
-        <div><b>Producto/material:</b> ${esc((s.tipos_producto || []).join(', '))}</div>
-        <div><b>Bultos:</b> ${esc(s.cantidad_bultos || 1)}</div>
-        <div><b>Retiro:</b> ${esc(s.fecha_retiro || 'A coordinar')} · ${esc(s.horario_retiro || 'A coordinar')}</div>
-        <div class="money">${esc(money)}</div>
+        <div>
+          <b>Comuna:</b>
+          ${esc(s.comuna || '—')}
+        </div>
+
+        <div>
+          <b>Producto/material:</b>
+          ${esc((s.tipos_producto || []).join(', '))}
+        </div>
+
+        <div>
+          <b>Bultos:</b>
+          ${esc(s.cantidad_bultos || 1)}
+        </div>
+
+        <div>
+          <b>Retiro:</b>
+          ${esc(s.fecha_retiro || 'A coordinar')}
+          ·
+          ${esc(s.horario_retiro || 'A coordinar')}
+        </div>
+
+        <div class="money">
+          ${esc(money)}
+        </div>
       </div>
     `;
 
     if (m.estado !== 'pendiente') {
+
       $('claimBtn').classList.add('hidden');
+
       $('matchMsg').innerHTML =
         m.estado === 'tomada'
           ? '<div class="msg ok">Esta solicitud fue adjudicada a ti. Ya puedes coordinar el retiro por el chat.</div>'
-          : (m.estado === 'cerrada'
-              ? '<div class="msg err">Esta solicitud ya fue tomada por otra persona.</div>'
-              : '<div class="msg err">Esta solicitud ya no está disponible.</div>');
+          : (
+              m.estado === 'cerrada'
+                ? '<div class="msg err">Esta solicitud ya fue tomada por otra persona.</div>'
+                : '<div class="msg err">Esta solicitud ya no está disponible.</div>'
+            );
     }
 
     if (m.estado === 'tomada') {
@@ -735,18 +1180,37 @@
     $('matchCard').classList.remove('hidden');
   }
 
+  // ============================================
+  // TOMAR SOLICITUD
+  // ============================================
+
   $('claimBtn').addEventListener('click', async () => {
+
     try {
       $('claimBtn').disabled = true;
-      const data = await req('/public/convocatorias/match/' + encodeURIComponent(match) + '/tomar', {
-        method: 'POST',
-        body: '{}'
-      });
+
+      const data = await req(
+        '/public/convocatorias/match/' +
+        encodeURIComponent(match) +
+        '/tomar',
+        {
+          method: 'POST',
+          body: '{}'
+        }
+      );
 
       $('matchMsg').innerHTML =
         `<div class="msg ok">✅ ${esc(data.mensaje || 'Solicitud tomada correctamente.')}` +
-        (data.solicitud?.direccion_retiro ? `<br><br><b>Retiro:</b> ${esc(data.solicitud.direccion_retiro)}` : '') +
-        (data.solicitud?.telefono ? `<br><b>WhatsApp:</b> +${esc(data.solicitud.telefono)}` : '') +
+        (
+          data.solicitud?.direccion_retiro
+            ? `<br><br><b>Retiro:</b> ${esc(data.solicitud.direccion_retiro)}`
+            : ''
+        ) +
+        (
+          data.solicitud?.telefono
+            ? `<br><b>WhatsApp:</b> +${esc(data.solicitud.telefono)}`
+            : ''
+        ) +
         `</div>`;
 
       $('claimBtn').classList.add('hidden');
@@ -757,16 +1221,28 @@
       }
 
       await refreshChat();
+
       startChatPolling();
+
     } catch (error) {
-      $('matchMsg').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+
+      $('matchMsg').innerHTML =
+        `<div class="msg err">${esc(error.message)}</div>`;
+
     } finally {
+
       $('claimBtn').disabled = false;
+
     }
   });
 
+  // ============================================
+  // INICIALIZAR
+  // ============================================
+
   (async () => {
     try {
+
       if (match) {
         await loadMatch();
       } else if (token) {
@@ -774,10 +1250,15 @@
       } else {
         await loadPreviewForm();
       }
+
     } catch (error) {
-      $('loading').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+
+      $('loading').innerHTML =
+        `<div class="msg err">${esc(error.message)}</div>`;
+
     }
   })();
+
 })();
 </script>
 </body>
