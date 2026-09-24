@@ -254,6 +254,48 @@
       color:#17643d;
     }
     #geoStatus.geo-error{color:var(--danger)}
+
+    /* Fotos del material */
+    .photo-box{
+      border:1px solid var(--line);
+      border-radius:13px;
+      padding:15px;
+      background:#fbfdfc;
+    }
+    .photo-help{
+      display:block;
+      margin-top:7px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      font-weight:500;
+    }
+    .photo-preview{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .photo-preview img,
+    .match-photos img{
+      width:100%;
+      aspect-ratio:1/1;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#f2f5f3;
+    }
+    .match-photos{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:14px;
+    }
+    @media(max-width:650px){
+      .photo-preview{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .match-photos{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
   </style>
 </head>
 <body>
@@ -321,6 +363,21 @@
           <div class="full">
             <label>Tipo de producto o material *</label>
             <div id="tipos" class="types-box"></div>
+          </div>
+
+          <div class="full photo-box">
+            <label for="fotos">Fotos del material *</label>
+            <input
+              id="fotos"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+            >
+            <span class="photo-help">
+              Adjunta entre 1 y 4 fotos. Formatos JPG, PNG o WEBP.
+              Máximo 6 MB por foto.
+            </span>
+            <div id="photoPreview" class="photo-preview"></div>
           </div>
 
           <div id="pesoWrap">
@@ -532,6 +589,119 @@
   function selectedTypes() {
     return [...document.querySelectorAll('#tipos input[type="checkbox"]:checked')]
       .map((input) => input.value);
+  }
+
+
+  const FOTO_MAX_CANTIDAD = 4;
+  const FOTO_MAX_BYTES = 6 * 1024 * 1024;
+  const FOTO_TIPOS = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+  function selectedPhotos() {
+    return [...($('fotos')?.files || [])];
+  }
+
+  function validatePhotos() {
+    const files = selectedPhotos();
+
+    if (!files.length) {
+      throw new Error('Adjunta al menos una foto del material.');
+    }
+
+    if (files.length > FOTO_MAX_CANTIDAD) {
+      throw new Error(`Puedes adjuntar máximo ${FOTO_MAX_CANTIDAD} fotos.`);
+    }
+
+    for (const file of files) {
+      if (!FOTO_TIPOS.has(file.type)) {
+        throw new Error('Las fotos deben ser JPG, PNG o WEBP.');
+      }
+      if (file.size > FOTO_MAX_BYTES) {
+        throw new Error(`Cada foto debe pesar máximo ${Math.round(FOTO_MAX_BYTES / 1024 / 1024)} MB.`);
+      }
+    }
+
+    return files;
+  }
+
+  function renderSelectedPhotos() {
+    const box = $('photoPreview');
+    if (!box) return;
+
+    const files = selectedPhotos().slice(0, FOTO_MAX_CANTIDAD);
+
+    box.innerHTML = files.map((file) => {
+      const url = URL.createObjectURL(file);
+      return `<img src="${esc(url)}" alt="Vista previa de material">`;
+    }).join('');
+  }
+
+  $('fotos')?.addEventListener('change', () => {
+    try {
+      validatePhotos();
+      renderSelectedPhotos();
+    } catch (error) {
+      $('fotos').value = '';
+      $('photoPreview').innerHTML = '';
+      $('formMsg').innerHTML = `<div class="msg err">${esc(error.message)}</div>`;
+    }
+  });
+
+  async function uploadPhotos() {
+    const files = validatePhotos();
+    const formData = new FormData();
+
+    formData.append('token', token);
+    files.forEach((file) => formData.append('fotos', file));
+
+    const response = await fetch(
+      API + '/public/convocatorias/fotos',
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.ok === false) {
+      throw new Error(data.error || `Error ${response.status} al subir fotos`);
+    }
+
+    const rows = Array.isArray(data.fotos) ? data.fotos : [];
+    const paths = rows
+      .map((item) => typeof item === 'string' ? item : item?.path)
+      .map((value) => String(value || '').trim())
+      .filter(Boolean);
+
+    if (!paths.length) {
+      throw new Error('Las fotos se subieron, pero el servidor no devolvió sus rutas.');
+    }
+
+    return paths;
+  }
+
+  function renderMatchPhotos(fotos) {
+    const rows = Array.isArray(fotos) ? fotos : [];
+
+    const urls = rows.map((item) => {
+      if (typeof item === 'string') return item;
+      return item?.url || '';
+    }).filter((url) => /^https?:\/\//i.test(String(url || '')));
+
+    if (!urls.length) return '';
+
+    return `
+      <div style="margin-top:16px">
+        <b>Fotos del material:</b>
+        <div class="match-photos">
+          ${urls.map((url) =>
+            `<a href="${esc(url)}" target="_blank" rel="noopener">
+               <img src="${esc(url)}" alt="Foto del material">
+             </a>`
+          ).join('')}
+        </div>
+      </div>
+    `;
   }
 
   function setVisibleByConfig(config) {
@@ -942,6 +1112,10 @@
       missing.push('tipo de producto/material');
     }
 
+    if (!selectedPhotos().length) {
+      missing.push('al menos una foto del material');
+    }
+
     if (missing.length) {
       $('formMsg').innerHTML =
         `<div class="msg err">Falta completar: ${esc(missing.join(', '))}.</div>`;
@@ -950,6 +1124,10 @@
 
     try {
       $('sendBtn').disabled = true;
+      $('sendBtn').textContent = 'Subiendo fotos…';
+
+      payload.fotos = await uploadPhotos();
+
       $('sendBtn').textContent = 'Publicando…';
 
       const result = await req(
@@ -1154,6 +1332,8 @@
         <div class="money">
           ${esc(money)}
         </div>
+
+        ${renderMatchPhotos(s.fotos)}
       </div>
     `;
 
