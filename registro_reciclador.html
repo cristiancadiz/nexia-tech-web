@@ -1,34 +1,184 @@
-=> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
-APP_VERSION: 2026-09-25-LAORTIGA-RECICLA-COTIZACIONES-V3.9-KILOS-RECICLADOS
-Traceback (most recent call last):
-  File "/opt/render/project/src/app_nexi_core_v1.py", line 15570, in <module>
-    print("LAORTIGA_SIN_IA:", LAORTIGA_SIN_IA)
-                              ^^^^^^^^^^^^^^^
-NameError: name 'LAORTIGA_SIN_IA' is not defined
-==> Running 'python app_nexi_core_v1.py'
-============================================================
-NEXI TWILIO ROUTING DEBUG
-REQUEST TO: whatsapp:+56971906724
-REQUEST FROM: whatsapp:+56950064242
-CONFIG GLOBAL FROM: whatsapp:+56971906724
-CONFIG ACCOUNT SID: ...15e72082
-TO NORMALIZADO: 56971906724
-TENANT EMPRESA ID: 10cdafab-db2d-4046-8f80-8cd9da680235
-TENANT EMPRESA: La Ortiga Recicla
-TENANT CANAL: whatsapp
-TENANT PROVIDER: twilio
-TENANT SENDER: (sin override)
-TENANT ACCOUNT SID ENV: (sin override)
-TENANT AUTH TOKEN ENV: (sin override)
-============================================================
-============================================================
-TWILIO WEBHOOK
-From: whatsapp:+56950064242
-Body: Hola
-MessageSid: SMe980c015d8c3548ae2f055ee4e2afe83
-============================================================
-SUPABASE LOG OK: whatsapp 56950064242 entrante 998e3576-e5c9-42bb-ae68-2f2537561095
-SUPABASE MODO ATENCION OK: 998e3576-e5c9-42bb-ae68-2f2537561095 ejecutivo
-NEXI RETIRO MODO: 998e3576-e5c9-42bb-ae68-2f2537561095 humano ventana= Ventana de atención WhatsApp abierta
-NEXI RETIRO WHATSAPP HUMANO INTERCEPTADO: 998e3576-e5c9-42bb-ae68-2f2537561095 empresa= 10cdafab-db2d-4046-8f80-8cd9da680235 IA_BLOQUEADA
-10.197.96.137 - - [25/Sep/2026 23:13:41] "POST /whatsapp/webhook HTTP/1.1" 200 -
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de reciclador | Nexia</title>
+  <meta name="description" content="Formulario de registro para recicladors en recibir oportunidades de retiro." />
+  <style>
+    :root{--bg:#f5f7f6;--card:#fff;--text:#17201b;--muted:#66736c;--line:#dbe3de;--brand:#173d22;--brand2:#285f35;--soft:#edf5ef;--danger:#b42318}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#eef4f0 0,#f8faf9 260px);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:34px 18px 60px}.hero{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:34px;border-radius:24px;box-shadow:0 18px 50px rgba(23,61,34,.16);margin-bottom:24px}
+    .tag{display:inline-flex;padding:7px 11px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;font-size:13px;margin-bottom:14px} h1{margin:0 0 10px;font-size:clamp(30px,5vw,46px);line-height:1.04}.hero p{margin:0;max-width:760px;font-size:16px;line-height:1.6;color:#eaf4ed}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;margin-bottom:18px;box-shadow:0 8px 28px rgba(25,50,35,.05)} .section-title{font-size:20px;margin:0 0 6px}.section-help{margin:0 0 20px;color:var(--muted);font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.full{grid-column:1/-1} label{display:block;font-weight:650;font-size:14px;margin-bottom:7px}.req{color:var(--danger)}
+    input,select,textarea{width:100%;border:1px solid #cfd9d3;border-radius:12px;padding:13px 14px;font:inherit;color:var(--text);background:#fff;outline:none;transition:.18s ease} input:focus,select:focus,textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 4px rgba(40,95,53,.10)} textarea{min-height:110px;resize:vertical}
+    .choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.choice{border:1px solid var(--line);border-radius:12px;padding:11px 12px;display:flex;gap:9px;align-items:center;cursor:pointer;background:#fff}.choice input{width:auto;margin:0}.choice:has(input:checked){background:var(--soft);border-color:#8db39a}
+    .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.inline input[type="checkbox"]{width:auto}.note{padding:14px 15px;border-radius:12px;background:#f7faf8;border:1px solid var(--line);font-size:13px;color:var(--muted)}
+    .actions{display:flex;gap:12px;justify-content:flex-end;align-items:center} button{border:0;border-radius:12px;padding:14px 20px;font-weight:750;font-size:15px;cursor:pointer}.primary{background:var(--brand);color:#fff}.primary:hover{background:#0f2f18}.secondary{background:#edf1ee;color:var(--text)}
+    .status{display:none;margin-top:16px;padding:13px 15px;border-radius:12px;background:#ecf8ef;border:1px solid #b8dec3;color:#215b31}.status.error{background:#fff0f0;border-color:#efc0c0;color:#9f2525}.primary:disabled{opacity:.6;cursor:wait}.small{font-size:12px;color:var(--muted);margin-top:6px}.money-wrap{display:none}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+    @media(max-width:720px){.grid{grid-template-columns:1fr}.choices{grid-template-columns:1fr 1fr}.hero,.card{padding:21px}} @media(max-width:460px){.choices{grid-template-columns:1fr}.actions{flex-direction:column-reverse}button{width:100%}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <div class="tag">Convocatorias · Registro de reciclador</div>
+    <h1>Quiero recibir oportunidades de retiro</h1>
+    <p>Registra tus datos, los tipos de productos que puedes retirar y las comunas donde tienes cobertura. Cuando exista una solicitud compatible, podremos notificarte para que la tomes desde el portal.</p>
+  </section>
+
+  <form id="recicladorForm" novalidate>
+    <section class="card">
+      <h2 class="section-title">Datos de contacto</h2><p class="section-help">Información que utilizaremos para identificarte y enviarte oportunidades.</p>
+      <div class="grid">
+        <div><label for="nombre">Nombre <span class="req">*</span></label><input id="nombre" name="nombre" autocomplete="given-name" required></div>
+        <div><label for="apellido">Apellido <span class="req">*</span></label><input id="apellido" name="apellido" autocomplete="family-name" required></div>
+        <div><label for="telefono">WhatsApp <span class="req">*</span></label><input id="telefono" name="telefono" type="tel" placeholder="+56 9 1234 5678" required><div class="small">Si vienes desde WhatsApp, este dato puede cargarse automáticamente.</div></div>
+        <div><label for="correo">Correo electrónico <span class="req">*</span></label><input id="correo" name="correo" type="email" autocomplete="email" required></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Tipos de productos</h2><p class="section-help">Puedes seleccionar más de una categoría.</p>
+      <div class="choices">
+        <label class="choice"><input type="checkbox" name="productos" value="textil"> Textil</label>
+        <label class="choice"><input type="checkbox" name="productos" value="electronicos"> Electrónicos</label>
+        <label class="choice"><input type="checkbox" name="productos" value="carton"> Cartón / papel</label>
+        <label class="choice"><input type="checkbox" name="productos" value="plastico"> Plástico</label>
+        <label class="choice"><input type="checkbox" name="productos" value="vidrio"> Vidrio</label>
+        <label class="choice"><input type="checkbox" name="productos" value="metales"> Metales</label>
+        <label class="choice"><input type="checkbox" name="productos" value="muebles"> Muebles</label>
+        <label class="choice"><input type="checkbox" name="productos" value="aceite"> Aceite</label>
+        <label class="choice"><input type="checkbox" name="productos" value="organicos"> Orgánicos</label>
+        <label class="choice"><input type="checkbox" name="productos" value="otros"> Otros</label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Cobertura</h2><p class="section-help">Indica las comunas donde puedes realizar retiros. Puedes seleccionar varias.</p>
+      <div class="choices">
+        <label class="choice"><input type="checkbox" name="comunas" value="Santiago"> Santiago</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="Providencia"> Providencia</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="Ñuñoa"> Ñuñoa</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="San Miguel"> San Miguel</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="Pedro Aguirre Cerda"> Pedro Aguirre Cerda</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="San Bernardo"> San Bernardo</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="La Cisterna"> La Cisterna</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="Estación Central"> Estación Central</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="Maipú"> Maipú</label>
+        <label class="choice"><input type="checkbox" name="comunas" value="otra"> Otra</label>
+      </div>
+      <div style="margin-top:14px"><label for="otrasComunas">Otras comunas</label><input id="otrasComunas" name="otras_comunas" placeholder="Ej.: Quilicura, Recoleta, Independencia"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Disponibilidad y capacidad</h2><p class="section-help">Esto permitirá mejorar los futuros matches.</p>
+      <div class="grid">
+        <div><label for="dias">Días disponibles</label><input id="dias" name="dias" placeholder="Ej.: lunes a sábado"></div>
+        <div><label for="horario">Horario habitual</label><input id="horario" name="horario" placeholder="Ej.: 0d> Quiero recibir nuevas oportunidades compatibles con mi cobertura y categorías.</label></div>
+        <div class="full"><label class="inline"><input id="consentimiento" name="consentimiento" type="checkbox" required> Acepto que mis datos sean utilizados para gestionar convocatorias y contactos asociados. <span class="req">*</span></label></div>
+      </div>
+      <div class="note" style="margin-top:18px">La dirección exacta y los datos privados de una solicitud deberían mostrarse únicamente al reciclador que efectivamente tome la oportunidad desde el portal.</div>
+    </section>
+
+    <section class="card">
+      <div class="actions"><button type="reset" class="secondary">Limpiar</button><button type="submit" class="primary">Registrarme como reciclador</button></div>
+      <div class="status" id="status"></div>
+    </section>
+  </form>
+  <div class="footer">Módulo de Convocatorias · Nexia</div>
+</main>
+
+<script>
+const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');
+const params=new URLSearchParams(location.search);
+const token=params.get('token')||'';
+const previewMode=!token;
+const form=document.getElementById('recicladorForm');
+
+
+if(params.get('telefono'))document.getElementById('telefono').value='+'+params.get('telefono').replace(/\D/g,'');
+function seleccionados(nombre){return [...document.querySelectorAll(`input[name="${nombre}"]:checked`)].map(x=>x.value)}
+function listaTexto(v){return String(v||'').split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean)}
+
+function renderChoices(name,items){
+  const first=document.querySelector(`input[name="${name}"]`);
+  if(!first||!items.length)return;
+  const box=first.closest('.choices');
+  box.innerHTML=items.map(x=>`<label class="choice"><input type="checkbox" name="${name}" value="${String(x).replace(/"/g,'&quot;')}"> ${x}</label>`).join('');
+}
+
+async function loadPublicConfig(){
+  if(previewMode){
+    showStatus('Vista previa: el formulario está listo. El registro real funcionará al abrir un enlace generado por Nexia.',false);
+    return;
+  }
+  try{
+    const d=await req('/public/convocatorias/recicladors/config?token='+encodeURIComponent(token));
+    const c=d.config||{};
+    if(Array.isArray(c.tipos_producto)&&c.tipos_producto.length)renderChoices('productos',c.tipos_producto);
+    if(Array.isArray(c.comunas)&&c.comunas.length)renderChoices('comunas',c.comunas);
+  }catch(e){
+    showStatus(e.message,true);
+    submitBtn.disabled=true;
+  }
+}
+
+form.addEventListener('reset',()=>{
+  setTimeout(()=>{
+    moneyWrap.style.display='none';
+    statusBox.style.display='none';
+  },0);
+});
+
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  if(!form.reportValidity())return;
+  const productos=seleccionados('productos');
+  let comunas=seleccionados('comunas');
+  const extra=listaTexto(document.getElementById('otrasComunas').value);
+  comunas=[...new Set([...comunas,...extra])];
+  if(!productos.length){showStatus('Selecciona al menos un tipo de producto.',true);return;}
+  if(!comunas.length){showStatus('Selecciona al menos una comuna o escribe una comuna adicional.',true);return;}
+  if(previewMode){showStatus('Vista previa correcta. Para registrarte debes abrir el enlace enviado desde WhatsApp.',false);return;}
+
+  const payload={
+    token,
+    nombre:document.getElementById('nombre').value.trim(),
+    apellido:document.getElementById('apellido').value.trim(),
+    telefono:document.getElementById('telefono').value.trim(),
+    correo:document.getElementById('correo').value.trim(),
+    tipos_producto:productos,
+    comunas,
+    dias_disponibles:listaTexto(document.getElementById('dias').value),
+    horarios:listaTexto(document.getElementById('horario').value),
+    medio_transporte:document.getElementById('transporte').value,
+    capacidad:document.getElementById('capacidad').value.trim(),
+    activo:document.getElementById('activo').checked,
+    consentimiento:document.getElementById('consentimiento').checked
+  };
+
+  try{
+    submitBtn.disabled=true;
+    const original=submitBtn.textContent;
+    submitBtn.textContent='Registrando…';
+    const d=await req('/public/convocatorias/recicladors',{method:'POST',body:JSON.stringify(payload)});
+    showStatus(
+      '✅ '+(d.mensaje||'Registro completado correctamente.') +
+      (d.portal_reciclador_url ? '<br><br><a href="'+d.portal_reciclador_url+'" target="_blank" rel="noopener" style="font-weight:800;color:#0c7b49">Abrir mi Portal del Reciclador</a>' : ''),
+      false
+    );
+    submitBtn.textContent='Registro completado';
+    submitBtn.disabled=true;
+  }catch(err){
+    showStatus(err.message,true);
+    submitBtn.disabled=false;
+    submitBtn.textContent='Registrarme como reciclador';
+  }
+});
+
+loadPublicConfig();
+</script>
+</body>
+</html>
