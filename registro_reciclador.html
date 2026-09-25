@@ -77,7 +77,19 @@
       <div class="grid">
         <div><label for="dias">Días disponibles</label><input id="dias" name="dias" placeholder="Ej.: lunes a sábado"></div>
         <div><label for="horario">Horario habitual</label><input id="horario" name="horario" placeholder="Ej.: 0d> Quiero recibir nuevas oportunidades compatibles con mi cobertura y categorías.</label></div>
-        <div class="full"><label class="inline"><input id="consentimiento" name="consentimiento" type="checkbox" required> Acepto que mis datos sean utilizados para gestionar convocatorias y contactos asociados. <span class="req">*</span></label></div>
+        <div class="full"><label class="inline">
+        <div class="field full" style="margin-top:14px">
+          <label style="display:flex;align-items:flex-start;gap:10px;font-weight:700">
+            <input id="entregaCertificado" type="checkbox" style="width:18px;height:18px;margin-top:2px;flex:none">
+            <span>
+              Entrego certificado de reciclaje
+              <small style="display:block;font-weight:500;color:#66736d;margin-top:4px;line-height:1.4">
+                Marca esta opción si puedes emitir un certificado o comprobante formal por los materiales reciclados.
+              </small>
+            </span>
+          </label>
+        </div>
+<input id="consentimiento" name="consentimiento" type="checkbox" required> Acepto que mis datos sean utilizados para gestionar convocatorias y contactos asociados. <span class="req">*</span></label></div>
       </div>
       <div class="note" style="margin-top:18px">La dirección exacta y los datos privados de una solicitud deberían mostrarse únicamente al reciclador que efectivamente tome la oportunidad desde el portal.</div>
     </section>
@@ -156,6 +168,7 @@ form.addEventListener('submit',async(e)=>{
     medio_transporte:document.getElementById('transporte').value,
     capacidad:document.getElementById('capacidad').value.trim(),
     activo:document.getElementById('activo').checked,
+    entrega_certificado_reciclaje:document.getElementById('entregaCertificado').checked,
     consentimiento:document.getElementById('consentimiento').checked
   };
 
