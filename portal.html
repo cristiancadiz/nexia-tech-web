@@ -468,26 +468,6 @@
 <section id="page-interested" class="page"><div class="sectionhead"><h2>Personas interesadas</h2></div><div class="card"><p style="margin-top:0">Este módulo queda preparado para centralizar contactos captados por ventas, formularios y conversaciones.</p><div class="panelnote">La V1.9 crea la tabla de interesados, pero el agente de ventas todavía debe conectarse explícitamente a esa tabla para capturarlos automáticamente. No se inventan contactos.</div></div></section>
 
 <section id="page-convocations" class="page">
-  <div class="card" id="cvInterestedLinkCard" style="margin-bottom:16px">
-    <div class="row between" style="gap:14px;align-items:flex-start;flex-wrap:wrap">
-      <div>
-        <div class="k">REGISTRO DE INTERESADOS</div>
-        <h3 style="margin:4px 0 6px">Enlace público para interesados</h3>
-        <div class="small">Genera un enlace para que recicladores o personas interesadas se registren sin entrar al Portal Nexia.</div>
-      </div>
-      <button class="btn primary" id="cvGenerateInterestedLinkBtn" type="button">Generar link</button>
-    </div>
-    <div id="cvInterestedLinkWrap" class="hidden" style="margin-top:14px">
-      <div class="small" style="margin-bottom:6px">Enlace generado</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input id="cvInterestedLinkInput" readonly style="flex:1;min-width:260px">
-        <button class="btn" id="cvCopyInterestedLinkBtn" type="button">Copiar link</button>
-        <a class="btn" id="cvOpenInterestedLinkBtn" target="_blank" rel="noopener">Abrir</a>
-      </div>
-      <div id="cvInterestedLinkMsg" class="small" style="margin-top:8px"></div>
-    </div>
-  </div>
-
  <div id="cvCompanyScopeCard" class="card hidden" style="margin-bottom:16px;background:#f8fbf9">
    <div class="sectionhead">
     <div>
@@ -1399,50 +1379,8 @@ async function testEcommerce(){
 async function loadCompanies(){if(!state.me?.superadmin){$('companyAdminNote').classList.remove('hidden');$('companyTable').classList.add('hidden');return}try{const d=await api('/portal/admin/empresas');$('companyRows').innerHTML=(d.empresas||[]).map(x=>`<tr><td><b>${esc(x.nombre)}</b></td><td>${x.activo?'Activa':'Inactiva'}</td><td>${fmt(x.created_at)}</td><td class="small">${esc(x.id)}</td></tr>`).join('')}catch(e){$('companyRows').innerHTML=`<tr><td colspan="4" class="error">${esc(e.message)}</td></tr>`}}
 function handleDeepLink(){const p=new URLSearchParams(location.search),id=p.get('conversacion');if(id){go('conversations');setTimeout(async()=>{await loadConversations();const found=state.conversations.find(x=>x.id===id);if(found)selectConversation(id)},250)}}
 $('loginBtn').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});$('logoutBtn').onclick=logout;
-$('cvGenerateInterestedLinkBtn')?.addEventListener('click',generateInterestedPublicLink);
-$('cvCopyInterestedLinkBtn')?.addEventListener('click',copyInterestedPublicLink);
 setInterval(()=>{if(!$('appView').classList.contains('hidden')){renderConversations();if(state.selected)renderChatHeader()}},30000);$('convSearch').addEventListener('input',renderConversations);$('takeBtn').onclick=takeConversation;$('closeBtn').onclick=closeConversation;$('sendBtn').onclick=sendMessage;$('cfgHasAddress')?.addEventListener('change',cfgAddressToggle);
 $('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});init();
-
-async function generateInterestedPublicLink(){
-  const btn=$('cvGenerateInterestedLinkBtn');
-  const msg=$('cvInterestedLinkMsg');
-  try{
-    btn.disabled=true;
-    btn.textContent='Generando…';
-    if(msg)msg.textContent='';
-    const d=await cvApi('/portal/convocatorias/interesados/link');
-    const url=d.url||'';
-    if(!url)throw new Error('El backend no devolvió un enlace');
-    $('cvInterestedLinkInput').value=url;
-    $('cvOpenInterestedLinkBtn').href=url;
-    $('cvInterestedLinkWrap').classList.remove('hidden');
-    if(msg)msg.textContent=`Enlace válido por ${d.expires_hours||720} horas.`;
-  }catch(e){
-    if(msg)msg.textContent=e.message;
-    else alert(e.message);
-  }finally{
-    btn.disabled=false;
-    btn.textContent='Generar link';
-  }
-}
-
-async function copyInterestedPublicLink(){
-  const input=$('cvInterestedLinkInput');
-  const msg=$('cvInterestedLinkMsg');
-  const value=(input?.value||'').trim();
-  if(!value)return;
-  try{
-    await navigator.clipboard.writeText(value);
-    if(msg)msg.textContent='Link copiado.';
-  }catch(e){
-    input.focus();
-    input.select();
-    document.execCommand('copy');
-    if(msg)msg.textContent='Link copiado.';
-  }
-}
-
 
 function cvApi(path,opt={}){
   const headers={...(opt.headers||{})};
@@ -1489,7 +1427,6 @@ async function loadCvCompanies(){
 async function changeCvCompany(empresaId){
   state.cvEmpresaId=String(empresaId||'').trim();
   sessionStorage.setItem('nexia_cv_empresa_id',state.cvEmpresaId);
-  $('cvInterestedLinkWrap')?.classList.add('hidden');
   const current=state.cvEmpresas.find(x=>String(x.id)===state.cvEmpresaId);
   $('cvCompanyScopeMsg').textContent=current
     ? `Trabajando sobre: ${current.nombre||current.id}`
