@@ -15,7 +15,13 @@
   <div id="content"></div>
 </main>
 <script>
-const P=new URLSearchParams(location.search),token=P.get('token')||'',API=(P.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
+const P=new URLSearchParams(location.search);
+let token=P.get('token')||sessionStorage.getItem('laortiga_cotizaciones_token')||'';
+if(P.get('token')){
+  sessionStorage.setItem('laortiga_cotizaciones_token',P.get('token'));
+  history.replaceState({},document.title,location.pathname);
+}
+const API=(P.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const money=v=>v==null||v===''?'—':'$'+Number(v).toLocaleString('es-CL')+' CLP';
 async function req(path,opt={}){const r=await fetch(API+path,{...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
