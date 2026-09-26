@@ -1666,6 +1666,8 @@ function renderConvRequests(){
     const i=x.nexi_convocatorias_interesados||{};
     const as=i.nombre?`${i.nombre} ${i.apellido||''}`:'—';
     const respaldo=x.respaldo_final||null;
+    const respaldoPath=String(x.respaldo_final_path||respaldo?.path||'').trim();
+    const respaldoNombre=String(x.respaldo_final_nombre||respaldo?.nombre||'Documento de respaldo').trim();
     const finalKg=x.peso_final_kg!=null&&x.peso_final_kg!==''?Number(x.peso_final_kg):null;
     const cant=x.cantidad_aprox||x.peso_aprox||'—';
 
@@ -1674,9 +1676,9 @@ function renderConvRequests(){
          ${x.resultado_detalle?`<div class="small" style="margin-top:5px">${esc(x.resultado_detalle)}</div>`:''}`
       : '<span class="small">Pendiente</span>';
 
-    const respaldoHtml=respaldo?.url
-      ? `<a class="btn smallbtn" href="${esc(respaldo.url)}" target="_blank" rel="noopener" download>📎 Descargar respaldo</a>
-         <div class="small" style="margin-top:4px">${esc(respaldo.nombre||'Documento')}</div>`
+    const respaldoHtml=respaldoPath
+      ? `<button class="btn smallbtn" onclick="downloadConvSupport('${x.id}')">📎 Descargar respaldo</button>
+         <div class="small" style="margin-top:4px">${esc(respaldoNombre)}</div>`
       : (x.estado==='completada'
           ? '<div class="small">Sin respaldo adjunto</div>'
           : '');
@@ -1700,6 +1702,44 @@ function renderConvRequests(){
     </tr>`;
   }).join('')||'<tr><td colspan="9" class="small">Todavía no hay solicitudes.</td></tr>';
 }
+
+async function downloadConvSupport(id){
+  try{
+    const headers={};
+    if(state.accessToken) headers['Authorization']='Bearer '+state.accessToken;
+    if(state.me?.superadmin && state.cvEmpresaId){
+      headers['X-Nexia-Empresa-ID']=state.cvEmpresaId;
+    }
+
+    const response=await fetch(
+      API+'/portal/convocatorias/solicitudes/'+encodeURIComponent(id)+'/respaldo',
+      {headers}
+    );
+
+    if(!response.ok){
+      const d=await response.json().catch(()=>({}));
+      throw new Error(d.error||('Error '+response.status));
+    }
+
+    const blob=await response.blob();
+    const disposition=response.headers.get('content-disposition')||'';
+    let filename='respaldo-reciclaje';
+    const m=disposition.match(/filename="?([^"]+)"?/i);
+    if(m?.[1]) filename=m[1];
+
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }catch(e){
+    alert(e.message||'No fue posible descargar el respaldo');
+  }
+}
+
 function renderConvInterested(){const rows=state.convocations.interesados||[];$('cvInterestedCount').textContent=rows.filter(x=>x.activo).length;$('cvInterestedRows').innerHTML=rows.map(x=>`<tr><td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b></td><td>${esc(x.correo||'')}<div class="small">+${esc(x.telefono||'')}</div></td><td>${esc((x.tipos_producto||[]).join(', '))}</td><td>${esc((x.comunas||[]).join(', '))}<div class="small">${x.latitud!=null&&x.longitud!=null?`📍 GPS · radio ${esc(x.radio_km??10)} km`:'Sin GPS · comunas'}</div></td><td>${x.acepta_retiro_sin_aporte?'Acepta sin aporte':('Mín. '+cvMoney(x.aporte_minimo))}</td><td>${x.activo?'<span class="badge bot"><i class="dot"></i>Activo</span>':'<span class="badge wait"><i class="dot"></i>Inactivo</span>'}</td><td><button class="btn smallbtn" onclick="editConvRadius('${x.id}')">Editar radio</button> <button class="btn smallbtn" onclick="updateConvGps('${x.id}')">Actualizar GPS</button> <button class="btn danger smallbtn" onclick="disableConvInterested('${x.id}')">Desactivar</button></td></tr>`).join('')||'<tr><td colspan="7" class="small">No hay interesados registrados.</td></tr>'}
 async function updateConvGps(id){
   const row=(state.convocations.interesados||[]).find(x=>String(x.id)===String(id));
