@@ -1410,11 +1410,7 @@ if(__urlToken){sessionStorage.setItem('laortiga_retiro_token',__urlToken);histor
     $('phoneNote').innerHTML =
       '<b>Vista previa</b><br>Cuando abras el enlace real enviado por La Ortiga, se usará automáticamente tu número de WhatsApp.';
 
-    $('comuna').innerHTML =
-      '<option value="">Selecciona una comuna</option>' +
-      config.comunas.map((x) =>
-        `<option value="${esc(x)}">${esc(x)}</option>`
-      ).join('');
+    // Se conserva el listado fijo de las 346 comunas de Chile.
 
     $('tipos').innerHTML = config.tipos_producto.map((x) =>
       `<label class="type-check"><input type="checkbox" value="${esc(x)}"><span>${esc(x)}</span></label>`
@@ -1451,24 +1447,10 @@ if(__urlToken){sessionStorage.setItem('laortiga_retiro_token',__urlToken);histor
       $('phoneNote').textContent = 'Utilizaremos tu número de WhatsApp para enviarte detalles y actualizaciones sobre tu solicitud.';
     }
 
-    const comunas = Array.isArray(config.comunas)
-      ? config.comunas.map(x => String(x || '').trim()).filter(Boolean)
-      : [];
-
-    if (comunas.length) {
-      $('comuna').innerHTML =
-        '<option value="">Selecciona una comuna</option>' +
-        comunas.map((x) =>
-          `<option value="${esc(x)}">${esc(x)}</option>`
-        ).join('');
-
-      $('comuna').disabled = false;
-    } else {
-      $('comuna').innerHTML =
-        '<option value="">No hay comunas con recicladores disponibles</option>';
-
-      $('comuna').disabled = true;
-    }
+    // IMPORTANTE:
+    // La solicitud puede crearse para cualquier comuna de Chile.
+    // No limitar este selector a las comunas que hoy tienen recicladores registrados.
+    $('comuna').disabled = false;
 
     const defaultTypes = [
       'Textil',
