@@ -3,286 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portal del reciclador · La Ortiga Recicla</title>
+<title>Cotizaciones · La Ortiga Recicla</title>
 <style>
-:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#17231d;background:#f3f7f5;--g:#128a58;--g2:#0b6c44;--line:#dce7e1;--muted:#6b7771;--panel:#fff}*{box-sizing:border-box}body{margin:0;background:#f3f7f5}.top{height:64px;background:#10271d;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px}.brand{font-weight:900;letter-spacing:.04em}.brand b{color:#49dda0}.layout{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 64px)}.left{border-right:1px solid var(--line);background:#fff;padding:16px;overflow:auto}.right{padding:20px;overflow:auto}.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.stat{background:#10271d;color:white;border-radius:15px;padding:14px}.stat .n{font-size:1.55rem;font-weight:900;color:#49dda0}.stat .l{font-size:.72rem;opacity:.82;margin-top:2px}.completeBox{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#f7fbf9}.completeBox input{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px;font:inherit;margin:8px 0 10px}.toolbar button,button{border:0;border-radius:12px;padding:11px 14px;background:var(--g);color:white;font-weight:800;cursor:pointer}.toolbar button.secondary,.secondary{background:#edf5f1;color:#245440}.item{border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:10px;cursor:pointer;background:white}.item.active{border-color:#32a975;box-shadow:0 0 0 3px rgba(18,138,88,.08)}.item h3{font-size:1rem;margin:0 0 5px}.small{font-size:.82rem;color:var(--muted);line-height:1.45}.badge{display:inline-block;border-radius:999px;padding:4px 8px;font-size:.72rem;font-weight:850;background:#eef4f1;color:#355249}.badge.taken{background:#e4f7ed;color:#14683f}.badge.done{background:#eceff0;color:#53605a}.card{max-width:900px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 35px rgba(20,40,30,.05)}h1{margin:0 0 8px;font-size:1.65rem}.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.fact{padding:12px;border-radius:13px;background:#f7faf8}.fact b{display:block;font-size:.76rem;color:var(--muted);margin-bottom:4px}.photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0}.photos img{width:100%;height:140px;object-fit:cover;border-radius:13px;border:1px solid var(--line)}.chat{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:18px}.messages{height:320px;overflow:auto;padding:14px;background:#f6f8f7}.msg{max-width:78%;padding:10px 12px;border-radius:14px;margin:7px 0;white-space:pre-wrap}.msg.in{background:white;border:1px solid var(--line)}.msg.out{background:#dff6e9;margin-left:auto}.composer{display:flex;gap:8px;padding:10px;background:white;border-top:1px solid var(--line)}.composer textarea{flex:1;min-height:44px;max-height:110px;resize:vertical;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit}.empty{padding:35px;text-align:center;color:var(--muted)}.error{padding:12px;border-radius:12px;background:#fff0f0;color:#a32525}.ok{padding:12px;border-radius:12px;background:#eaf8f0;color:#17643d}.quoteBox{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:16px;background:#fbfdfc}.quoteGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.quoteBox label{font-size:.78rem;font-weight:800;color:var(--muted);display:block;margin-bottom:5px}.quoteBox input,.quoteBox select,.quoteBox textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px;font:inherit;background:white}.quoteBox textarea{min-height:80px;resize:vertical}.quoteStatus{margin-top:10px}.closedBox{padding:14px;border-radius:13px;background:#f1f3f2;color:#4f5d56;margin-top:16px}.deadline{font-weight:800;color:#8a5b16}.hidden{display:none!important}@media(max-width:820px){.layout{grid-template-columns:1fr}.left{border-right:0;border-bottom:1px solid var(--line);max-height:42vh}.right{padding:12px}.facts{grid-template-columns:1fr}}
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#173126;background:#f3f7f5;--g:#14865a;--line:#dbe7e1;--muted:#6a7770}*{box-sizing:border-box}body{margin:0}.top{background:#123226;color:#fff;padding:22px}.top h1{max-width:860px;margin:0 auto;font-size:1.35rem}.wrap{max-width:860px;margin:24px auto;padding:0 16px}.summary,.quote{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}.quote.selected{border-color:#1a9b68;box-shadow:0 0 0 3px rgba(20,134,90,.08)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.fact{background:#f7faf8;border-radius:12px;padding:11px}.fact b{display:block;font-size:.75rem;color:var(--muted);margin-bottom:4px}.price{font-size:1.3rem;font-weight:900;margin:10px 0}.muted{color:var(--muted);font-size:.88rem;line-height:1.5}button{border:0;border-radius:12px;padding:12px 16px;background:var(--g);color:#fff;font-weight:800;cursor:pointer}.ok{background:#e9f8f0;color:#17633f;border-radius:12px;padding:12px}.err{background:#fff0f0;color:#9b2929;border-radius:12px;padding:12px}.empty{text-align:center;padding:35px;color:var(--muted)}.rule{background:#eef7f2;border-radius:13px;padding:12px;margin-top:12px}.closed{background:#f2f3f2;color:#4e5a54;border-radius:13px;padding:12px;margin-top:12px}@media(max-width:620px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="top"><div class="brand"><b>LA ORTIGA</b> · Portal del reciclador</div><div id="topStatus" class="small" style="color:#cfe8db">Cargando…</div></div>
-<div class="layout">
-  <aside class="left">
-    <div class="toolbar"><button id="refreshBtn" class="secondary">↻ Actualizar</button></div>
-    <div class="stats"><div class="stat"><div class="n" id="kgTotal">0 kg</div><div class="l">KILOS RECICLADOS</div></div><div class="stat"><div class="n" id="retirosTotal">0</div><div class="l">RETIROS COMPLETADOS</div></div></div>
-    <div id="list"><div class="empty">Cargando solicitudes…</div></div>
-  </aside>
-  <main class="right">
-    <div id="empty" class="card empty">Selecciona una solicitud para ver sus detalles y conversar.</div>
-    <div id="detail" class="card hidden"></div>
-  </main>
-</div>
+<div class="top"><h1>♻️ La Ortiga Recicla · Cotizaciones</h1></div>
+<main class="wrap">
+  <div id="status" class="empty">Cargando cotizaciones…</div>
+  <div id="content"></div>
+</main>
 <script>
 const P=new URLSearchParams(location.search);
-let token=(new URLSearchParams(location.search).get('token')||sessionStorage.getItem('laortiga_reciclador_token')||'');
-const __urlToken=new URLSearchParams(location.search).get('token');
-if(__urlToken){sessionStorage.setItem('laortiga_reciclador_token',__urlToken);history.replaceState({},document.title,location.pathname);}
-const API=(P.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-let rows=[],selected=null,timer=null,quoteDirty=false,quoteSending=false;
-async function request(path,opt={}){
-  const headers={...(opt.headers||{})};
-  if(opt.body && !headers['Content-Type'] && !(opt.body instanceof FormData)) headers['Content-Type']='application/json';
-  let r;
-  try{ r=await fetch(API+path,{...opt,headers}); }
-  catch(e){ throw new Error('No se pudo conectar con Reciclaje La Ortiga. Intenta nuevamente.'); }
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);
-  return d;
+let token=P.get('token')||sessionStorage.getItem('laortiga_cotizaciones_token')||'';
+if(P.get('token')){
+  sessionStorage.setItem('laortiga_cotizaciones_token',P.get('token'));
+  history.replaceState({},document.title,location.pathname);
 }
-function money(v){return v==null||v===''?'Sin aporte':'$'+Number(v).toLocaleString('es-CL')+' CLP'}
-function stateBadge(x){const s=String(x||'').toLowerCase();return `<span class="badge ${s==='tomada'?'taken':(['cerrada','completada'].includes(s)?'done':'')}">${esc(s||'pendiente')}</span>`}
-async function load(){if(!token){$('list').innerHTML='<div class="error">Enlace de acceso incompleto.</div>';return}try{$('topStatus').textContent='Actualizando…';const d=await request('/public/recicladores/solicitudes?token='+encodeURIComponent(token));rows=d.solicitudes||[];const st=d.estadisticas||{};$('kgTotal').textContent=Number(st.kilos_reciclados||0).toLocaleString('es-CL',{maximumFractionDigits:2})+' kg';$('retirosTotal').textContent=Number(st.retiros_completados||0).toLocaleString('es-CL');renderList();$('topStatus').textContent='Portal activo';if(selected){const still=rows.find(x=>x.id===selected);if(still)await openItem(still.id)}}catch(e){$('list').innerHTML=`<div class="error">${esc(e.message)}</div>`;$('topStatus').textContent='Error de acceso'}}
-function renderList(){if(!rows.length){$('list').innerHTML='<div class="empty">No tienes solicitudes por ahora.</div>';return}$('list').innerHTML=rows.map(x=>{const s=x.solicitud||{};return `<div class="item ${selected===x.id?'active':''}" data-id="${esc(x.id)}"><div style="display:flex;justify-content:space-between;gap:8px"><h3>${esc(s.comuna||'Solicitud')}</h3>${stateBadge(x.estado)}</div><div class="small">${esc((s.tipos_producto||[]).join(', ')||'Material no indicado')}</div><div class="small">${esc(s.fecha_retiro||'Fecha a coordinar')} · ${esc(s.horario_retiro||'Horario a coordinar')}</div><div class="small" style="margin-top:5px"><b>${esc(money(s.monto_ofrecido))}</b></div></div>`}).join('');document.querySelectorAll('.item[data-id]').forEach(el=>el.onclick=()=>openItem(el.dataset.id))}
-async function openItem(id){selected=id;renderList();$('empty').classList.add('hidden');$('detail').classList.remove('hidden');$('detail').innerHTML='<div class="empty">Cargando detalle…</div>';try{const d=await request('/public/recicladores/match/'+encodeURIComponent(id)+'?token='+encodeURIComponent(token));renderDetail(d)}catch(e){$('detail').innerHTML=`<div class="error">${esc(e.message)}</div>`}}
-function recepcionTexto(r){
+const API=(P.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const money=v=>v==null||v===''?'—':'$'+Number(v).toLocaleString('es-CL')+' CLP';
+async function req(path,opt={}){const r=await fetch(API+path,{...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
+function quoteBase(q){return Number(q.monto_total||0)}
+function quotePickup(q){return Number(q.costo_retiro||0)}
+function quoteTotal(q){return Math.max(0,quoteBase(q))+Math.max(0,quotePickup(q))}
+function quoteUnitLabel(q){
+  if(q.valor_unitario==null || q.valor_unitario==='')return 'No indicado';
+  const unidad=String(q.unidad||'kg').trim();
+  return money(q.valor_unitario)+' por '+unidad;
+}
+function quoteLabel(q){
+  if(q.modalidad==='retiro_gratis' && quoteTotal(q)===0)return 'Retiro gratis';
+  if(q.modalidad==='a_convenir' && quoteTotal(q)===0)return 'Monto a convenir';
+  return 'Total '+money(quoteTotal(q));
+}
+function receptionHtml(r){
   if(!r)return '';
   const limite=r.limite_at?new Date(r.limite_at).toLocaleString('es-CL'):'';
   if(r.cerrada){
-    const motivo=r.motivo==='maximo'?`Se alcanzó el máximo de ${r.maximo} cotizaciones.`:
+    const motivo=r.motivo==='maximo'?`Se recibieron las ${r.maximo} cotizaciones máximas.`:
       r.motivo==='plazo'?`Finalizó el plazo de ${r.plazo_horas} horas.`:
-      r.motivo==='seleccionada'?'La persona ya seleccionó una propuesta.':
-      'La solicitud está cerrada para nuevas cotizaciones.';
-    return `<div class="closedBox"><b>Solicitud cerrada para nuevas cotizaciones</b><br>${esc(motivo)}</div>`;
+      r.motivo==='seleccionada'?'Ya seleccionaste una propuesta.':
+      'La recepción de nuevas cotizaciones está cerrada.';
+    return `<div class="closed"><b>Recepción de cotizaciones cerrada</b><br>${esc(motivo)}</div>`;
   }
-  return `<div class="small" style="margin:10px 0"><b>${esc(r.recibidas||0)}/${esc(r.maximo||3)} cotizaciones recibidas</b>${limite?` · plazo hasta ${esc(limite)}`:''}</div>`;
+  return `<div class="rule"><b>${esc(r.recibidas||0)} de ${esc(r.maximo||3)} cotizaciones recibidas</b><br>Podrás recibir propuestas hasta completar ${esc(r.maximo||3)} o hasta ${esc(limite||'el límite de 24 horas')}, lo que ocurra primero.</div>`;
 }
-function renderDetail(d){
-  const s=d.solicitud||{},m=d.match||{},chat=d.chat||null;
-  const photos=(s.fotos||[]).filter(x=>x.url);
-  const taken=String(m.estado||'').toLowerCase()==='tomada';
-  const final=['completada','no_concretada','cancelada'].includes(String(s.estado||'').toLowerCase());
-  $('detail').innerHTML=`<div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><div><h1>${esc(s.comuna||'Solicitud de retiro')}</h1><div class="small">${esc((s.tipos_producto||[]).join(', '))}</div></div>${stateBadge(m.estado)}</div><div class="facts"><div class="fact"><b>Retiro</b>${esc(s.fecha_retiro||'A coordinar')} · ${esc(s.horario_retiro||'A coordinar')}</div><div class="fact"><b>Cantidad aproximada</b>${esc(s.cantidad_aprox||s.peso_aprox||'No indicada')}</div><div class="fact"><b>Kilos / peso</b>${esc(s.peso_aprox||'No indicado')}</div><div class="fact"><b>Estado</b>${esc(s.estado||'disponible')}</div></div>${photos.length?`<h3>Fotos del material</h3><div class="photos">${photos.map(x=>`<a href="${esc(x.url)}" target="_blank"><img src="${esc(x.url)}" alt="Material"></a>`).join('')}</div>`:''}${taken?`<div class="ok"><b>Tu cotización fue seleccionada ✅</b><br><br><b>Datos del retiro</b><br>${esc(s.nombre||'')} ${esc(s.apellido||'')}<br>${esc(s.direccion_retiro||'')}<br>${s.telefono?'WhatsApp: +'+esc(s.telefono):''}</div>`:''}${taken&&!final?completeHtml(s):''}${taken&&final&&s.peso_final_kg?`<div class="ok" style="margin-top:14px"><b>♻️ Retiro completado</b><br>${esc(Number(s.peso_final_kg).toLocaleString('es-CL',{maximumFractionDigits:2}))} kg registrados.${s.resultado_detalle?`<br><br><b>Comentario final:</b><br>${esc(s.resultado_detalle)}`:''}${s.respaldo_final?.url?`<br><br><a href="${esc(s.respaldo_final.url)}" target="_blank" rel="noopener" style="font-weight:800;color:#14683f">📎 Ver / descargar respaldo: ${esc(s.respaldo_final.nombre||'Documento')}</a>`:''}</div>`:''}${!taken&&!final?quoteHtml():''}<div id="actionMsg"></div>${taken?chatHtml(chat,final):''}`;
-  if(!taken&&!final){
-    bindQuoteDraft();
-    loadQuote();
-  }
-  if(taken&&!final&&$('completeBtn'))$('completeBtn').onclick=completePickup;
-  if(taken)bindChat(chat,final);
-}
-function quoteHtml(){
-  return `<div class="quoteBox"><h3 style="margin-top:0">Enviar cotización</h3><div class="small" style="margin-bottom:12px">Puedes indicar si pagarás por el material, si el retiro tiene costo, si es gratuito o si prefieres acordar el valor directamente. La persona podrá comparar hasta 3 propuestas. La recepción se cierra al llegar a 3 cotizaciones o a las 24 horas, lo que ocurra primero.</div><div id="quoteReception"></div><div id="quoteForm"><div class="quoteGrid"><div><label>Propuesta</label><select id="qModalidad"><option value="paga_cliente">Pago al cliente por el material</option><option value="cobra_retiro">Cobro por realizar el retiro</option><option value="retiro_gratis">Retiro gratis</option><option value="a_convenir">Monto a convenir</option></select></div><div><label>Forma de cálculo</label><select id="qTarifa"><option value="fijo">Monto fijo / lote</option><option value="por_kg">Por kg</option><option value="por_unidad">Por unidad</option><option value="por_m3">Por m³</option><option value="por_lote">Por lote</option><option value="a_convenir">A convenir</option></select></div><div><label>Valor unitario ($)</label><input id="qUnit" type="number" min="0" step="1" placeholder="Ej: 120"></div><div><label>Cantidad considerada</label><input id="qQty" type="number" min="0" step="0.01" placeholder="Ej: 1000"></div><div><label>Unidad</label><input id="qUnidad" placeholder="kg, unidades, m³..."></div><div><label>Monto base ($)</label><input id="qTotal" type="number" min="0" step="1" placeholder="Ej: 120000"></div><div><label>Costo adicional de retiro ($)</label><input id="qRetiro" type="number" min="0" step="1" value="0"></div></div><div style="margin-top:12px;padding:13px 14px;border-radius:12px;background:#eef7f2;border:1px solid #cfe4d7"><div class="small" style="margin-bottom:4px">TOTAL COTIZACIÓN</div><div id="qGranTotal" style="font-size:1.45rem;font-weight:900;color:#14683f">$0</div><div class="small">Monto base + costo adicional de retiro</div></div><div style="margin-top:10px"><label>Comentario</label><textarea id="qComentario" placeholder="Ej: retiro con camión, sujeto a pesaje final..."></textarea></div><button id="quoteBtn" style="margin-top:12px">Enviar cotización</button></div><div id="quoteStatus" class="quoteStatus"></div></div>`;
-}
-function lockQuoteForm(){
-  const form=$('quoteForm');
-  if(!form)return;
-  form.querySelectorAll('input,select,textarea,button').forEach(x=>x.disabled=true);
-}
-
-function quoteGrandTotal(){
-  const base=Number($('qTotal')?.value||0);
-  const retiro=Number($('qRetiro')?.value||0);
-  const total=Math.max(0,base)+Math.max(0,retiro);
-  if($('qGranTotal'))$('qGranTotal').textContent='$'+total.toLocaleString('es-CL')+' CLP';
-  return total;
-}
-
-function bindQuoteDraft(){
-  const form=$('quoteForm');
-  if(!form)return;
-  form.querySelectorAll('input,select,textarea').forEach(el=>{
-    el.addEventListener('input',()=>{
-      quoteDirty=true;
-      quoteGrandTotal();
-    });
-    el.addEventListener('change',()=>{
-      quoteDirty=true;
-      quoteGrandTotal();
-    });
-  });
-  quoteGrandTotal();
-}
-
-async function loadQuote(){
+async function load(){
+  if(!token){document.getElementById('status').innerHTML='<div class="err">Enlace incompleto.</div>';return}
   try{
-    const d=await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/cotizacion?token='+encodeURIComponent(token));
-    const q=d.cotizacion,r=d.recepcion||{};
-    if($('quoteReception'))$('quoteReception').innerHTML=recepcionTexto(r);
-    if(q){
-      $('qModalidad').value=q.modalidad||'paga_cliente';$('qTarifa').value=q.tipo_tarifa||'fijo';
-      $('qUnit').value=q.valor_unitario??'';$('qQty').value=q.cantidad??'';$('qUnidad').value=q.unidad||'';
-      $('qTotal').value=q.monto_total??'';$('qRetiro').value=q.costo_retiro??0;$('qComentario').value=q.comentario||'';
-      quoteGrandTotal();
-      quoteDirty=false;
-      $('quoteBtn').textContent='Actualizar cotización';
-      $('quoteStatus').innerHTML=`<div class="ok">Cotización enviada · estado: ${esc(q.estado||'pendiente')}</div>`;
+    const d=await req('/public/cotizaciones?token='+encodeURIComponent(token));
+    document.getElementById('status').style.display='none';
+    const s=d.solicitud||{},qs=d.cotizaciones||[],r=d.recepcion||{},sel=d.seleccionada||null;
+    let h=`<section class="summary"><h2 style="margin-top:0">Tu solicitud</h2><div class="grid"><div class="fact"><b>Comuna</b>${esc(s.comuna||'—')}</div><div class="fact"><b>Material</b>${esc((s.tipos_producto||[]).join(', ')||'—')}</div><div class="fact"><b>Cantidad aproximada</b>${esc(s.cantidad_aprox||'—')}</div><div class="fact"><b>Kilos / peso</b>${esc(s.peso_aprox||'—')}</div><div class="fact"><b>Retiro</b>${esc(s.fecha_retiro||'A coordinar')} · ${esc(s.horario_retiro||'A coordinar')}</div></div>${receptionHtml(r)}</section>`;
+    if(!qs.length){
+      h+='<div class="empty">Todavía no hay cotizaciones. Te avisaremos por WhatsApp cuando llegue una propuesta.</div>';
+    }else{
+      h+=qs.map(q=>`<section class="quote ${q.estado==='aceptada'?'selected':''}"><div class="muted">${esc(q.reciclador_nombre||'Reciclador')}</div><div class="price">${esc(quoteLabel(q))}</div>${q.tipo_tarifa&&q.tipo_tarifa!=='fijo'?`<div class="muted">Tarifa: ${esc(q.tipo_tarifa.replaceAll('_',' '))}${q.valor_unitario!=null?' · '+money(q.valor_unitario):''}${q.cantidad!=null?' × '+esc(q.cantidad):''}${q.unidad?' '+esc(q.unidad):''}</div>`:''}<div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+  <div style="padding:10px 12px;border:1px solid #e1e8e3;border-radius:10px;background:#fafcfb">
+    <div class="muted">Monto base</div>
+    <b>${money(quoteBase(q))}</b>
+  </div>
+  <div style="padding:10px 12px;border:1px solid #e1e8e3;border-radius:10px;background:#fafcfb">
+    <div class="muted">Precio por unidad / kg</div>
+    <b>${esc(quoteUnitLabel(q))}</b>
+    ${q.cantidad!=null&&q.cantidad!==''?`<div class="muted">Cantidad: ${esc(q.cantidad)}${q.unidad?' '+esc(q.unidad):''}</div>`:''}
+  </div>
+  <div style="padding:10px 12px;border:1px solid #e1e8e3;border-radius:10px;background:#fafcfb">
+    <div class="muted">Costo adicional de retiro</div>
+    <b>${money(quotePickup(q))}</b>
+  </div>
+</div>
+<div style="margin-top:10px;padding:13px 14px;border-radius:12px;background:#eef7f2;border:1px solid #cfe4d7">
+  <div class="muted">TOTAL COTIZACIÓN</div>
+  <div style="font-size:1.35rem;font-weight:900">${money(quoteTotal(q))}</div>
+  <div class="muted">Monto base + costo adicional de retiro</div>
+</div>${q.comentario?`<p>${esc(q.comentario)}</p>`:''}${q.estado==='aceptada'?'<div class="ok">✅ Cotización seleccionada. Las demás propuestas quedaron cerradas.</div>':sel?'':'<button onclick="acceptQuote(\''+esc(q.id)+'\',this)">Elegir esta cotización</button>'}</section>`).join('');
     }
-    if(r.cerrada){
-      lockQuoteForm();
-      if(!q)$('quoteStatus').innerHTML='<div class="closedBox">Ya no puedes enviar una cotización para esta solicitud.</div>';
-      else $('quoteStatus').innerHTML+=`<div class="closedBox">Tu propuesta queda visible, pero ya no puede modificarse porque la recepción está cerrada.</div>`;
-    }
+    document.getElementById('content').innerHTML=h;
   }catch(e){
-    $('quoteStatus').innerHTML=`<div class="error">${esc(e.message)}</div>`;
-  }
-  quoteGrandTotal();
-  if($('quoteBtn'))$('quoteBtn').onclick=sendQuote;
-}
-async function sendQuote(){
-  const body={
-    token,
-    modalidad:$('qModalidad').value,
-    tipo_tarifa:$('qTarifa').value,
-    valor_unitario:$('qUnit').value||null,
-    cantidad:$('qQty').value||null,
-    unidad:$('qUnidad').value||null,
-    // El backend conserva monto base y costo de retiro por separado.
-    // El total visible al reciclador es la suma de ambos.
-    monto_total:$('qTotal').value||null,
-    costo_retiro:$('qRetiro').value||0,
-    comentario:$('qComentario').value||null
-  };
-
-  try{
-    quoteSending=true;
-    $('quoteBtn').disabled=true;
-    $('quoteBtn').textContent='Enviando…';
-    $('quoteStatus').innerHTML='<div class="small">Guardando cotización…</div>';
-
-    const form=new URLSearchParams();
-    Object.entries(body).forEach(([k,v])=>{
-      if(v!==null&&v!==undefined)form.append(k,String(v));
-    });
-
-    const d=await request(
-      '/public/recicladores/match/'+encodeURIComponent(selected)+'/cotizacion',
-      {
-        method:'POST',
-        headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-        body:form.toString()
-      }
-    );
-
-    quoteDirty=false;
-    $('quoteStatus').innerHTML=
-      `<div class="ok">${esc(d.mensaje||'Cotización enviada correctamente')}<br><b>Total cotización: ${esc('$'+quoteGrandTotal().toLocaleString('es-CL')+' CLP')}</b></div>`;
-    $('quoteBtn').textContent='Actualizar cotización';
-
-    // NO ejecutar load() aquí: reconstruía todo el detalle y podía borrar
-    // lo escrito mientras el servidor respondía.
-    // Solo refrescamos el estado de la cotización actual.
-    await loadQuote();
-
-  }catch(e){
-    $('quoteStatus').innerHTML=`<div class="error">${esc(e.message)}</div>`;
-    $('quoteBtn').textContent='Enviar cotización';
-    // Tampoco recargamos el formulario al fallar: así se conserva lo escrito.
-  }finally{
-    quoteSending=false;
-    if($('quoteBtn')&&!$('quoteBtn').closest('.quoteBox')?.querySelector('.closedBox')){
-      $('quoteBtn').disabled=false;
-    }
+    document.getElementById('status').innerHTML=`<div class="err">${esc(e.message)}</div>`;
   }
 }
-
-
-function completeHtml(s={}){
-  const required=!!s.requiere_certificado_reciclaje;
-  return `<div class="completeBox" id="completeForm"><h3 style="margin:0 0 5px">Finalizar retiro</h3>
-    <div class="small">Registra los kilos reales, un comentario final y, si corresponde, el certificado de reciclaje o una imagen de respaldo.</div>
-
-    <label style="display:block;margin-top:10px;font-weight:800;font-size:.82rem">Kilos reciclados</label>
-    <input id="finalKg" type="number" min="0.01" step="0.01" placeholder="Ej: 125.5">
-
-    <label style="display:block;font-weight:800;font-size:.82rem">Comentario final (opcional)</label>
-    <textarea id="finalDetail" placeholder="Ej: material recibido, pesado en planta y entregado para valorización"></textarea>
-
-    <label style="display:block;margin-top:10px;font-weight:800;font-size:.82rem">
-      Documento de respaldo ${required?'<span style="color:#a32525">(obligatorio)</span>':'(opcional)'}
-    </label>
-    <input id="finalSupport" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
-    <div class="small">
-      Puedes subir certificado de reciclaje o imagen de respaldo. Formatos: PDF, JPG, PNG o WEBP. Máximo 10 MB.
-      ${required?'<br><b>Esta solicitud pidió certificado, por lo que debes adjuntar un respaldo.</b>':''}
-    </div>
-
-    <button id="completeBtn" style="margin-top:12px">Marcar retiro como completado</button>
-    <div id="completeStatus"></div>
-  </div>`;
-}
-
-async function completePickup(){
-  const kg=Number($('finalKg')?.value||0);
-  if(!kg||kg<=0){
-    $('completeStatus').innerHTML='<div class="error" style="margin-top:10px">Ingresa los kilos reales reciclados.</div>';
-    return;
-  }
-
-  const current=rows.find(x=>x.id===selected);
-  const sol=current?.solicitud||{};
-  const file=$('finalSupport')?.files?.[0]||null;
-
-  if(sol.requiere_certificado_reciclaje && !file && !sol.respaldo_final?.path){
-    $('completeStatus').innerHTML='<div class="error" style="margin-top:10px">Esta solicitud requiere certificado de reciclaje. Adjunta un PDF o una imagen de respaldo.</div>';
-    return;
-  }
-
-  if(file && file.size>10*1024*1024){
-    $('completeStatus').innerHTML='<div class="error" style="margin-top:10px">El archivo no puede superar 10 MB.</div>';
-    return;
-  }
-
-  if(!confirm(`¿Confirmas que este retiro se completó con ${kg.toLocaleString('es-CL')} kg?`))return;
-
-  try{
-    $('completeBtn').disabled=true;
-    $('completeBtn').textContent='Guardando…';
-    $('completeStatus').innerHTML='<div class="small" style="margin-top:10px">Guardando kilos, comentario y respaldo…</div>';
-
-    const form=new FormData();
-    form.append('token',token);
-    form.append('peso_final_kg',String(kg));
-    form.append('resultado_detalle',$('finalDetail')?.value||'');
-    if(file)form.append('respaldo_final',file,file.name);
-
-    const d=await request(
-      '/public/recicladores/match/'+encodeURIComponent(selected)+'/completar',
-      {method:'POST',body:form}
-    );
-
-    $('completeStatus').innerHTML=`<div class="ok" style="margin-top:10px">${esc(d.mensaje||'Retiro completado')}</div>`;
-    await load();
-    await openItem(selected);
-  }catch(e){
-    $('completeStatus').innerHTML=`<div class="error" style="margin-top:10px">${esc(e.message)}</div>`;
-  }finally{
-    if($('completeBtn')){
-      $('completeBtn').disabled=false;
-      $('completeBtn').textContent='Marcar retiro como completado';
-    }
-  }
-}
-
-function chatHtml(chat,final){const ms=chat?.mensajes||[];const enabled=!!chat?.habilitado&&!final;return `<div class="chat"><div style="padding:12px 14px;background:white"><b>Conversación con la persona</b><div class="small">${enabled?'Puedes coordinar el retiro desde aquí.':'El chat no está disponible en este momento.'}</div></div><div id="messages" class="messages">${ms.map(renderMsg).join('')||'<div class="empty">Aún no hay mensajes.</div>'}</div><div class="composer ${enabled?'':'hidden'}"><textarea id="messageText" placeholder="Escribe un mensaje…"></textarea><button id="sendBtn">Enviar</button></div></div>`}
-function renderMsg(x){return `<div class="msg ${x.direccion==='entrante'?'in':'out'}">${esc(x.mensaje||'')}<div class="small" style="margin-top:4px">${esc(new Date(x.fecha).toLocaleString('es-CL'))}</div></div>`}
-function bindChat(chat,final){if($('messages'))$('messages').scrollTop=$('messages').scrollHeight;if($('sendBtn'))$('sendBtn').onclick=sendMessage;if($('messageText'))$('messageText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}})}
-async function sendMessage(){const t=$('messageText'),msg=t?.value.trim();if(!msg)return;try{$('sendBtn').disabled=true;await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/mensaje',{method:'POST',body:JSON.stringify({token,mensaje:msg})});t.value='';await openItem(selected)}catch(e){alert(e.message)}finally{if($('sendBtn'))$('sendBtn').disabled=false}}
-$('refreshBtn').onclick=load;
+async function acceptQuote(id,btn){if(!confirm('¿Quieres elegir esta cotización? Las demás propuestas serán rechazadas.'))return;try{btn.disabled=true;await req('/public/cotizaciones/'+encodeURIComponent(id)+'/aceptar',{method:'POST',body:JSON.stringify({token})});await load()}catch(e){alert(e.message);btn.disabled=false}}
 load();
-timer=setInterval(()=>{
-  if(document.visibilityState!=='visible')return;
-  // No actualizar mientras se está escribiendo o enviando una cotización.
-  if(
-    quoteDirty||
-    quoteSending||
-    document.activeElement?.closest?.('#quoteForm')||
-    document.activeElement?.closest?.('#completeForm')||
-    ($('finalKg')?.value||'').trim()||
-    ($('finalDetail')?.value||'').trim()||
-    ($('finalSupport')?.files?.length||0)>0
-  )return;
-  load();
-},30000);
 </script>
 </body>
 </html>
