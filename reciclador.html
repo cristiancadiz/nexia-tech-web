@@ -29,7 +29,7 @@ if(__urlToken){sessionStorage.setItem('laortiga_reciclador_token',__urlToken);hi
 const API=(P.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-let rows=[],selected=null,timer=null;
+let rows=[],selected=null,timer=null,quoteDirty=false,quoteSending=false;
 async function request(path,opt={}){
   const headers={...(opt.headers||{})};
   if(opt.body && !headers['Content-Type'] && !(opt.body instanceof FormData)) headers['Content-Type']='application/json';
@@ -62,19 +62,47 @@ function renderDetail(d){
   const photos=(s.fotos||[]).filter(x=>x.url);
   const taken=String(m.estado||'').toLowerCase()==='tomada';
   const final=['completada','no_concretada','cancelada'].includes(String(s.estado||'').toLowerCase());
-  $('detail').innerHTML=`<div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><div><h1>${esc(s.comuna||'Solicitud de retiro')}</h1><div class="small">${esc((s.tipos_producto||[]).join(', '))}</div></div>${stateBadge(m.estado)}</div><div class="facts"><div class="fact"><b>Retiro</b>${esc(s.fecha_retiro||'A coordinar')} · ${esc(s.horario_retiro||'A coordinar')}</div><div class="fact"><b>Bultos</b>${esc(s.cantidad_bultos||1)}</div><div class="fact"><b>Cantidad/peso</b>${esc(s.peso_aprox||'No indicado')}</div><div class="fact"><b>Estado</b>${esc(s.estado||'disponible')}</div></div>${photos.length?`<h3>Fotos del material</h3><div class="photos">${photos.map(x=>`<a href="${esc(x.url)}" target="_blank"><img src="${esc(x.url)}" alt="Material"></a>`).join('')}</div>`:''}${taken?`<div class="ok"><b>Tu cotización fue seleccionada ✅</b><br><br><b>Datos del retiro</b><br>${esc(s.nombre||'')} ${esc(s.apellido||'')}<br>${esc(s.direccion_retiro||'')}<br>${s.telefono?'WhatsApp: +'+esc(s.telefono):''}</div>`:''}${taken&&!final?completeHtml():''}${taken&&final&&s.peso_final_kg?`<div class="ok" style="margin-top:14px"><b>♻️ Retiro completado</b><br>${esc(Number(s.peso_final_kg).toLocaleString('es-CL',{maximumFractionDigits:2}))} kg registrados.</div>`:''}${!taken&&!final?quoteHtml():''}<div id="actionMsg"></div>${taken?chatHtml(chat,final):''}`;
-  if(!taken&&!final)loadQuote();
+  $('detail').innerHTML=`<div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><div><h1>${esc(s.comuna||'Solicitud de retiro')}</h1><div class="small">${esc((s.tipos_producto||[]).join(', '))}</div></div>${stateBadge(m.estado)}</div><div class="facts"><div class="fact"><b>Retiro</b>${esc(s.fecha_retiro||'A coordinar')} · ${esc(s.horario_retiro||'A coordinar')}</div><div class="fact"><b>Cantidad aproximada</b>${esc(s.cantidad_aprox||s.peso_aprox||'No indicada')}</div><div class="fact"><b>Kilos / peso</b>${esc(s.peso_aprox||'No indicado')}</div><div class="fact"><b>Estado</b>${esc(s.estado||'disponible')}</div></div>${photos.length?`<h3>Fotos del material</h3><div class="photos">${photos.map(x=>`<a href="${esc(x.url)}" target="_blank"><img src="${esc(x.url)}" alt="Material"></a>`).join('')}</div>`:''}${taken?`<div class="ok"><b>Tu cotización fue seleccionada ✅</b><br><br><b>Datos del retiro</b><br>${esc(s.nombre||'')} ${esc(s.apellido||'')}<br>${esc(s.direccion_retiro||'')}<br>${s.telefono?'WhatsApp: +'+esc(s.telefono):''}</div>`:''}${taken&&!final?completeHtml():''}${taken&&final&&s.peso_final_kg?`<div class="ok" style="margin-top:14px"><b>♻️ Retiro completado</b><br>${esc(Number(s.peso_final_kg).toLocaleString('es-CL',{maximumFractionDigits:2}))} kg registrados.</div>`:''}${!taken&&!final?quoteHtml():''}<div id="actionMsg"></div>${taken?chatHtml(chat,final):''}`;
+  if(!taken&&!final){
+    bindQuoteDraft();
+    loadQuote();
+  }
   if(taken&&!final&&$('completeBtn'))$('completeBtn').onclick=completePickup;
   if(taken)bindChat(chat,final);
 }
 function quoteHtml(){
-  return `<div class="quoteBox"><h3 style="margin-top:0">Enviar cotización</h3><div class="small" style="margin-bottom:12px">Puedes indicar si pagarás por el material, si el retiro tiene costo, si es gratuito o si prefieres acordar el valor directamente. La persona podrá comparar hasta 3 propuestas. La recepción se cierra al llegar a 3 cotizaciones o a las 24 horas, lo que ocurra primero.</div><div id="quoteReception"></div><div id="quoteForm"><div class="quoteGrid"><div><label>Propuesta</label><select id="qModalidad"><option value="paga_cliente">Pago al cliente por el material</option><option value="cobra_retiro">Cobro por realizar el retiro</option><option value="retiro_gratis">Retiro gratis</option><option value="a_convenir">Monto a convenir</option></select></div><div><label>Forma de cálculo</label><select id="qTarifa"><option value="fijo">Monto fijo / lote</option><option value="por_kg">Por kg</option><option value="por_unidad">Por unidad</option><option value="por_m3">Por m³</option><option value="por_lote">Por lote</option><option value="a_convenir">A convenir</option></select></div><div><label>Valor unitario ($)</label><input id="qUnit" type="number" min="0" step="1" placeholder="Ej: 120"></div><div><label>Cantidad considerada</label><input id="qQty" type="number" min="0" step="0.01" placeholder="Ej: 1000"></div><div><label>Unidad</label><input id="qUnidad" placeholder="kg, unidades, m³..."></div><div><label>Monto total ($)</label><input id="qTotal" type="number" min="0" step="1" placeholder="Ej: 120000"></div><div><label>Costo adicional de retiro ($)</label><input id="qRetiro" type="number" min="0" step="1" value="0"></div></div><div style="margin-top:10px"><label>Comentario</label><textarea id="qComentario" placeholder="Ej: retiro con camión, sujeto a pesaje final..."></textarea></div><button id="quoteBtn" style="margin-top:12px">Enviar cotización</button></div><div id="quoteStatus" class="quoteStatus"></div></div>`;
+  return `<div class="quoteBox"><h3 style="margin-top:0">Enviar cotización</h3><div class="small" style="margin-bottom:12px">Puedes indicar si pagarás por el material, si el retiro tiene costo, si es gratuito o si prefieres acordar el valor directamente. La persona podrá comparar hasta 3 propuestas. La recepción se cierra al llegar a 3 cotizaciones o a las 24 horas, lo que ocurra primero.</div><div id="quoteReception"></div><div id="quoteForm"><div class="quoteGrid"><div><label>Propuesta</label><select id="qModalidad"><option value="paga_cliente">Pago al cliente por el material</option><option value="cobra_retiro">Cobro por realizar el retiro</option><option value="retiro_gratis">Retiro gratis</option><option value="a_convenir">Monto a convenir</option></select></div><div><label>Forma de cálculo</label><select id="qTarifa"><option value="fijo">Monto fijo / lote</option><option value="por_kg">Por kg</option><option value="por_unidad">Por unidad</option><option value="por_m3">Por m³</option><option value="por_lote">Por lote</option><option value="a_convenir">A convenir</option></select></div><div><label>Valor unitario ($)</label><input id="qUnit" type="number" min="0" step="1" placeholder="Ej: 120"></div><div><label>Cantidad considerada</label><input id="qQty" type="number" min="0" step="0.01" placeholder="Ej: 1000"></div><div><label>Unidad</label><input id="qUnidad" placeholder="kg, unidades, m³..."></div><div><label>Monto base ($)</label><input id="qTotal" type="number" min="0" step="1" placeholder="Ej: 120000"></div><div><label>Costo adicional de retiro ($)</label><input id="qRetiro" type="number" min="0" step="1" value="0"></div></div><div style="margin-top:12px;padding:13px 14px;border-radius:12px;background:#eef7f2;border:1px solid #cfe4d7"><div class="small" style="margin-bottom:4px">TOTAL COTIZACIÓN</div><div id="qGranTotal" style="font-size:1.45rem;font-weight:900;color:#14683f">$0</div><div class="small">Monto base + costo adicional de retiro</div></div><div style="margin-top:10px"><label>Comentario</label><textarea id="qComentario" placeholder="Ej: retiro con camión, sujeto a pesaje final..."></textarea></div><button id="quoteBtn" style="margin-top:12px">Enviar cotización</button></div><div id="quoteStatus" class="quoteStatus"></div></div>`;
 }
 function lockQuoteForm(){
   const form=$('quoteForm');
   if(!form)return;
   form.querySelectorAll('input,select,textarea,button').forEach(x=>x.disabled=true);
 }
+
+function quoteGrandTotal(){
+  const base=Number($('qTotal')?.value||0);
+  const retiro=Number($('qRetiro')?.value||0);
+  const total=Math.max(0,base)+Math.max(0,retiro);
+  if($('qGranTotal'))$('qGranTotal').textContent='$'+total.toLocaleString('es-CL')+' CLP';
+  return total;
+}
+
+function bindQuoteDraft(){
+  const form=$('quoteForm');
+  if(!form)return;
+  form.querySelectorAll('input,select,textarea').forEach(el=>{
+    el.addEventListener('input',()=>{
+      quoteDirty=true;
+      quoteGrandTotal();
+    });
+    el.addEventListener('change',()=>{
+      quoteDirty=true;
+      quoteGrandTotal();
+    });
+  });
+  quoteGrandTotal();
+}
+
 async function loadQuote(){
   try{
     const d=await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/cotizacion?token='+encodeURIComponent(token));
@@ -84,6 +112,8 @@ async function loadQuote(){
       $('qModalidad').value=q.modalidad||'paga_cliente';$('qTarifa').value=q.tipo_tarifa||'fijo';
       $('qUnit').value=q.valor_unitario??'';$('qQty').value=q.cantidad??'';$('qUnidad').value=q.unidad||'';
       $('qTotal').value=q.monto_total??'';$('qRetiro').value=q.costo_retiro??0;$('qComentario').value=q.comentario||'';
+      quoteGrandTotal();
+      quoteDirty=false;
       $('quoteBtn').textContent='Actualizar cotización';
       $('quoteStatus').innerHTML=`<div class="ok">Cotización enviada · estado: ${esc(q.estado||'pendiente')}</div>`;
     }
@@ -95,29 +125,66 @@ async function loadQuote(){
   }catch(e){
     $('quoteStatus').innerHTML=`<div class="error">${esc(e.message)}</div>`;
   }
+  quoteGrandTotal();
   if($('quoteBtn'))$('quoteBtn').onclick=sendQuote;
 }
 async function sendQuote(){
-  const body={token,modalidad:$('qModalidad').value,tipo_tarifa:$('qTarifa').value,valor_unitario:$('qUnit').value||null,cantidad:$('qQty').value||null,unidad:$('qUnidad').value||null,monto_total:$('qTotal').value||null,costo_retiro:$('qRetiro').value||0,comentario:$('qComentario').value||null};
+  const body={
+    token,
+    modalidad:$('qModalidad').value,
+    tipo_tarifa:$('qTarifa').value,
+    valor_unitario:$('qUnit').value||null,
+    cantidad:$('qQty').value||null,
+    unidad:$('qUnidad').value||null,
+    // El backend conserva monto base y costo de retiro por separado.
+    // El total visible al reciclador es la suma de ambos.
+    monto_total:$('qTotal').value||null,
+    costo_retiro:$('qRetiro').value||0,
+    comentario:$('qComentario').value||null
+  };
+
   try{
+    quoteSending=true;
     $('quoteBtn').disabled=true;
+    $('quoteBtn').textContent='Enviando…';
+    $('quoteStatus').innerHTML='<div class="small">Guardando cotización…</div>';
+
     const form=new URLSearchParams();
-    Object.entries(body).forEach(([k,v])=>{ if(v!==null&&v!==undefined) form.append(k,String(v)); });
-    const d=await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/cotizacion',{
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-      body:form.toString()
+    Object.entries(body).forEach(([k,v])=>{
+      if(v!==null&&v!==undefined)form.append(k,String(v));
     });
-    $('quoteStatus').innerHTML=`<div class="ok">${esc(d.mensaje||'Cotización enviada')}</div>`;
+
+    const d=await request(
+      '/public/recicladores/match/'+encodeURIComponent(selected)+'/cotizacion',
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+        body:form.toString()
+      }
+    );
+
+    quoteDirty=false;
+    $('quoteStatus').innerHTML=
+      `<div class="ok">${esc(d.mensaje||'Cotización enviada correctamente')}<br><b>Total cotización: ${esc('$'+quoteGrandTotal().toLocaleString('es-CL')+' CLP')}</b></div>`;
     $('quoteBtn').textContent='Actualizar cotización';
-    await load();
+
+    // NO ejecutar load() aquí: reconstruía todo el detalle y podía borrar
+    // lo escrito mientras el servidor respondía.
+    // Solo refrescamos el estado de la cotización actual.
+    await loadQuote();
+
   }catch(e){
     $('quoteStatus').innerHTML=`<div class="error">${esc(e.message)}</div>`;
-    await loadQuote().catch(()=>{});
+    $('quoteBtn').textContent='Enviar cotización';
+    // Tampoco recargamos el formulario al fallar: así se conserva lo escrito.
   }finally{
-    if($('quoteBtn')&&!$('quoteBtn').closest('.quoteBox')?.querySelector('.closedBox'))$('quoteBtn').disabled=false;
+    quoteSending=false;
+    if($('quoteBtn')&&!$('quoteBtn').closest('.quoteBox')?.querySelector('.closedBox')){
+      $('quoteBtn').disabled=false;
+    }
   }
 }
+
 
 function completeHtml(){
   return `<div class="completeBox"><h3 style="margin:0 0 5px">Finalizar retiro</h3><div class="small">Cuando hayas terminado el retiro, registra el peso real recibido. Este valor se sumará a tus kilos reciclados acumulados.</div><label style="display:block;margin-top:10px;font-weight:800;font-size:.82rem">Kilos reciclados</label><input id="finalKg" type="number" min="0.01" step="0.01" placeholder="Ej: 125.5"><label style="display:block;font-weight:800;font-size:.82rem">Observación final (opcional)</label><textarea id="finalDetail" placeholder="Ej: material recibido y pesado en planta"></textarea><button id="completeBtn" style="margin-top:10px">Marcar retiro como completado</button><div id="completeStatus"></div></div>`;
@@ -143,7 +210,13 @@ function renderMsg(x){return `<div class="msg ${x.direccion==='entrante'?'in':'o
 function bindChat(chat,final){if($('messages'))$('messages').scrollTop=$('messages').scrollHeight;if($('sendBtn'))$('sendBtn').onclick=sendMessage;if($('messageText'))$('messageText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}})}
 async function sendMessage(){const t=$('messageText'),msg=t?.value.trim();if(!msg)return;try{$('sendBtn').disabled=true;await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/mensaje',{method:'POST',body:JSON.stringify({token,mensaje:msg})});t.value='';await openItem(selected)}catch(e){alert(e.message)}finally{if($('sendBtn'))$('sendBtn').disabled=false}}
 $('refreshBtn').onclick=load;
-load();timer=setInterval(()=>{if(document.visibilityState==='visible')load()},30000);
+load();
+timer=setInterval(()=>{
+  if(document.visibilityState!=='visible')return;
+  // No actualizar mientras se está escribiendo o enviando una cotización.
+  if(quoteDirty||quoteSending||document.activeElement?.closest?.('#quoteForm'))return;
+  load();
+},30000);
 </script>
 </body>
 </html>
