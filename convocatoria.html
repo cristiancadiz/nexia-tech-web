@@ -967,11 +967,11 @@
             <input
               id="fotos"
               type="file"
-              accept="image/jpeg,image/png,image/webp"
+              accept="image/*,.heic,.heif,image/heic,image/heif"
               multiple
             >
             <span class="photo-help">
-              Adjunta entre 1 y 4 fotos. Formatos JPG, PNG o WEBP.
+              Adjunta entre 1 y 4 fotos. Formatos JPG, PNG, WEBP, HEIC o HEIF.
               Máximo 6 MB por foto.
             </span>
             <div id="photoPreview" class="photo-preview"></div>
@@ -1070,7 +1070,6 @@
                   <option value="">Selecciona</option>
                   <option>Transferencia</option>
                   <option>Efectivo</option>
-                  <option>Mercado Pago</option>
                   <option>Otro</option>
                 </select>
               </div>
@@ -1205,7 +1204,7 @@ if(__urlToken){sessionStorage.setItem('laortiga_retiro_token',__urlToken);histor
 
   const FOTO_MAX_CANTIDAD = 4;
   const FOTO_MAX_BYTES = 6 * 1024 * 1024;
-  const FOTO_TIPOS = new Set(['image/jpeg', 'image/png', 'image/webp']);
+  const FOTO_TIPOS = new Set(['image/jpeg','image/png','image/webp','image/heic','image/heif','image/heic-sequence','image/heif-sequence']);
 
   function selectedPhotos() {
     return [...($('fotos')?.files || [])];
@@ -1224,7 +1223,10 @@ if(__urlToken){sessionStorage.setItem('laortiga_retiro_token',__urlToken);histor
 
     for (const file of files) {
       if (!FOTO_TIPOS.has(file.type)) {
-        throw new Error('Las fotos deben ser JPG, PNG o WEBP.');
+        const nombre=(file.name||'').toLowerCase();
+        if(!nombre.endsWith('.heic') && !nombre.endsWith('.heif')){
+          throw new Error('Las fotos deben ser JPG, PNG, WEBP, HEIC o HEIF.');
+        }
       }
       if (file.size > FOTO_MAX_BYTES) {
         throw new Error(`Cada foto debe pesar máximo ${Math.round(FOTO_MAX_BYTES / 1024 / 1024)} MB.`);
@@ -1475,11 +1477,6 @@ if(__urlToken){sessionStorage.setItem('laortiga_retiro_token',__urlToken);histor
     ).join('');
 
     setVisibleByConfig(config);
-
-    if (config.pago_retiro_habilitado) {
-      $('pago').value = 'Mercado Pago';
-      $('pago').disabled = true;
-    }
 
     $('loading').classList.add('hidden');
     $('formCard').classList.remove('hidden');
