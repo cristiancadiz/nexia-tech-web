@@ -1643,7 +1643,7 @@ function renderConvRequests(){
 async function downloadConvSupport(id){
   try{
     const headers={};
-    if(state.accessToken) headers['Authorization']='Bearer '+state.accessToken;
+    if(state.authToken) headers['Authorization']='Bearer '+state.authToken;
     if(state.me?.superadmin && state.cvEmpresaId){
       headers['X-Nexia-Empresa-ID']=state.cvEmpresaId;
     }
