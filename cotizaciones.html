@@ -62,7 +62,7 @@ function renderDetail(d){
   const photos=(s.fotos||[]).filter(x=>x.url);
   const taken=String(m.estado||'').toLowerCase()==='tomada';
   const final=['completada','no_concretada','cancelada'].includes(String(s.estado||'').toLowerCase());
-  $('detail').innerHTML=`<div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><div><h1>${esc(s.comuna||'Solicitud de retiro')}</h1><div class="small">${esc((s.tipos_producto||[]).join(', '))}</div></div>${stateBadge(m.estado)}</div><div class="facts"><div class="fact"><b>Retiro</b>${esc(s.fecha_retiro||'A coordinar')} · ${esc(s.horario_retiro||'A coordinar')}</div><div class="fact"><b>Cantidad aproximada</b>${esc(s.cantidad_aprox||s.peso_aprox||'No indicada')}</div><div class="fact"><b>Kilos / peso</b>${esc(s.peso_aprox||'No indicado')}</div><div class="fact"><b>Estado</b>${esc(s.estado||'disponible')}</div></div>${photos.length?`<h3>Fotos del material</h3><div class="photos">${photos.map(x=>`<a href="${esc(x.url)}" target="_blank"><img src="${esc(x.url)}" alt="Material"></a>`).join('')}</div>`:''}${taken?`<div class="ok"><b>Tu cotización fue seleccionada ✅</b><br><br><b>Datos del retiro</b><br>${esc(s.nombre||'')} ${esc(s.apellido||'')}<br>${esc(s.direccion_retiro||'')}<br>${s.telefono?'WhatsApp: +'+esc(s.telefono):''}</div>`:''}${taken&&!final?completeHtml():''}${taken&&final&&s.peso_final_kg?`<div class="ok" style="margin-top:14px"><b>♻️ Retiro completado</b><br>${esc(Number(s.peso_final_kg).toLocaleString('es-CL',{maximumFractionDigits:2}))} kg registrados.</div>`:''}${!taken&&!final?quoteHtml():''}<div id="actionMsg"></div>${taken?chatHtml(chat,final):''}`;
+  $('detail').innerHTML=`<div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><div><h1>${esc(s.comuna||'Solicitud de retiro')}</h1><div class="small">${esc((s.tipos_producto||[]).join(', '))}</div></div>${stateBadge(m.estado)}</div><div class="facts"><div class="fact"><b>Retiro</b>${esc(s.fecha_retiro||'A coordinar')} · ${esc(s.horario_retiro||'A coordinar')}</div><div class="fact"><b>Cantidad aproximada</b>${esc(s.cantidad_aprox||s.peso_aprox||'No indicada')}</div><div class="fact"><b>Kilos / peso</b>${esc(s.peso_aprox||'No indicado')}</div><div class="fact"><b>Estado</b>${esc(s.estado||'disponible')}</div></div>${photos.length?`<h3>Fotos del material</h3><div class="photos">${photos.map(x=>`<a href="${esc(x.url)}" target="_blank"><img src="${esc(x.url)}" alt="Material"></a>`).join('')}</div>`:''}${taken?`<div class="ok"><b>Tu cotización fue seleccionada ✅</b><br><br><b>Datos del retiro</b><br>${esc(s.nombre||'')} ${esc(s.apellido||'')}<br>${esc(s.direccion_retiro||'')}<br>${s.telefono?'WhatsApp: +'+esc(s.telefono):''}</div>`:''}${taken&&!final?completeHtml(s):''}${taken&&final&&s.peso_final_kg?`<div class="ok" style="margin-top:14px"><b>♻️ Retiro completado</b><br>${esc(Number(s.peso_final_kg).toLocaleString('es-CL',{maximumFractionDigits:2}))} kg registrados.${s.resultado_detalle?`<br><br><b>Comentario final:</b><br>${esc(s.resultado_detalle)}`:''}${s.respaldo_final?.url?`<br><br><a href="${esc(s.respaldo_final.url)}" target="_blank" rel="noopener" style="font-weight:800;color:#14683f">📎 Ver / descargar respaldo: ${esc(s.respaldo_final.nombre||'Documento')}</a>`:''}</div>`:''}${!taken&&!final?quoteHtml():''}<div id="actionMsg"></div>${taken?chatHtml(chat,final):''}`;
   if(!taken&&!final){
     bindQuoteDraft();
     loadQuote();
@@ -186,25 +186,83 @@ async function sendQuote(){
 }
 
 
-function completeHtml(){
-  return `<div class="completeBox"><h3 style="margin:0 0 5px">Finalizar retiro</h3><div class="small">Cuando hayas terminado el retiro, registra el peso real recibido. Este valor se sumará a tus kilos reciclados acumulados.</div><label style="display:block;margin-top:10px;font-weight:800;font-size:.82rem">Kilos reciclados</label><input id="finalKg" type="number" min="0.01" step="0.01" placeholder="Ej: 125.5"><label style="display:block;font-weight:800;font-size:.82rem">Observación final (opcional)</label><textarea id="finalDetail" placeholder="Ej: material recibido y pesado en planta"></textarea><button id="completeBtn" style="margin-top:10px">Marcar retiro como completado</button><div id="completeStatus"></div></div>`;
+function completeHtml(s={}){
+  const required=!!s.requiere_certificado_reciclaje;
+  return `<div class="completeBox" id="completeForm"><h3 style="margin:0 0 5px">Finalizar retiro</h3>
+    <div class="small">Registra los kilos reales, un comentario final y, si corresponde, el certificado de reciclaje o una imagen de respaldo.</div>
+
+    <label style="display:block;margin-top:10px;font-weight:800;font-size:.82rem">Kilos reciclados</label>
+    <input id="finalKg" type="number" min="0.01" step="0.01" placeholder="Ej: 125.5">
+
+    <label style="display:block;font-weight:800;font-size:.82rem">Comentario final (opcional)</label>
+    <textarea id="finalDetail" placeholder="Ej: material recibido, pesado en planta y entregado para valorización"></textarea>
+
+    <label style="display:block;margin-top:10px;font-weight:800;font-size:.82rem">
+      Documento de respaldo ${required?'<span style="color:#a32525">(obligatorio)</span>':'(opcional)'}
+    </label>
+    <input id="finalSupport" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+    <div class="small">
+      Puedes subir certificado de reciclaje o imagen de respaldo. Formatos: PDF, JPG, PNG o WEBP. Máximo 10 MB.
+      ${required?'<br><b>Esta solicitud pidió certificado, por lo que debes adjuntar un respaldo.</b>':''}
+    </div>
+
+    <button id="completeBtn" style="margin-top:12px">Marcar retiro como completado</button>
+    <div id="completeStatus"></div>
+  </div>`;
 }
+
 async function completePickup(){
   const kg=Number($('finalKg')?.value||0);
-  if(!kg||kg<=0){$('completeStatus').innerHTML='<div class="error" style="margin-top:10px">Ingresa los kilos reales reciclados.</div>';return}
+  if(!kg||kg<=0){
+    $('completeStatus').innerHTML='<div class="error" style="margin-top:10px">Ingresa los kilos reales reciclados.</div>';
+    return;
+  }
+
+  const current=rows.find(x=>x.id===selected);
+  const sol=current?.solicitud||{};
+  const file=$('finalSupport')?.files?.[0]||null;
+
+  if(sol.requiere_certificado_reciclaje && !file && !sol.respaldo_final?.path){
+    $('completeStatus').innerHTML='<div class="error" style="margin-top:10px">Esta solicitud requiere certificado de reciclaje. Adjunta un PDF o una imagen de respaldo.</div>';
+    return;
+  }
+
+  if(file && file.size>10*1024*1024){
+    $('completeStatus').innerHTML='<div class="error" style="margin-top:10px">El archivo no puede superar 10 MB.</div>';
+    return;
+  }
+
   if(!confirm(`¿Confirmas que este retiro se completó con ${kg.toLocaleString('es-CL')} kg?`))return;
+
   try{
     $('completeBtn').disabled=true;
-    const d=await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/completar',{method:'POST',body:JSON.stringify({token,peso_final_kg:kg,resultado_detalle:$('finalDetail')?.value||''})});
+    $('completeBtn').textContent='Guardando…';
+    $('completeStatus').innerHTML='<div class="small" style="margin-top:10px">Guardando kilos, comentario y respaldo…</div>';
+
+    const form=new FormData();
+    form.append('token',token);
+    form.append('peso_final_kg',String(kg));
+    form.append('resultado_detalle',$('finalDetail')?.value||'');
+    if(file)form.append('respaldo_final',file,file.name);
+
+    const d=await request(
+      '/public/recicladores/match/'+encodeURIComponent(selected)+'/completar',
+      {method:'POST',body:form}
+    );
+
     $('completeStatus').innerHTML=`<div class="ok" style="margin-top:10px">${esc(d.mensaje||'Retiro completado')}</div>`;
     await load();
     await openItem(selected);
   }catch(e){
     $('completeStatus').innerHTML=`<div class="error" style="margin-top:10px">${esc(e.message)}</div>`;
   }finally{
-    if($('completeBtn'))$('completeBtn').disabled=false;
+    if($('completeBtn')){
+      $('completeBtn').disabled=false;
+      $('completeBtn').textContent='Marcar retiro como completado';
+    }
   }
 }
+
 function chatHtml(chat,final){const ms=chat?.mensajes||[];const enabled=!!chat?.habilitado&&!final;return `<div class="chat"><div style="padding:12px 14px;background:white"><b>Conversación con la persona</b><div class="small">${enabled?'Puedes coordinar el retiro desde aquí.':'El chat no está disponible en este momento.'}</div></div><div id="messages" class="messages">${ms.map(renderMsg).join('')||'<div class="empty">Aún no hay mensajes.</div>'}</div><div class="composer ${enabled?'':'hidden'}"><textarea id="messageText" placeholder="Escribe un mensaje…"></textarea><button id="sendBtn">Enviar</button></div></div>`}
 function renderMsg(x){return `<div class="msg ${x.direccion==='entrante'?'in':'out'}">${esc(x.mensaje||'')}<div class="small" style="margin-top:4px">${esc(new Date(x.fecha).toLocaleString('es-CL'))}</div></div>`}
 function bindChat(chat,final){if($('messages'))$('messages').scrollTop=$('messages').scrollHeight;if($('sendBtn'))$('sendBtn').onclick=sendMessage;if($('messageText'))$('messageText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}})}
@@ -214,7 +272,15 @@ load();
 timer=setInterval(()=>{
   if(document.visibilityState!=='visible')return;
   // No actualizar mientras se está escribiendo o enviando una cotización.
-  if(quoteDirty||quoteSending||document.activeElement?.closest?.('#quoteForm'))return;
+  if(
+    quoteDirty||
+    quoteSending||
+    document.activeElement?.closest?.('#quoteForm')||
+    document.activeElement?.closest?.('#completeForm')||
+    ($('finalKg')?.value||'').trim()||
+    ($('finalDetail')?.value||'').trim()||
+    ($('finalSupport')?.files?.length||0)>0
+  )return;
   load();
 },30000);
 </script>
