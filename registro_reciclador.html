@@ -204,7 +204,9 @@ button:disabled{opacity:.6;cursor:wait}
 (() => {
   const API=(new URLSearchParams(location.search).get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
   const params=new URLSearchParams(location.search);
-  const token=params.get('token')||'';
+  let token=(new URLSearchParams(location.search).get('token')||sessionStorage.getItem('laortiga_registro_token')||'');
+const __urlToken=new URLSearchParams(location.search).get('token');
+if(__urlToken){sessionStorage.setItem('laortiga_registro_token',__urlToken);history.replaceState({},document.title,location.pathname);}
   const $=id=>document.getElementById(id);
   const form=$('form'),submitBtn=$('submitBtn'),statusBox=$('status');
 
