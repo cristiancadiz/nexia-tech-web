@@ -1740,7 +1740,107 @@ async function downloadConvSupport(id){
   }
 }
 
-function renderConvInterested(){const rows=state.convocations.interesados||[];$('cvInterestedCount').textContent=rows.filter(x=>x.activo).length;$('cvInterestedRows').innerHTML=rows.map(x=>`<tr><td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b></td><td>${esc(x.correo||'')}<div class="small">+${esc(x.telefono||'')}</div></td><td>${esc((x.tipos_producto||[]).join(', '))}</td><td>${esc((x.comunas||[]).join(', '))}<div class="small">${x.latitud!=null&&x.longitud!=null?`📍 GPS · radio ${esc(x.radio_km??10)} km`:'Sin GPS · comunas'}</div></td><td>${x.acepta_retiro_sin_aporte?'Acepta sin aporte':('Mín. '+cvMoney(x.aporte_minimo))}</td><td>${x.activo?'<span class="badge bot"><i class="dot"></i>Activo</span>':'<span class="badge wait"><i class="dot"></i>Inactivo</span>'}</td><td><button class="btn smallbtn" onclick="editConvRadius('${x.id}')">Editar radio</button> <button class="btn smallbtn" onclick="updateConvGps('${x.id}')">Actualizar GPS</button> <button class="btn danger smallbtn" onclick="disableConvInterested('${x.id}')">Desactivar</button></td></tr>`).join('')||'<tr><td colspan="7" class="small">No hay interesados registrados.</td></tr>'}
+function renderConvInterested(){
+  const rows=state.convocations.interesados||[];
+  $('cvInterestedCount').textContent=rows.filter(x=>x.activo).length;
+
+  $('cvInterestedRows').innerHTML=rows.map(x=>`
+    <tr>
+      <td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b></td>
+      <td>${esc(x.correo||'')}<div class="small">+${esc(x.telefono||'')}</div></td>
+      <td>${esc((x.tipos_producto||[]).join(', '))||'—'}</td>
+      <td>
+        ${esc((x.comunas||[]).join(', '))||'—'}
+        <div class="small">${x.latitud!=null&&x.longitud!=null?`📍 GPS · radio ${esc(x.radio_km??10)} km`:'Sin GPS · comunas'}</div>
+      </td>
+      <td>${x.acepta_retiro_sin_aporte?'Acepta sin aporte':('Mín. '+cvMoney(x.aporte_minimo))}</td>
+      <td>${x.activo?'<span class="badge bot"><i class="dot"></i>Activo</span>':'<span class="badge wait"><i class="dot"></i>Inactivo</span>'}</td>
+      <td>
+        <button class="btn smallbtn" onclick="openConvInterestedEditor('${x.id}')">✏️ Editar</button>
+        <button class="btn smallbtn" onclick="editConvRadius('${x.id}')">Editar radio</button>
+        <button class="btn smallbtn" onclick="updateConvGps('${x.id}')">Actualizar GPS</button>
+        <button class="btn danger smallbtn" onclick="disableConvInterested('${x.id}')">Desactivar</button>
+      </td>
+    </tr>
+  `).join('')||'<tr><td colspan="7" class="small">No hay interesados registrados.</td></tr>';
+}
+
+function openConvInterestedEditor(id){
+  const row=(state.convocations.interesados||[]).find(x=>String(x.id)===String(id));
+  if(!row)return;
+
+  $('ceiId').value=row.id||'';
+  $('ceiName').value=row.nombre||'';
+  $('ceiLast').value=row.apellido||'';
+  $('ceiPhone').value=row.telefono||'';
+  $('ceiEmail').value=row.correo||'';
+  $('ceiProducts').value=(row.tipos_producto||[]).join(', ');
+  $('ceiCommunes').value=(row.comunas||[]).join(', ');
+  $('ceiDays').value=(row.dias_disponibles||[]).join(', ');
+  $('ceiHours').value=(row.horarios||[]).join(', ');
+  $('ceiTransport').value=row.medio_transporte||'';
+  $('ceiCapacity').value=row.capacidad||'';
+  $('ceiRadius').value=row.radio_km??10;
+  $('ceiCertificate').checked=!!row.entrega_certificado_reciclaje;
+  $('ceiActive').checked=row.activo!==false;
+  $('ceiMsg').textContent='';
+
+  $('convInterestedEditBackdrop').classList.remove('hidden');
+}
+
+function closeConvInterestedEditor(){
+  $('convInterestedEditBackdrop').classList.add('hidden');
+}
+
+async function saveConvInterestedEditor(){
+  const id=$('ceiId').value;
+  if(!id)return;
+
+  const payload={
+    nombre:$('ceiName').value.trim(),
+    apellido:$('ceiLast').value.trim(),
+    telefono:$('ceiPhone').value.trim(),
+    correo:$('ceiEmail').value.trim(),
+    tipos_producto:cvList($('ceiProducts').value),
+    comunas:cvList($('ceiCommunes').value),
+    dias_disponibles:cvList($('ceiDays').value),
+    horarios:cvList($('ceiHours').value),
+    medio_transporte:$('ceiTransport').value.trim(),
+    capacidad:$('ceiCapacity').value.trim(),
+    radio_km:Number(String($('ceiRadius').value||'10').replace(',','.')),
+    entrega_certificado_reciclaje:$('ceiCertificate').checked,
+    activo:$('ceiActive').checked
+  };
+
+  if(!payload.nombre){$('ceiMsg').innerHTML='<span class="error">El nombre es obligatorio.</span>';return}
+  if(!payload.telefono){$('ceiMsg').innerHTML='<span class="error">El teléfono es obligatorio.</span>';return}
+  if(!payload.correo){$('ceiMsg').innerHTML='<span class="error">El correo es obligatorio.</span>';return}
+  if(!Number.isFinite(payload.radio_km)||payload.radio_km<0.5||payload.radio_km>100){
+    $('ceiMsg').innerHTML='<span class="error">El radio debe estar entre 0,5 y 100 km.</span>';
+    return;
+  }
+
+  const btn=$('ceiSaveBtn');
+  try{
+    btn.disabled=true;
+    btn.textContent='Guardando…';
+    $('ceiMsg').textContent='';
+
+    await cvApi('/portal/convocatorias/interesados/'+encodeURIComponent(id),{
+      method:'PATCH',
+      body:JSON.stringify(payload)
+    });
+
+    await loadConvocations();
+    closeConvInterestedEditor();
+  }catch(e){
+    $('ceiMsg').innerHTML=`<span class="error">${esc(e.message)}</span>`;
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Guardar cambios';
+  }
+}
+
 async function updateConvGps(id){
   const row=(state.convocations.interesados||[]).find(x=>String(x.id)===String(id));
   if(!row)return;
@@ -1773,6 +1873,56 @@ async function setConvResult(id,estado){const detalle=prompt(estado==='completad
 async function openConvConversation(id){go('conversations');await loadConversations();setTimeout(()=>selectConversation(id),100)}
 
 </script>
+
+
+<div id="convInterestedEditBackdrop" class="calendar-modal-backdrop hidden" onclick="if(event.target===this)closeConvInterestedEditor()">
+  <div class="calendar-modal" style="max-width:760px">
+    <h3 style="margin-top:0">Editar reciclador / interesado</h3>
+    <input id="ceiId" type="hidden">
+
+    <div class="formgrid">
+      <label>Nombre<input id="ceiName"></label>
+      <label>Apellido<input id="ceiLast"></label>
+      <label>WhatsApp<input id="ceiPhone" placeholder="569..."></label>
+      <label>Correo<input id="ceiEmail" type="email"></label>
+
+      <label class="wide">
+        Productos / materiales
+        <textarea id="ceiProducts" rows="3" placeholder="Textil, Cartón, PET, Electrónicos"></textarea>
+        <span class="small">Puedes agregar o quitar productos. Sepáralos por coma.</span>
+      </label>
+
+      <label class="wide">
+        Comunas donde retira
+        <textarea id="ceiCommunes" rows="3" placeholder="Maipú, Santiago, San Bernardo"></textarea>
+        <span class="small">Puedes agregar o quitar comunas. Sepáralas por coma.</span>
+      </label>
+
+      <label>Días disponibles<input id="ceiDays" placeholder="Lunes, Martes, Sábado"></label>
+      <label>Horarios<input id="ceiHours" placeholder="09:00-13:00"></label>
+      <label>Medio de transporte<input id="ceiTransport" placeholder="Camioneta, auto, bicicleta"></label>
+      <label>Capacidad<input id="ceiCapacity" placeholder="Ej: 500 kg"></label>
+      <label>Radio de cobertura (km)<input id="ceiRadius" type="number" min="0.5" max="100" step="0.5"></label>
+
+      <label style="display:flex;align-items:center;gap:8px">
+        <input id="ceiCertificate" type="checkbox" style="width:auto">
+        Puede entregar certificado de reciclaje
+      </label>
+
+      <label style="display:flex;align-items:center;gap:8px">
+        <input id="ceiActive" type="checkbox" style="width:auto">
+        Reciclador activo
+      </label>
+    </div>
+
+    <div id="ceiMsg" class="small" style="margin-top:10px"></div>
+
+    <div class="calendar-modal-actions">
+      <button class="btn" onclick="closeConvInterestedEditor()">Cancelar</button>
+      <button id="ceiSaveBtn" class="btn primary" onclick="saveConvInterestedEditor()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
 
 <div id="calendarModalBackdrop" class="calendar-modal-backdrop hidden" onclick="if(event.target===this)closeCalendarModal()">
  <div class="calendar-modal">
