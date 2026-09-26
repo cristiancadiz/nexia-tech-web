@@ -811,7 +811,9 @@
   ).replace(/\/$/, '');
 
   const Q = new URLSearchParams(location.search);
-  const token = Q.get('token') || '';
+  let token=(new URLSearchParams(location.search).get('token')||sessionStorage.getItem('laortiga_retiro_token')||'');
+const __urlToken=new URLSearchParams(location.search).get('token');
+if(__urlToken){sessionStorage.setItem('laortiga_retiro_token',__urlToken);history.replaceState({},document.title,location.pathname);}
   const match = Q.get('match') || '';
   const previewMode = !token && !match;
 
