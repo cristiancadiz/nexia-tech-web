@@ -24,11 +24,20 @@
 <script>
 const P=new URLSearchParams(location.search);
 const token=P.get('token')||'';
-const API=(P.get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');
+const API=(P.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 let rows=[],selected=null,timer=null;
-async function request(path,opt={}){const r=await fetch(API+path,{...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);return d}
+async function request(path,opt={}){
+  const headers={...(opt.headers||{})};
+  if(opt.body && !headers['Content-Type'] && !(opt.body instanceof FormData)) headers['Content-Type']='application/json';
+  let r;
+  try{ r=await fetch(API+path,{...opt,headers}); }
+  catch(e){ throw new Error('No se pudo conectar con Reciclaje La Ortiga. Intenta nuevamente.'); }
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||d.ok===false)throw new Error(d.error||`Error ${r.status}`);
+  return d;
+}
 function money(v){return v==null||v===''?'Sin aporte':'$'+Number(v).toLocaleString('es-CL')+' CLP'}
 function stateBadge(x){const s=String(x||'').toLowerCase();return `<span class="badge ${s==='tomada'?'taken':(['cerrada','completada'].includes(s)?'done':'')}">${esc(s||'pendiente')}</span>`}
 async function load(){if(!token){$('list').innerHTML='<div class="error">Enlace de acceso incompleto.</div>';return}try{$('topStatus').textContent='Actualizando…';const d=await request('/public/recicladores/solicitudes?token='+encodeURIComponent(token));rows=d.solicitudes||[];const st=d.estadisticas||{};$('kgTotal').textContent=Number(st.kilos_reciclados||0).toLocaleString('es-CL',{maximumFractionDigits:2})+' kg';$('retirosTotal').textContent=Number(st.retiros_completados||0).toLocaleString('es-CL');renderList();$('topStatus').textContent='Portal activo';if(selected){const still=rows.find(x=>x.id===selected);if(still)await openItem(still.id)}}catch(e){$('list').innerHTML=`<div class="error">${esc(e.message)}</div>`;$('topStatus').textContent='Error de acceso'}}
@@ -90,7 +99,13 @@ async function sendQuote(){
   const body={token,modalidad:$('qModalidad').value,tipo_tarifa:$('qTarifa').value,valor_unitario:$('qUnit').value||null,cantidad:$('qQty').value||null,unidad:$('qUnidad').value||null,monto_total:$('qTotal').value||null,costo_retiro:$('qRetiro').value||0,comentario:$('qComentario').value||null};
   try{
     $('quoteBtn').disabled=true;
-    const d=await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/cotizacion',{method:'POST',body:JSON.stringify(body)});
+    const form=new URLSearchParams();
+    Object.entries(body).forEach(([k,v])=>{ if(v!==null&&v!==undefined) form.append(k,String(v)); });
+    const d=await request('/public/recicladores/match/'+encodeURIComponent(selected)+'/cotizacion',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body:form.toString()
+    });
     $('quoteStatus').innerHTML=`<div class="ok">${esc(d.mensaje||'Cotización enviada')}</div>`;
     $('quoteBtn').textContent='Actualizar cotización';
     await load();
