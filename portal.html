@@ -518,7 +518,7 @@
   <button class="btn" type="button" id="ciGeoButton" onclick="captureCiLocation()" style="margin-top:10px">📍 Capturar ubicación de la base</button>
   <div id="ciGeoStatus" class="small" role="status" aria-live="polite" style="margin-top:8px">Sin GPS: se utilizarán las comunas declaradas.</div>
 </div><label>Días disponibles<input id="ciDays" placeholder="Lunes, Martes, Sábado"></label><label>Horarios<input id="ciHours" placeholder="09:00-13:00"></label><label>Medio de transporte<input id="ciTransport" placeholder="Camioneta, auto, bicicleta"></label><label>Capacidad<input id="ciCapacity" placeholder="Hasta 10 bultos"></label><label>Aporte mínimo opcional<input id="ciMinAmount" type="number" min="0" placeholder="5000"></label><label style="display:flex;align-items:center;gap:8px"><input id="ciFree" type="checkbox" checked style="width:auto"> Acepta retiros sin aporte</label></div><div class="actions"><button class="btn" onclick="createConvInterested()">Agregar interesado</button></div><div id="ciMsg" class="small"></div></div>
- <div class="section"><div class="sectionhead"><h3>Solicitudes</h3></div><div class="tablewrap"><table class="table"><thead><tr><th>Fecha</th><th>Solicitante</th><th>Comuna</th><th>Producto/material</th><th>Bultos</th><th>Aporte</th><th>Estado</th><th>Asignado</th><th>Acciones</th></tr></thead><tbody id="cvRequestRows"></tbody></table></div></div>
+ <div class="section"><div class="sectionhead"><h3>Solicitudes</h3></div><div class="tablewrap"><table class="table"><thead><tr><th>Fecha</th><th>Solicitante</th><th>Comuna</th><th>Producto/material</th><th>Cantidad / kilos</th><th>Resultado final</th><th>Estado</th><th>Asignado</th><th>Acciones / respaldo</th></tr></thead><tbody id="cvRequestRows"></tbody></table></div></div>
  <div class="section"><div class="sectionhead"><h3>Interesados registrados</h3></div><div class="tablewrap"><table class="table"><thead><tr><th>Nombre</th><th>Contacto</th><th>Productos</th><th>Comunas</th><th>Aporte</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="cvInterestedRows"></tbody></table></div></div>
 </section>
 
@@ -1656,7 +1656,50 @@ async function createConvInterested(){
   }
 }
 function cvMoney(v){return v==null||v===''?'—':'$'+Number(v).toLocaleString('es-CL')}function cvBadge(s){return `<span class="badge ${s==='completada'?'bot':(['reclamada','en_gestion'].includes(s)?'exec':'wait')}"><i class="dot"></i>${esc(String(s||'').replace('_',' '))}</span>`}
-function renderConvRequests(){const rows=state.convocations.solicitudes||[];$('cvAvailable').textContent=rows.filter(x=>x.estado==='disponible').length;$('cvManaging').textContent=rows.filter(x=>['reclamada','en_gestion'].includes(x.estado)).length;$('cvDone').textContent=rows.filter(x=>x.estado==='completada').length;$('cvRequestRows').innerHTML=rows.map(x=>{const i=x.nexi_convocatorias_interesados||{},as=i.nombre?`${i.nombre} ${i.apellido||''}`:'—';return `<tr><td>${fmt(x.created_at)}</td><td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b><div class="small">+${esc(x.telefono||'')}</div></td><td>${esc(x.comuna||'—')}</td><td>${esc((x.tipos_producto||[]).join(', '))}${(x.fotos||[]).length?`<div class="small" style="margin-top:5px">📷 ${(x.fotos||[]).length} foto(s)</div>`:''}</td><td>${esc(x.cantidad_bultos||1)}</td><td>${cvMoney(x.monto_ofrecido)}${x.monto_negociable?' · negociable':''}${x.monto_ofrecido!=null?`<div class="small">Comisión ${Number(x.comision_porcentaje||0).toLocaleString('es-CL')}%: ${cvMoney(x.comision_monto)} · Neto: ${cvMoney(x.monto_neto_interesado)}</div>`:''}</td><td>${cvBadge(x.estado)}</td><td>${esc(as)}</td><td><div class="actions" style="margin:0">${x.conversacion_id?`<button class="btn smallbtn" onclick="openConvConversation('${x.conversacion_id}')">Conversación</button>`:''}${['reclamada','en_gestion'].includes(x.estado)?`<button class="btn good smallbtn" onclick="setConvResult('${x.id}','completada')">Completado</button><button class="btn danger smallbtn" onclick="setConvResult('${x.id}','no_concretada')">No concretado</button>`:''}</div></td></tr>`}).join('')||'<tr><td colspan="9" class="small">Todavía no hay solicitudes.</td></tr>'}
+function renderConvRequests(){
+  const rows=state.convocations.solicitudes||[];
+  $('cvAvailable').textContent=rows.filter(x=>x.estado==='disponible').length;
+  $('cvManaging').textContent=rows.filter(x=>['reclamada','en_gestion'].includes(x.estado)).length;
+  $('cvDone').textContent=rows.filter(x=>x.estado==='completada').length;
+
+  $('cvRequestRows').innerHTML=rows.map(x=>{
+    const i=x.nexi_convocatorias_interesados||{};
+    const as=i.nombre?`${i.nombre} ${i.apellido||''}`:'—';
+    const respaldo=x.respaldo_final||null;
+    const finalKg=x.peso_final_kg!=null&&x.peso_final_kg!==''?Number(x.peso_final_kg):null;
+    const cant=x.cantidad_aprox||x.peso_aprox||'—';
+
+    const resultado=x.estado==='completada'
+      ? `<b>${finalKg!=null?esc(finalKg.toLocaleString('es-CL',{maximumFractionDigits:2})+' kg'):'Sin kilos registrados'}</b>
+         ${x.resultado_detalle?`<div class="small" style="margin-top:5px">${esc(x.resultado_detalle)}</div>`:''}`
+      : '<span class="small">Pendiente</span>';
+
+    const respaldoHtml=respaldo?.url
+      ? `<a class="btn smallbtn" href="${esc(respaldo.url)}" target="_blank" rel="noopener" download>📎 Descargar respaldo</a>
+         <div class="small" style="margin-top:4px">${esc(respaldo.nombre||'Documento')}</div>`
+      : (x.estado==='completada'
+          ? '<div class="small">Sin respaldo adjunto</div>'
+          : '');
+
+    return `<tr>
+      <td>${fmt(x.created_at)}</td>
+      <td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b><div class="small">+${esc(x.telefono||'')}</div></td>
+      <td>${esc(x.comuna||'—')}</td>
+      <td>${esc((x.tipos_producto||[]).join(', '))}${(x.fotos||[]).length?`<div class="small" style="margin-top:5px">📷 ${(x.fotos||[]).length} foto(s) iniciales</div>`:''}</td>
+      <td><b>${esc(cant)}</b>${finalKg!=null?`<div class="small">Final: ${esc(finalKg.toLocaleString('es-CL',{maximumFractionDigits:2}))} kg</div>`:''}</td>
+      <td>${resultado}</td>
+      <td>${cvBadge(x.estado)}</td>
+      <td>${esc(as)}</td>
+      <td>
+        <div class="actions" style="margin:0">
+          ${x.conversacion_id?`<button class="btn smallbtn" onclick="openConvConversation('${x.conversacion_id}')">Conversación</button>`:''}
+          ${respaldoHtml}
+          ${['reclamada','en_gestion'].includes(x.estado)?`<button class="btn good smallbtn" onclick="setConvResult('${x.id}','completada')">Completado</button><button class="btn danger smallbtn" onclick="setConvResult('${x.id}','no_concretada')">No concretado</button>`:''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="9" class="small">Todavía no hay solicitudes.</td></tr>';
+}
 function renderConvInterested(){const rows=state.convocations.interesados||[];$('cvInterestedCount').textContent=rows.filter(x=>x.activo).length;$('cvInterestedRows').innerHTML=rows.map(x=>`<tr><td><b>${esc(x.nombre||'')} ${esc(x.apellido||'')}</b></td><td>${esc(x.correo||'')}<div class="small">+${esc(x.telefono||'')}</div></td><td>${esc((x.tipos_producto||[]).join(', '))}</td><td>${esc((x.comunas||[]).join(', '))}<div class="small">${x.latitud!=null&&x.longitud!=null?`📍 GPS · radio ${esc(x.radio_km??10)} km`:'Sin GPS · comunas'}</div></td><td>${x.acepta_retiro_sin_aporte?'Acepta sin aporte':('Mín. '+cvMoney(x.aporte_minimo))}</td><td>${x.activo?'<span class="badge bot"><i class="dot"></i>Activo</span>':'<span class="badge wait"><i class="dot"></i>Inactivo</span>'}</td><td><button class="btn smallbtn" onclick="editConvRadius('${x.id}')">Editar radio</button> <button class="btn smallbtn" onclick="updateConvGps('${x.id}')">Actualizar GPS</button> <button class="btn danger smallbtn" onclick="disableConvInterested('${x.id}')">Desactivar</button></td></tr>`).join('')||'<tr><td colspan="7" class="small">No hay interesados registrados.</td></tr>'}
 async function updateConvGps(id){
   const row=(state.convocations.interesados||[]).find(x=>String(x.id)===String(id));
