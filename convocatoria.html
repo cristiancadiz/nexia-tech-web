@@ -1312,7 +1312,11 @@
       apellido: $('apellido').value.trim(),
       direccion_retiro: $('direccion').value.trim(),
       comuna: $('comuna').value,
-      fecha_retiro: $('fechaModo').value === 'fecha' ? $('fecha').value : $('fechaModo').value,
+      // fecha_retiro es DATE en Supabase: solo enviamos una fecha real YYYY-MM-DD.
+      fecha_retiro: $('fechaModo').value === 'fecha' ? $('fecha').value : null,
+      fecha_preferencia: $('fechaModo').value === 'fecha'
+        ? 'Fecha específica'
+        : $('fechaModo').value,
       horario_retiro: $('horarioModo').value === 'hora' ? $('horario').value : $('horarioModo').value,
       cantidad_bultos: 1,
       cantidad_aprox: $('cantidad').value,
