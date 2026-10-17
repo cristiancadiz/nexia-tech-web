@@ -63,7 +63,8 @@ const P=new URLSearchParams(location.search);
 let token=(new URLSearchParams(location.search).get('token')||sessionStorage.getItem('laortiga_reciclador_token')||'');
 const __urlToken=new URLSearchParams(location.search).get('token');
 if(__urlToken){sessionStorage.setItem('laortiga_reciclador_token',__urlToken);history.replaceState({},document.title,location.pathname);}
-const API=(P.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
+// Seguridad: servidor fijo; los enlaces no pueden cambiar el destino de los datos.
+const API='https://reciclaje-la-ortiga.onrender.com';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 let rows=[],selected=null,timer=null,quoteDirty=false,quoteSending=false;
