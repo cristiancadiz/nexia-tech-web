@@ -364,7 +364,8 @@ textarea{min-height:96px;resize:vertical}
 <section id="chatCard" class="card hidden"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><div class="pill">Simulador Web</div><h2 id="chatTitle" style="margin-bottom:4px">Habla con tu asistente</h2></div><div id="remaining" class="stat">50 mensajes</div></div><div id="chat" class="chat"></div><div class="actions"><input id="chatInput" placeholder="Escribe un mensaje..." style="flex:1;min-width:180px"><button id="chatSend">Enviar</button></div><p id="chatStatus" class="muted"></p></section>
 </div>
 <script>
-const API=(new URLSearchParams(location.search).get('api')||'https://chatbot-laortiga-hddw.onrender.com').replace(/\/$/,'');let token=null,summary={};
+// Seguridad: servidor fijo; los enlaces no pueden cambiar el destino de los datos.
+const API='https://chatbot-laortiga-hddw.onrender.com';let token=null,summary={};
 function refreshAssistantIdentity(){
  const nombre=(summary.nombre_asistente||'tu asistente').trim();
  const negocio=(summary.nombre_negocio||'tu negocio').trim();
