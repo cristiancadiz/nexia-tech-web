@@ -202,7 +202,8 @@ button:disabled{opacity:.6;cursor:wait}
 
 <script>
 (() => {
-  const API=(new URLSearchParams(location.search).get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
+  // Seguridad: servidor fijo; los enlaces no pueden cambiar el destino de los datos.
+const API='https://reciclaje-la-ortiga.onrender.com';
   const params=new URLSearchParams(location.search);
   let token=(new URLSearchParams(location.search).get('token')||sessionStorage.getItem('laortiga_registro_token')||'');
 const __urlToken=new URLSearchParams(location.search).get('token');
