@@ -652,7 +652,8 @@
 </main></div></div>
 <script>
 const PARAMS=new URLSearchParams(location.search);
-const API=(PARAMS.get('api')||'https://reciclaje-la-ortiga.onrender.com').replace(/\/$/,'');
+// Seguridad: el destino de credenciales es fijo; la URL no puede cambiarlo.
+const API='https://reciclaje-la-ortiga.onrender.com';
 // V2.5: la prueba conserva su token durante OAuth/recargas.
 // La URL tiene prioridad; sessionStorage es respaldo para volver desde proveedores externos.
 const URL_DEMO_TOKEN=(PARAMS.get('demo_token')||'').trim();
